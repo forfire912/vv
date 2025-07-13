@@ -7,7 +7,7 @@
             "id": "gpioPortA",
             "type": "Miscellaneous.Button",
             "props": {
-                "allowed _type": ["GPIOPort.STM32_GPIOPort", "CAN.CANBus"]
+                "allowed_types": ["GPIOPort.STM32_GPIOPort", "CAN.CANBus"]
             }
         }
     ]
