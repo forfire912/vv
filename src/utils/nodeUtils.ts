@@ -29,9 +29,12 @@ export function getAllowedPeripheralOptions(
   let allowedTypes: string[] = [];
   if (Array.isArray(peripheralData.interfaces)) {
     for (const iface of peripheralData.interfaces) {
-      let at = iface.props?.allowed_type || iface.props?.allowed_types;
-      if (Array.isArray(at)) allowedTypes.push(...at);
-      else if (typeof at === 'string') allowedTypes.push(at);
+      const allowed = iface.props?.allowed_type || iface.props?.allowed_types;
+      if (Array.isArray(allowed)) {
+        allowedTypes.push(...allowed);
+      } else if (typeof allowed === 'string') {
+        allowedTypes.push(allowed);
+      }
     }
   }
   allowedTypes = Array.from(new Set(allowedTypes));

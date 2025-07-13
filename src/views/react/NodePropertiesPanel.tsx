@@ -1,75 +1,60 @@
-import React from 'react';
-import PeripheralConnectionFields from './PeripheralConnectionFields';
-import NodeConfigFields from './NodeConfigFields';
+import React, { useState, useEffect } from 'react';
+import { getAllowedPeripheralOptions } from '../../utils/nodeUtils';
+import { getConnectedCpuNode } from '../../utils/topology';
 import type { Node, Edge } from 'reactflow';
-// import type { PeripheralNodeData } from '../../types/nodes';
-import { t } from '../../i18n/i18n';
 
 interface NodePropertiesPanelProps {
   selectedNode: Node | null;
   nodes: Node[];
   edges: Edge[];
   onChange: (id: string, key: string, value: any) => void;
-  data: any; // 临时用 any，避免类型报错
+  data: any;
   lang: 'zh' | 'en';
 }
 
 const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
   selectedNode, nodes, edges, onChange, data, lang = 'zh'
 }) => {
-  const typeStr = typeof data.type === 'string' ? data.type.toLowerCase() : '';
-  const isCpu = typeStr === 'cpu';
-  const isPeripheral = !isCpu;
+  const [allowedInterfaces, setAllowedInterfaces] = useState<string[]>([]);
+  const [errors, setErrors] = useState<string[]>([]);
 
-  // 配置参数变更处理
-  const handleConfigChange = (key: string, value: any) => {
-    if (selectedNode) {
-      const newConfig = { ...data.config, [key]: value };
-      onChange(selectedNode.id, 'config', newConfig);
+  useEffect(() => {
+    if (!selectedNode || !data?.type) {
+      setAllowedInterfaces([]);
+      setErrors([]);
+      return;
     }
-  };
 
-  // 基础属性变更处理
-  const handleBaseChange = (key: string, value: any) => {
-    if (selectedNode) {
-      onChange(selectedNode.id, key, value);
+    if (data.type === 'peripheral') {
+      const connectedCpuNode = getConnectedCpuNode(selectedNode.id, edges, nodes.filter(n => n.data?.type === 'cpu'));
+      if (connectedCpuNode) {
+        const options = getAllowedPeripheralOptions(connectedCpuNode, data) as unknown as {
+          allowedInterfaces: string[];
+          errors: string[];
+        };
+        setAllowedInterfaces(options.allowedInterfaces || []);
+        setErrors(options.errors || []);
+      } else {
+        setAllowedInterfaces([]);
+        setErrors(['未连接到处理器']);
+      }
+    } else {
+      setAllowedInterfaces([]);
+      setErrors([]);
     }
-  };
+  }, [selectedNode, nodes, edges, data]);
 
   return (
     <div>
-      {/* 基础属性 */}
-      <div style={{ marginBottom: 12 }}>
-        <div style={{ fontWeight: 'bold', marginBottom: 4 }}>基础属性</div>
-        <div style={{ marginBottom: 8 }}>
-          <label style={{ marginRight: 8 }}>名称:</label>
-          <input
-            style={{ width: '70%' }}
-            type="text"
-            value={data.label || ''}
-            onChange={e => handleBaseChange('label', e.target.value)}
-          />
+      <h4>属性</h4>
+      {errors.length > 0 && (
+        <div style={{ color: 'red' }}>
+          {errors.map((err, index) => <p key={index}>{err}</p>)}
         </div>
-        <div style={{ marginBottom: 8 }}>
-          <label style={{ marginRight: 8 }}>类型:</label>
-          <span>{data.type}</span>
-        </div>
+      )}
+      <div>
+        <p>允许的接口: {allowedInterfaces.length > 0 ? allowedInterfaces.join(', ') : '无'}</p>
       </div>
-      {/* 外设连接属性 */}
-      {isPeripheral && (
-        <PeripheralConnectionFields 
-          selectedNode={selectedNode}
-          nodes={nodes}
-          edges={edges}
-          onChange={onChange}
-          data={data}
-          lang={lang}
-        />
-      )}
-      {/* 配置参数编辑 */}
-      {data.config && (
-        <NodeConfigFields config={data.config} onChange={handleConfigChange} lang={lang} />
-      )}
     </div>
   );
 };
