@@ -78,6 +78,16 @@ const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
       <p>ID: {selectedNode.id}</p>
       <p>模型: {selectedNode.data.name || selectedNode.data.label}</p>
       <p>类型: {selectedNode.data.type === 'cpu' ? '处理器' : '外设'}</p>
+      {/* 新增 用户自定义“名称” - 移动到此处 */}
+      <div style={{ marginBottom: 12 }}>
+        <label>名称</label>
+        <input
+          type="text"
+          value={selectedNode.data.displayName || ''}
+          onChange={e => onChange(selectedNode.id, 'displayName', e.target.value)}
+          style={{ width: '100%', marginTop: 4 }}
+        />
+      </div>
 
       {selectedNode.data.type === 'cpu' && cpuNode && (
         <>

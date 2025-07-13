@@ -179,7 +179,17 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
   const handleNodeChange = useCallback((id: string, key: string, value: any) => {
     setIsDirty(true);
     setNodes(ns =>
-      ns.map(n => (n.id === id ? { ...n, data: { ...n.data, [key]: value } } : n))
+      ns.map(n => {
+        if (n.id !== id) return n;
+        const newData: any = { ...n.data };
+        if (key === 'displayName') {
+          newData.displayName = value;
+          newData.label = value;
+        } else {
+          newData[key] = value;
+        }
+        return { ...n, data: newData };
+      })
     );
   }, []);
 
@@ -262,6 +272,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
     });
 
     const id = `${item.type}_${Date.now()}`;
+    const initName = item.label || item.name;
     setNodes(ns => [
       ...ns,
       {
@@ -269,12 +280,10 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
         type: 'default',
         position,
         data: {
-          label: item.label || item.name,
-          // 节点类型：'cpu' 或 'device'
+          label: initName,
+          displayName: initName,
           type: item.type,
-          // 模型名称
           name: item.name,
-          // 接口定义数组
           interfaces: item.interfaces,
           config: {},
         },
