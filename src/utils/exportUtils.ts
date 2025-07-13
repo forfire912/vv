@@ -32,3 +32,29 @@ export function exportTopologyRepl(nodes: Node[], edges: Edge[]) {
   a.click();
   URL.revokeObjectURL(url);
 }
+
+// 保存到 localStorage（按名称）
+export function saveTopologyByName(name: string, nodes: Node[], edges: Edge[]) {
+  localStorage.setItem(`vlab_${name}`, JSON.stringify({ nodes, edges }));
+}
+
+// 读取指定名称的拓扑
+export function loadTopologyByName(name: string): { nodes: Node[]; edges: Edge[] } | null {
+  const item = localStorage.getItem(`vlab_${name}`);
+  return item ? JSON.parse(item) : null;
+}
+
+// 列出所有已保存的拓扑名称
+export function getSavedTopologyNames(): string[] {
+  return Object.keys(localStorage)
+    .filter(key =>
+      key.startsWith('vlab_')
+      && key !== 'vlab_topology'   // 排除默认存储项
+    )
+    .map(key => key.replace('vlab_', ''));
+}
+
+// 删除指定名称的拓扑
+export function deleteTopologyByName(name: string) {
+  localStorage.removeItem(`vlab_${name}`);
+}

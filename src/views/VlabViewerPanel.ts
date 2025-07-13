@@ -1,52 +1,55 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 
-export function startVlabViewer(context: vscode.ExtensionContext) {
+export function startVlabViewer(context: vscode.ExtensionContext): vscode.WebviewPanel {
   const panel = vscode.window.createWebviewPanel(
     'vlabviewer',
     'VlabViewer',
-    vscode.ViewColumn.One, // 可选 One / Two / Three 或 vscode.ViewColumn.Active
+    vscode.ViewColumn.One,
     {
       enableScripts: true,
-      retainContextWhenHidden: true, // 保持状态
+      retainContextWhenHidden: true,
       localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'dist'))]
     }
   );
 
   panel.webview.html = getWebviewContent(panel.webview, context.extensionUri);
+  return panel;
 }
 
 function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri): string {
-
   const scriptUri = webview.asWebviewUri(
     vscode.Uri.joinPath(extensionUri, 'dist', 'main.js')
   );
-  console.log("test:" + scriptUri.toString()); // 输出路径确认是否正确
-
   return `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <title>VlabViewer</title>
-      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-eval' ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline';">
-        <style>
-          html, body, #app {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-          }
-          body {
-            overflow: hidden;
-          }
-        </style>    
-      </head>
-    <body>
-      <div id="app"></div>
-      <script src="${scriptUri}"></script>  
-    </body>
-    </html>
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>VlabViewer</title>
+    <meta http-equiv="Content-Security-Policy" content="
+      default-src 'none';
+      script-src 'unsafe-eval' ${webview.cspSource};
+      style-src ${webview.cspSource} 'unsafe-inline';
+    ">
+    <style>html,body,#app{height:100%;margin:0;padding:0;}body{overflow:hidden;}</style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      const vscode = acquireVsCodeApi();
+      window.addEventListener('message', event => {
+        const msg = event.data;
+        // 前端接收 prompt/confirm 结果，转为自定义事件
+        if (msg.type === 'promptResponse') {
+          window.dispatchEvent(new CustomEvent('vscode-prompt-response', { detail: msg.value }));
+        } else if (msg.type === 'confirmResponse') {
+          window.dispatchEvent(new CustomEvent('vscode-confirm-response', { detail: msg.confirmed }));
+        }
+      });
+    </script>
+    <script src="${scriptUri}"></script>
+  </body>
+  </html>
   `;
 }

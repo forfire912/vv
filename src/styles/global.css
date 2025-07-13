@@ -1,39 +1,172 @@
+/* 主题变量定义 */
+:root[data-theme="light"] {
+  --bg: #fafafa;
+  --text: #333;
+  --toolbar-bg: #1976d2;
+  --toolbar-text: #fff;
+  --btn-bg: #fff;
+  --btn-text: #1976d2;
+  --palette-bg: #fff;
+  --palette-text: #000;
+  --palette-item-bg: #f0f0f0;
+  --palette-item-hover: #e0e0e0;
+  --node-bg: #fff;
+  --node-border: #bbb;
+  --node-selected: #1976d2;
+  --node-hover: #90caf9;
+  --input-bg: #fff;
+  --input-text: #000;
+  --input-border: #ccc;
+}
+
+:root[data-theme="dark"] {
+  --bg: #1e1e1e;
+  --text: #ddd;
+  --toolbar-bg: #333;
+  --toolbar-text: #bb86fc;
+  --btn-bg: #555;
+  --btn-text: #fff;
+  --palette-bg: #2e2e2e;
+  --palette-text: #ddd;
+  --palette-item-bg: #3e3e3e;
+  --palette-item-hover: #555;
+  --node-bg: #2a2a2a;
+  --node-border: #444;
+  --node-selected: #bb86fc;
+  --node-hover: #ae94f4;
+  --input-bg: #3e3e3e;
+  --input-text: #fff;
+  --input-border: #555;
+}
+
+:root[data-theme="colorful"] {
+  --bg: #f0f2f5;
+  --text: #212121;
+  --toolbar-bg: linear-gradient(45deg, #ff5722, #ff9800);
+  --toolbar-text: #fff;
+  --btn-bg: #2196f3;
+  --btn-text: #fff;
+  --palette-bg: #212121;
+  --palette-text: #fff;
+  --palette-item-bg: #424242;
+  --palette-item-hover: #1e88e5;
+  --node-bg: #fff;
+  --node-border: #2196f3;
+  --node-selected: #ff9800;
+  --node-hover: #ffc107;
+  --input-bg: #424242;
+  --input-text: #fff;
+  --input-border: #757575;
+}
+
+:root[data-theme="soft"] {
+  --bg: #f3f4f6;
+  --text: #2d3748;
+  --toolbar-bg: #e2e8f0;
+  --toolbar-text: #2d3748;
+  --btn-bg: #edf2f7;
+  --btn-text: #2d3748;
+  --palette-bg: #fff;
+  --palette-text: #2d3748;
+  --palette-item-bg: #edf2f7;
+  --palette-item-hover: #e2e8f0;
+  --node-bg: #fff;
+  --node-border: #cbd5e0;
+  --node-selected: #667eea;
+  --node-hover: #a3bffa;
+  --input-bg: #fff;
+  --input-text: #2d3748;
+  --input-border: #cbd5e0;
+}
+
+:root[data-theme="neon"] {
+  --bg: #000;
+  --text: #0ff;
+  --toolbar-bg: #111;
+  --toolbar-text: #0ff;
+  --btn-bg: #0ff;
+  --btn-text: #000;
+  --palette-bg: #111;
+  --palette-text: #0ff;
+  --palette-item-bg: #222;
+  --palette-item-hover: #0ff;
+  --node-bg: #111;
+  --node-border: #0ff;
+  --node-selected: #f0f;
+  --node-hover: #ff0;
+  --input-bg: #222;
+  --input-text: #0ff;
+  --input-border: #0ff;
+}
+
+/* 应用变量 */
 body {
   margin: 0;
-  font-family: system-ui, sans-serif;
-  background: #f7f8fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: var(--bg);
+  color: var(--text);
 }
 .toolbar {
-  background: #fff;
-  border-bottom: 1px solid #eee;
+  background: var(--toolbar-bg);
+  color: var(--toolbar-text);
+  border-bottom: none;
   padding: 8px 16px;
   display: flex;
+  align-items: center;
   gap: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.toolbar button {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.toolbar button:hover {
+  background: #1976d2;
 }
 .main-content {
   display: flex;
-  flex-direction: row;
-  height: calc(100vh - 40px);
+  height: calc(100vh - 48px);
 }
 .component-palette {
-  width: 220px;
-  background: #f9fafb;
-  border-right: 1px solid #eee;
-  padding: 12px 8px;
+  background: var(--palette-bg);
+  color: var(--palette-text);
+  width: 240px;
+  box-shadow: 1px 0 6px rgba(0,0,0,0.3);
+  padding: 12px;
+  overflow-y: auto;
 }
 .palette-section {
   margin-bottom: 18px;
 }
+.palette-section h4 {
+  color: #ffcc80;
+}
 .palette-item {
-  background: #fff;
+  background: var(--palette-item-bg);
   margin-bottom: 8px;
   padding: 8px 10px;
   border-radius: 5px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #616161;
   cursor: grab;
   font-size: 15px;
   transition: box-shadow 0.2s;
 }
+.palette-item:hover {
+  background: var(--palette-item-hover);
+  border-color: #64b5f6;
+}
 .palette-item:active {
   box-shadow: 0 3px 8px rgba(50,50,50,0.07);
+}
+select,
+input[type="text"],
+input[type="number"] {
+  background: var(--input-bg);
+  color: var(--input-text);
+  border: 1px solid var(--input-border);
 }

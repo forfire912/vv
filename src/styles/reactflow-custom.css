@@ -1,9 +1,9 @@
 .react-flow__node.selected {
-  outline: 3px solid #1976d2;
+  outline: 3px solid var(--node-selected);
   z-index: 2;
 }
 .react-flow__node.hovered {
-  outline: 2px solid #90caf9;
+  outline: 2px solid var(--node-hover);
 }
 
 /* 基础背景和字体色 */
@@ -12,43 +12,36 @@ body, .main-content, .toolbar, .component-palette, .palette-section {
   color: #222 !important;
 }
 
-/* Palette 样式 */
+/* Palette 样式优化 */
 .component-palette {
-  width: 200px;
-  background: #f8f8f8;
-  border-right: 1px solid #eee;
-  padding: 8px;
-}
-
-.palette-section {
-  margin-bottom: 16px;
-}
-
-.palette-item {
   background: #fff;
-  border: 1px solid #ccc;
+  padding: 12px;
   border-radius: 4px;
-  margin: 4px 0;
-  padding: 8px;
-  cursor: grab;
-  user-select: none;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+.palette-section h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.palette-item {
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-bottom: 6px;
   transition: background 0.2s;
 }
-
-.palette-item:active {
-  background: #e6f7ff;
+.palette-item:hover {
+  background: #e3f2fd;
 }
 
-.palette-item:focus {
-  outline: 2px solid #1890ff;
-}
-
-/* ReactFlow 节点样式可根据需要自定义 */
+/* ReactFlow 节点样式 */
 .react-flow__node {
-  background: #fff;
-  border: 1px solid #bbb;
+  background: var(--node-bg);
+  border: 1px solid var(--node-border);
   border-radius: 4px;
-  color: #222;
+  color: var(--text);
   max-width: 120px;
   min-width: 60px;
   white-space: nowrap;
@@ -56,20 +49,40 @@ body, .main-content, .toolbar, .component-palette, .palette-section {
   text-overflow: ellipsis;
   padding: 4px 8px;
   box-sizing: border-box;
-  pointer-events: auto;
 }
 
-/* 确保画布交互正常 */
+/* 画布交互正常 */
 .react-flow__renderer {
   pointer-events: auto;
 }
 
-/* 移除或注释掉 pointer-events 强制设置 */
-/* .react-flow__renderer {
-  pointer-events: all !important;
-} */
-
-/* 其他常用样式 */
+/* 工具栏按钮间距 */
 .toolbar button {
   margin-right: 8px;
+}
+
+/* 表单域统一样式 */
+label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+select,
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #757575;
+  border-radius: 4px;
+  margin-top: 4px;
+  box-sizing: border-box;
+  background: #424242;
+  color: #fff;
+}
+
+/* 下拉选项同色 */
+select option {
+  background: #424242;
+  color: #fff;
 }

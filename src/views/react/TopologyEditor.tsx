@@ -8,7 +8,10 @@ import ComponentPalette from './ComponentPalette';
 import NodeContextMenu from './NodeContextMenu'; // 确保正确导入
 import { useConfigContext } from '../../context/ConfigContext';
 import '../../styles/reactflow-custom.css';
-import { exportTopologyJson, exportTopologyRepl } from '../../utils/exportUtils'; // 确保正确导入
+import { exportTopologyJson, exportTopologyRepl, saveTopologyByName, loadTopologyByName, getSavedTopologyNames, deleteTopologyByName } from '../../utils/exportUtils'; // 确保正确导入
+import { Toolbar } from './Toolbar'; // 确保正确导入
+
+const vscode = (window as any).acquireVsCodeApi();
 
 const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
   const { cpuList, deviceList } = useConfigContext();
@@ -18,6 +21,117 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; nodeId: string } | null>(null);
   const reactFlowWrapper = useRef<HTMLDivElement>(null);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
+  const [theme, setTheme] = useState<'light' | 'dark' | 'colorful'>('light');
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [savedList, setSavedList] = useState<string[]>([]);
+  const [currentName, setCurrentName] = useState<string>('');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
+    setSavedList(getSavedTopologyNames());
+  }, []);
+
+  // 处理扩展宿主返回的输入
+  useEffect(() => {
+    function onPrompt(e: any) {
+      const name = e.detail;
+      if (name) {
+        setCurrentName(name);
+        saveTopologyByName(name, nodes, edges);
+        setSavedList(getSavedTopologyNames());
+      }
+    }
+    window.addEventListener('vscode-prompt-response', onPrompt);
+    return () => window.removeEventListener('vscode-prompt-response', onPrompt);
+  }, [nodes, edges]);
+
+  // 处理扩展宿主返回的确认
+  useEffect(() => {
+    function onConfirm(e: any) {
+      if (e.detail) {
+        // 用户确认保存
+        if (currentName) {
+          saveTopologyByName(currentName, nodes, edges);
+        } else {
+          vscode.postMessage({ type: 'prompt', text: '请输入保存名称:' });
+        }
+      }
+    }
+    window.addEventListener('vscode-confirm-response', onConfirm);
+    return () => window.removeEventListener('vscode-confirm-response', onConfirm);
+  }, [currentName, nodes, edges]);
+
+  const handleToggleFullscreen = useCallback(() => {
+    setIsFullscreen(f => !f);
+  }, []);
+
+  const handleNew = useCallback(() => {
+    setNodes([]);
+    setEdges([]);
+    setCurrentName('');
+  }, []);
+
+  const handleSave = useCallback(() => {
+    let name = currentName;
+    if (!name) {
+      // 新建：弹出输入框获取名称
+      const input = prompt('请输入保存名称:');
+      if (!input) return;
+      name = input;
+      setCurrentName(name);
+    }
+    // 保存或更新
+    saveTopologyByName(name, nodes, edges);
+    // 立即刷新列表
+    const list = getSavedTopologyNames();
+    setSavedList(list);
+  }, [currentName, nodes, edges]);
+
+  const handleOpen = useCallback(() => {
+    const name = prompt('请选择要打开的拓扑:\n' + savedList.join('\n'));
+    if (name) {
+      const data = loadTopologyByName(name);
+      if (data) {
+        setNodes(data.nodes);
+        setEdges(data.edges);
+        setCurrentName(name);
+      }
+    }
+  }, [savedList]);
+
+  const handleDeleteSaved = useCallback(() => {
+    if (currentName) {
+      if (window.confirm(`确认删除当前拓扑 "${currentName}" 吗？`)) {
+        deleteTopologyByName(currentName);
+        setSavedList(getSavedTopologyNames());
+        setCurrentName('');
+        // 清空并新建拓扑
+        setNodes([]);
+        setEdges([]);
+      }
+    } else {
+      const name = prompt('请选择要删除的拓扑:\n' + savedList.join('\n'));
+      if (name && window.confirm(`确认删除拓扑 "${name}" 吗？`)) {
+        deleteTopologyByName(name);
+        setSavedList(getSavedTopologyNames());
+        // 清空并新建拓扑
+        setNodes([]);
+        setEdges([]);
+        setCurrentName('');
+      }
+    }
+  }, [currentName, savedList]);
+
+  const handleSelectTopology = useCallback((name: string) => {
+    if (!name) return;
+    // 通过扩展宿主弹出确认框
+    vscode.postMessage({ type: 'confirm', text: '是否保存当前拓扑？' });
+    // 打开部分在 confirm 的回调里处理
+    // 所以这里不再直接调用 loadTopology...
+  }, []);
 
   // 节点拖动逻辑
   const handleNodeChange = useCallback((id: string, key: string, value: any) => {
@@ -145,11 +259,27 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      {/* 工具栏固定高度 */}
-      <div className="toolbar">
-        <button onClick={handleExportJson}>导出 JSON</button>
-        <button onClick={handleExportRepl}>导出 REPL</button>
-      </div>
+      <Toolbar
+        savedList={savedList}
+        currentName={currentName}   // ← 传入
+        onSelect={handleSelectTopology}
+        onNew={handleNew}
+        onSave={handleSave}
+        onOpen={handleOpen}
+        onDeleteSaved={handleDeleteSaved}
+        onAutoLayout={() => console.log('Auto layout triggered')}
+        onExportJson={handleExportJson}
+        onExportRepl={handleExportRepl}
+        onToggleFullscreen={handleToggleFullscreen}
+        isFullscreen={isFullscreen}
+        theme={theme}
+        onThemeChange={(theme) => {
+          if (['light', 'dark', 'colorful'].includes(theme)) {
+            setTheme(theme as 'light' | 'dark' | 'colorful');
+          }
+        }}
+      />
+
       {/* 主体内容，撑满剩余空间 */}
       <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
         <ComponentPalette
@@ -157,10 +287,10 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
           deviceList={deviceList.map(device => ({ ...device, type: 'device' }))}
           onDragStart={handlePaletteDragStart}
         />
-        {/* 画布区域，自适应伸缩 */}
+        {/* 画布区域，宽度固定为15cm */}
         <div
           ref={reactFlowWrapper}
-          style={{ flex: 1, position: 'relative' }}
+          style={{ flex: 1, position: 'relative' }}  // 取消固定宽度，恢复自适应
           onDrop={handleDrop}
           onDragOver={handleDragOver}
         >
