@@ -1,0 +1,39 @@
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #f7f8fa;
+}
+.toolbar {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  padding: 8px 16px;
+  display: flex;
+  gap: 8px;
+}
+.main-content {
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 40px);
+}
+.component-palette {
+  width: 220px;
+  background: #f9fafb;
+  border-right: 1px solid #eee;
+  padding: 12px 8px;
+}
+.palette-section {
+  margin-bottom: 18px;
+}
+.palette-item {
+  background: #fff;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  border-radius: 5px;
+  border: 1px solid #e0e0e0;
+  cursor: grab;
+  font-size: 15px;
+  transition: box-shadow 0.2s;
+}
+.palette-item:active {
+  box-shadow: 0 3px 8px rgba(50,50,50,0.07);
+}

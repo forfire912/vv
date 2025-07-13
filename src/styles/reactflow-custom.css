@@ -1,0 +1,75 @@
+.react-flow__node.selected {
+  outline: 3px solid #1976d2;
+  z-index: 2;
+}
+.react-flow__node.hovered {
+  outline: 2px solid #90caf9;
+}
+
+/* 基础背景和字体色 */
+body, .main-content, .toolbar, .component-palette, .palette-section {
+  background: #fff !important;
+  color: #222 !important;
+}
+
+/* Palette 样式 */
+.component-palette {
+  width: 200px;
+  background: #f8f8f8;
+  border-right: 1px solid #eee;
+  padding: 8px;
+}
+
+.palette-section {
+  margin-bottom: 16px;
+}
+
+.palette-item {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin: 4px 0;
+  padding: 8px;
+  cursor: grab;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.palette-item:active {
+  background: #e6f7ff;
+}
+
+.palette-item:focus {
+  outline: 2px solid #1890ff;
+}
+
+/* ReactFlow 节点样式可根据需要自定义 */
+.react-flow__node {
+  background: #fff;
+  border: 1px solid #bbb;
+  border-radius: 4px;
+  color: #222;
+  max-width: 120px;
+  min-width: 60px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 4px 8px;
+  box-sizing: border-box;
+  pointer-events: auto;
+}
+
+/* 确保画布交互正常 */
+.react-flow__renderer {
+  pointer-events: auto;
+}
+
+/* 移除或注释掉 pointer-events 强制设置 */
+/* .react-flow__renderer {
+  pointer-events: all !important;
+} */
+
+/* 其他常用样式 */
+.toolbar button {
+  margin-right: 8px;
+}

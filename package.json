@@ -1,0 +1,53 @@
+{
+  "name": "vlabviewer",
+  "displayName": "VlabViewer",
+  "description": "A visual Renode configuration builder for embedded systems",
+  "version": "0.2.0",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:vlabviewer.start"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vlabviewer.start",
+        "title": "Start VlabViewer"
+      }
+    ]
+  },
+  "scripts": {
+    "watch:tsc": "tsc -w",
+    "build": "tsc",
+    "build:react": "webpack",
+    "clean": "del-cli dist",
+    "compile": "tsc -p ./ --jsx react-jsx",
+    "rebuild": "npm run clean & npm run build & npm run build:react"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.10",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@types/vscode": "^1.80.0",
+    "copy-webpack-plugin": "^13.0.0",
+    "css-loader": "^7.1.2",
+    "del-cli": "^6.0.0",
+    "rimraf": "^6.0.1",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.0.0",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^5.1.4"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "reactflow": "^11.11.4",
+    "vsce": "^2.15.0"
+  }
+}

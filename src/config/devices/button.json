@@ -1,0 +1,14 @@
+{
+    "name":"button",
+    "type":"io",
+    "desc":"按钮设备",
+    "interfaces": [
+        {
+            "id": "gpioPortA",
+            "type": "Miscellaneous.Button",
+            "props": {
+                "allowed _type": ["GPIOPort.STM32_GPIOPort", "CAN.CANBus"]
+            }
+        }
+    ]
+}
