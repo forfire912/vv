@@ -6,15 +6,9 @@
   outline: 2px solid var(--node-hover);
 }
 
-/* 基础背景和字体色 */
-body, .main-content, .toolbar, .component-palette, .palette-section {
-  background: #fff !important;
-  color: #222 !important;
-}
-
 /* Palette 样式优化 */
 .component-palette {
-  background: #fff;
+  background: var(--palette-bg);
   padding: 12px;
   border-radius: 4px;
   box-shadow: 0 1px 4px rgba(0,0,0,0.1);
@@ -73,16 +67,26 @@ input[type="text"],
 input[type="number"] {
   width: 100%;
   padding: 6px 10px;
-  border: 1px solid #757575;
+  border: 1px solid var(--input-border);
   border-radius: 4px;
   margin-top: 4px;
   box-sizing: border-box;
-  background: #424242;
-  color: #fff;
+  background: var(--input-bg);
+  color: var(--input-text);
 }
 
 /* 下拉选项同色 */
 select option {
-  background: #424242;
-  color: #fff;
+  background: var(--input-bg);
+  color: var(--input-text);
+}
+
+/* 画布中间：主背景色 */
+.canvas-panel {
+  background: var(--bg);
+}
+
+/* 右侧属性面板：略微区分 */
+.properties-panel {
+  background: var(--palette-item-bg);
 }

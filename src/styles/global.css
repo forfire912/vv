@@ -34,9 +34,9 @@
   --node-border: #444;
   --node-selected: #bb86fc;
   --node-hover: #ae94f4;
-  --input-bg: #3e3e3e;
+  --input-bg: #555555;
   --input-text: #fff;
-  --input-border: #555;
+  --input-border: #777777;
 }
 
 :root[data-theme="colorful"] {
@@ -54,9 +54,9 @@
   --node-border: #2196f3;
   --node-selected: #ff9800;
   --node-hover: #ffc107;
-  --input-bg: #424242;
-  --input-text: #fff;
-  --input-border: #757575;
+  --input-bg: #ffffff;
+  --input-text: #212121;
+  --input-border: #cbd5e0;
 }
 
 :root[data-theme="soft"] {
@@ -94,7 +94,7 @@
   --node-border: #0ff;
   --node-selected: #f0f;
   --node-hover: #ff0;
-  --input-bg: #222;
+  --input-bg: #333333;
   --input-text: #0ff;
   --input-border: #0ff;
 }

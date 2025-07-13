@@ -26,6 +26,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [savedList, setSavedList] = useState<string[]>([]);
   const [currentName, setCurrentName] = useState<string>('');
+  const [isDirty, setIsDirty] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -93,6 +94,12 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
         }
         setSavedList(getSavedTopologyNames());
       }
+      else if (action === 'new') {
+        if (confirmed && currentName) {
+          saveTopologyByName(currentName, nodes, edges);
+        }
+        setNodes([]); setEdges([]); setCurrentName(''); setIsDirty(false);
+      }
       else {
         // 用户确认保存当前（action 可省略）
         if (confirmed) {
@@ -111,7 +118,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
   // 点击列表时：如果名称改变，先弹确认；否则直接打开
   const handleSelectTopology = useCallback((name: string) => {
     if (!name) return;
-    if (currentName && currentName !== name) {
+    if (currentName && currentName !== name && isDirty) {
       vscode.postMessage({
         type: 'confirm',
         text: '是否保存当前拓扑？',
@@ -125,18 +132,21 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
         setEdges(data.edges);
         setCurrentName(name);
       }
+      setIsDirty(false);
     }
-  }, [currentName, nodes, edges]);
+  }, [currentName, isDirty]);
 
   const handleToggleFullscreen = useCallback(() => {
     setIsFullscreen(f => !f);
   }, []);
 
   const handleNew = useCallback(() => {
-    setNodes([]);
-    setEdges([]);
-    setCurrentName('');
-  }, []);
+    if (isDirty && currentName) {
+      vscode.postMessage({ type: 'confirm', text: '是否保存当前拓扑？', action: 'new', name: currentName });
+    } else {
+      setNodes([]); setEdges([]); setCurrentName(''); setIsDirty(false);
+    }
+  }, [isDirty, currentName]);
 
   const handleSave = useCallback(() => {
     if (!currentName) {
@@ -145,6 +155,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
     }
     saveTopologyByName(currentName, nodes, edges);
     setSavedList(getSavedTopologyNames());
+    setIsDirty(false);
   }, [currentName, nodes, edges]);
 
   const handleDeleteSaved = useCallback(() => {
@@ -166,6 +177,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
 
   // 节点拖动逻辑
   const handleNodeChange = useCallback((id: string, key: string, value: any) => {
+    setIsDirty(true);
     setNodes(ns =>
       ns.map(n => (n.id === id ? { ...n, data: { ...n.data, [key]: value } } : n))
     );
@@ -173,6 +185,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
 
   // 连线处理逻辑
   const handleConnect = useCallback((params: Connection | FlowEdge) => {
+    setIsDirty(true);
     setEdges(eds => [
       ...eds,
       { ...params, id: `e${params.source}-${params.target}` } as Edge,
@@ -192,6 +205,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
 
   // 删除节点逻辑
   const handleDeleteNode = useCallback((nodeId: string) => {
+    setIsDirty(true);
     setNodes(ns => ns.filter(n => n.id !== nodeId));
     setEdges(es => es.filter(e => e.source !== nodeId && e.target !== nodeId));
     if (selectedNodeId === nodeId) setSelectedNodeId(null);
@@ -199,6 +213,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
 
   // 重命名节点逻辑
   const handleRenameNode = useCallback((nodeId: string) => {
+    setIsDirty(true);
     const newLabel = prompt('请输入新名称:');
     if (newLabel) {
       setNodes(ns =>
@@ -209,6 +224,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
 
   // 切换外设所连 CPU 时，同步更新 edges
   const handleCpuChange = useCallback((peripheralId: string, cpuId: string) => {
+    setIsDirty(true);
     setEdges(es => {
       // 移除该外设已有的所有连线
       const filtered = es.filter(e => !(e.source === peripheralId || e.target === peripheralId));
@@ -234,6 +250,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
     event.preventDefault();
     if (!reactFlowInstance) return;
 
+    setIsDirty(true);
     const data = event.dataTransfer.getData('application/json');
     if (!data) return;
 
@@ -284,6 +301,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
   const onNodesChange = useCallback((changes: NodeChange[]) => {
     setNodes(ns => applyNodeChanges(changes, ns));
   }, []);
+
   const onEdgesChange = useCallback((changes: EdgeChange[]) => {
     setEdges(es => applyEdgeChanges(changes, es));
   }, []);
@@ -297,7 +315,6 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
         onNew={handleNew}
         onSave={handleSave}
         onDeleteSaved={handleDeleteSaved}
-        onAutoLayout={() => console.log('Auto layout triggered')}
         onExportJson={handleExportJson}
         onExportRepl={handleExportRepl}
         onToggleFullscreen={handleToggleFullscreen}
@@ -317,10 +334,11 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
           deviceList={deviceList.map(device => ({ ...device, type: 'device' }))}
           onDragStart={handlePaletteDragStart}
         />
-        {/* 画布区域，宽度固定为15cm */}
+        {/* 画布区域 */}
         <div
+          className="canvas-panel"
           ref={reactFlowWrapper}
-          style={{ flex: 1, position: 'relative' }}  // 取消固定宽度，恢复自适应
+          style={{ flex: 1, position: 'relative' }}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
         >
@@ -353,8 +371,11 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
           )}
         </div>
 
-        {/* 属性面板，超出时滚动 */}
-        <div style={{ width: '320px', borderLeft: '1px solid #eee', overflowY: 'auto' }}>
+        {/* 属性面板 */}
+        <div
+          className="properties-panel"
+          style={{ width: '320px', borderLeft: '1px solid #eee', overflowY: 'auto' }}
+        >
           {selectedNodeId && (
             <NodePropertiesPanel
               selectedNode={nodes.find(n => n.id === selectedNodeId) || null}

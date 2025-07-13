@@ -7,7 +7,6 @@ interface ToolbarProps {
   onNew: () => void;
   onSave: () => void;
   onDeleteSaved: () => void;
-  onAutoLayout: () => void;
   onExportJson: () => void;
   onExportRepl: () => void;
   onToggleFullscreen: () => void;
@@ -23,7 +22,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onNew,
   onSave,
   onDeleteSaved,
-  onAutoLayout,
   onExportJson,
   onExportRepl,
   onToggleFullscreen,
@@ -45,7 +43,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     <button onClick={onNew} style={{ marginRight: 10 }}>新建</button>
     <button onClick={onSave} style={{ marginRight: 10 }}>保存</button>
     <button onClick={onDeleteSaved} style={{ marginRight: 10 }}>删除</button>
-    <button onClick={onAutoLayout} style={{ marginRight: 10 }}>自动布局</button>
     <button onClick={onExportJson} style={{ marginRight: 10 }}>导出 JSON</button>
     <button onClick={onExportRepl} style={{ marginRight: 10 }}>导出 REPL</button>
     <button onClick={onToggleFullscreen}>{isFullscreen ? '退出全屏' : '全屏'}</button>
