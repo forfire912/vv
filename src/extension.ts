@@ -9,12 +9,14 @@ export function activate(context: vscode.ExtensionContext) {
     panel.webview.onDidReceiveMessage(async msg => {
       if (msg.type === 'prompt') {
         const val = await vscode.window.showInputBox({ prompt: msg.text });
-        panel.webview.postMessage({ type: 'promptResponse', value: val });
+        panel.webview.postMessage({ type: 'promptResponse', value: val, action: msg.action });
       } else if (msg.type === 'confirm') {
         const pick = await vscode.window.showInformationMessage(msg.text, 'Yes', 'No');
         panel.webview.postMessage({
           type: 'confirmResponse',
-          confirmed: pick === 'Yes'
+          confirmed: pick === 'Yes',
+          action: msg.action,
+          name: msg.name
         });
       }
     });

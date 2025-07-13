@@ -1,17 +1,28 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
-
-// React Flow 默认样式
 import 'reactflow/dist/style.css';
-
-// 全局通用样式
 import '../../styles/global.css';
-
-// 自定义覆盖样式
 import '../../styles/reactflow-custom.css';
 
+// VS Code API 获取并挂载
+declare const acquireVsCodeApi: any;
+const vscodeApi = acquireVsCodeApi();
+;(window as any).vscodeApi = vscodeApi;
+
+// 转发 Webview 消息到自定义事件
+window.addEventListener('message', event => {
+  const msg = event.data;
+  if (msg.type === 'promptResponse') {
+    window.dispatchEvent(new CustomEvent('vscode-prompt-response', {
+      detail: { value: msg.value, action: msg.action }
+    }));
+  } else if (msg.type === 'confirmResponse') {
+    window.dispatchEvent(new CustomEvent('vscode-confirm-response', {
+      detail: { confirmed: msg.confirmed, action: msg.action, name: msg.name }
+    }));
+  }
+});
+
 const root = createRoot(document.getElementById('app')!);
-if (root) {
-    root.render(<App />);
-}
+root.render(<App />);

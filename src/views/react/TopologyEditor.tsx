@@ -11,9 +11,10 @@ import '../../styles/reactflow-custom.css';
 import { exportTopologyJson, exportTopologyRepl, saveTopologyByName, loadTopologyByName, getSavedTopologyNames, deleteTopologyByName } from '../../utils/exportUtils'; // 确保正确导入
 import { Toolbar } from './Toolbar'; // 确保正确导入
 
-const vscode = (window as any).acquireVsCodeApi();
-
 const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
+  // 运行时获取 VS Code Webview API
+  const vscode = (window as any).vscodeApi;
+  
   const { cpuList, deviceList } = useConfigContext();
   const [nodes, setNodes] = useState<Node[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
@@ -34,34 +35,97 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
     setSavedList(getSavedTopologyNames());
   }, []);
 
-  // 处理扩展宿主返回的输入
+  // 处理扩展宿主返回的输入（包括 deletePrompt）
   useEffect(() => {
     function onPrompt(e: any) {
-      const name = e.detail;
-      if (name) {
+      const { value: name, action } = e.detail;
+      if (!name) return;
+      if (action === 'open') {
+        const data = loadTopologyByName(name);
+        if (data) {
+          setNodes(data.nodes);
+          setEdges(data.edges);
+          setCurrentName(name);
+        }
+      } else if (action === 'deletePrompt') {
+        vscode.postMessage({
+          type: 'confirm',
+          text: `确认删除拓扑 "${name}" 吗？`,
+          action: 'delete',
+          name
+        });
+      } else {
+        // 默认当作保存
         setCurrentName(name);
         saveTopologyByName(name, nodes, edges);
-        setSavedList(getSavedTopologyNames());
       }
+      setSavedList(getSavedTopologyNames());
     }
     window.addEventListener('vscode-prompt-response', onPrompt);
     return () => window.removeEventListener('vscode-prompt-response', onPrompt);
-  }, [nodes, edges]);
+  }, [nodes, edges, savedList]);
 
-  // 处理扩展宿主返回的确认
+  // 处理扩展宿主返回的确认（包括 delete、select）
   useEffect(() => {
     function onConfirm(e: any) {
-      if (e.detail) {
-        // 用户确认保存
-        if (currentName) {
+      const { confirmed, action, name } = e.detail;
+      if (!action) return;
+
+      if (action === 'delete') {
+        deleteTopologyByName(name);
+        setSavedList(getSavedTopologyNames());
+        setCurrentName('');
+        setNodes([]);
+        setEdges([]);
+      }
+      else if (action === 'select') {
+        // 用户选择要打开的新拓扑
+        // 如果确认保存，则先保存当前
+        if (confirmed && currentName) {
           saveTopologyByName(currentName, nodes, edges);
-        } else {
-          vscode.postMessage({ type: 'prompt', text: '请输入保存名称:' });
+        }
+        // 打开选中的拓扑
+        const data = loadTopologyByName(name);
+        if (data) {
+          setNodes(data.nodes);
+          setEdges(data.edges);
+          setCurrentName(name);
+        }
+        setSavedList(getSavedTopologyNames());
+      }
+      else {
+        // 用户确认保存当前（action 可省略）
+        if (confirmed) {
+          if (currentName) {
+            saveTopologyByName(currentName, nodes, edges);
+          } else {
+            vscode.postMessage({ type: 'prompt', text: '请输入保存名称:' });
+          }
         }
       }
     }
     window.addEventListener('vscode-confirm-response', onConfirm);
     return () => window.removeEventListener('vscode-confirm-response', onConfirm);
+  }, [currentName, nodes, edges]);
+
+  // 点击列表时：如果名称改变，先弹确认；否则直接打开
+  const handleSelectTopology = useCallback((name: string) => {
+    if (!name) return;
+    if (currentName && currentName !== name) {
+      vscode.postMessage({
+        type: 'confirm',
+        text: '是否保存当前拓扑？',
+        action: 'select',
+        name
+      });
+    } else {
+      const data = loadTopologyByName(name);
+      if (data) {
+        setNodes(data.nodes);
+        setEdges(data.edges);
+        setCurrentName(name);
+      }
+    }
   }, [currentName, nodes, edges]);
 
   const handleToggleFullscreen = useCallback(() => {
@@ -75,63 +139,30 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
   }, []);
 
   const handleSave = useCallback(() => {
-    let name = currentName;
-    if (!name) {
-      // 新建：弹出输入框获取名称
-      const input = prompt('请输入保存名称:');
-      if (!input) return;
-      name = input;
-      setCurrentName(name);
+    if (!currentName) {
+      vscode.postMessage({ type: 'prompt', text: '请输入保存名称:', action: 'save' });
+      return;
     }
-    // 保存或更新
-    saveTopologyByName(name, nodes, edges);
-    // 立即刷新列表
-    const list = getSavedTopologyNames();
-    setSavedList(list);
+    saveTopologyByName(currentName, nodes, edges);
+    setSavedList(getSavedTopologyNames());
   }, [currentName, nodes, edges]);
-
-  const handleOpen = useCallback(() => {
-    const name = prompt('请选择要打开的拓扑:\n' + savedList.join('\n'));
-    if (name) {
-      const data = loadTopologyByName(name);
-      if (data) {
-        setNodes(data.nodes);
-        setEdges(data.edges);
-        setCurrentName(name);
-      }
-    }
-  }, [savedList]);
 
   const handleDeleteSaved = useCallback(() => {
     if (currentName) {
-      if (window.confirm(`确认删除当前拓扑 "${currentName}" 吗？`)) {
-        deleteTopologyByName(currentName);
-        setSavedList(getSavedTopologyNames());
-        setCurrentName('');
-        // 清空并新建拓扑
-        setNodes([]);
-        setEdges([]);
-      }
+      vscode.postMessage({
+        type: 'confirm',
+        text: `确认删除当前拓扑 "${currentName}" 吗？`,
+        action: 'delete',
+        name: currentName
+      });
     } else {
-      const name = prompt('请选择要删除的拓扑:\n' + savedList.join('\n'));
-      if (name && window.confirm(`确认删除拓扑 "${name}" 吗？`)) {
-        deleteTopologyByName(name);
-        setSavedList(getSavedTopologyNames());
-        // 清空并新建拓扑
-        setNodes([]);
-        setEdges([]);
-        setCurrentName('');
-      }
+      vscode.postMessage({
+        type: 'prompt',
+        text: '请选择要删除的拓扑:\n' + savedList.join('\n'),
+        action: 'deletePrompt'
+      });
     }
   }, [currentName, savedList]);
-
-  const handleSelectTopology = useCallback((name: string) => {
-    if (!name) return;
-    // 通过扩展宿主弹出确认框
-    vscode.postMessage({ type: 'confirm', text: '是否保存当前拓扑？' });
-    // 打开部分在 confirm 的回调里处理
-    // 所以这里不再直接调用 loadTopology...
-  }, []);
 
   // 节点拖动逻辑
   const handleNodeChange = useCallback((id: string, key: string, value: any) => {
@@ -265,7 +296,6 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
         onSelect={handleSelectTopology}
         onNew={handleNew}
         onSave={handleSave}
-        onOpen={handleOpen}
         onDeleteSaved={handleDeleteSaved}
         onAutoLayout={() => console.log('Auto layout triggered')}
         onExportJson={handleExportJson}
@@ -303,14 +333,15 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
             onNodeClick={handleNodeClick}
             onNodeContextMenu={handleNodeContextMenu}
             onInit={setReactFlowInstance}
-            nodesDraggable={true}
-            nodesConnectable={true}
-            elementsSelectable={true}
+            nodesDraggable
+            nodesConnectable
+            elementsSelectable
             fitView
           >
             <MiniMap position="bottom-right" />
             <Controls position="bottom-left" />
           </ReactFlow>
+
           {contextMenu && (
             <NodeContextMenu
               x={contextMenu.x}
@@ -321,6 +352,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
             />
           )}
         </div>
+
         {/* 属性面板，超出时滚动 */}
         <div style={{ width: '320px', borderLeft: '1px solid #eee', overflowY: 'auto' }}>
           {selectedNodeId && (

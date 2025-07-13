@@ -36,18 +36,6 @@ function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri): s
   </head>
   <body>
     <div id="app"></div>
-    <script>
-      const vscode = acquireVsCodeApi();
-      window.addEventListener('message', event => {
-        const msg = event.data;
-        // 前端接收 prompt/confirm 结果，转为自定义事件
-        if (msg.type === 'promptResponse') {
-          window.dispatchEvent(new CustomEvent('vscode-prompt-response', { detail: msg.value }));
-        } else if (msg.type === 'confirmResponse') {
-          window.dispatchEvent(new CustomEvent('vscode-confirm-response', { detail: msg.confirmed }));
-        }
-      });
-    </script>
     <script src="${scriptUri}"></script>
   </body>
   </html>

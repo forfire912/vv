@@ -6,7 +6,6 @@ interface ToolbarProps {
   onSelect: (name: string) => void;
   onNew: () => void;
   onSave: () => void;
-  onOpen: () => void;
   onDeleteSaved: () => void;
   onAutoLayout: () => void;
   onExportJson: () => void;
@@ -23,7 +22,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onSelect,
   onNew,
   onSave,
-  onOpen,
   onDeleteSaved,
   onAutoLayout,
   onExportJson,
@@ -46,7 +44,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     </select>
     <button onClick={onNew} style={{ marginRight: 10 }}>新建</button>
     <button onClick={onSave} style={{ marginRight: 10 }}>保存</button>
-    <button onClick={onOpen} style={{ marginRight: 10 }}>打开</button>
     <button onClick={onDeleteSaved} style={{ marginRight: 10 }}>删除</button>
     <button onClick={onAutoLayout} style={{ marginRight: 10 }}>自动布局</button>
     <button onClick={onExportJson} style={{ marginRight: 10 }}>导出 JSON</button>
