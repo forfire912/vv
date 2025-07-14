@@ -51,17 +51,27 @@ export function exportTopologyJson(nodes: Node[], edges: Edge[]) {
         cfg.selectedInterface ??
         cpuNode.data.interfaces?.[0]?.id;
       // 新增：从接口定义取默认 addr
-      const ifaceDef = cpuNode.data.interfaces.find((i: any) => i.id === ifaceId);
+      // 同时按照 id 或 type 查找接口定义
+      const ifaceDef = cpuNode.data.interfaces.find((i: any) =>
+        i.id === ifaceId || i.type === ifaceId
+      );
       const propsDef = ifaceDef?.props || {};
 
-      // 构造 to 对象，包含 id 与动态参数
-      const to: any = { id: ifaceId };
-      // 根据接口 props 定义，将外设配置映射到相应字段
-      if (propsDef.pin_nums !== undefined && cfg.pinNumber !== undefined) {
-        to.pin_nums = cfg.pinNumber;
+      // 构造 to 对象：使用接口的 type 作为 id，并始终输出参数
+      const to: any = { id: ifaceDef?.type ?? ifaceId };
+      // 如果接口有 pin_nums 字段，输出用户配置或默认最大值
+      if (propsDef.pin_nums !== undefined) {
+        to.pin_nums = cfg.pinNumber !== undefined
+          ? cfg.pinNumber
+          : propsDef.pin_nums;
       }
-      if (propsDef.pin_sels !== undefined && cfg.pinSelection !== undefined) {
-        to.pin_sels = cfg.pinSelection;
+      // 如果接口有 pin_sels 字段，输出用户配置或默认第一个选项
+      if (propsDef.pin_sels !== undefined) {
+        to.pin_sels = cfg.pinSelection
+          ? cfg.pinSelection
+          : Array.isArray(propsDef.pin_sels) && propsDef.pin_sels.length > 0
+            ? propsDef.pin_sels[0]
+            : undefined;
       }
 
       return { from: { id: perNode.id }, to };

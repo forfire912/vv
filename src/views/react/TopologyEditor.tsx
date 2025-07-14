@@ -8,7 +8,7 @@ import ComponentPalette from './ComponentPalette';
 import NodeContextMenu from './NodeContextMenu'; // 确保正确导入
 import { useConfigContext } from '../../context/ConfigContext';
 import '../../styles/reactflow-custom.css';
-import { exportTopologyJson, exportTopologyRepl, saveTopologyByName, loadTopologyByName, getSavedTopologyNames, deleteTopologyByName } from '../../utils/exportUtils'; // 确保正确导入
+import { exportTopologyJson, saveTopologyByName, loadTopologyByName, getSavedTopologyNames, deleteTopologyByName } from '../../utils/exportUtils'; // 确保正确导入
 import { Toolbar } from './Toolbar'; // 确保正确导入
 
 const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
@@ -301,11 +301,6 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
     exportTopologyJson(nodes, edges);
   }, [nodes, edges]);
 
-  // 导出 REPL
-  const handleExportRepl = useCallback(() => {
-    exportTopologyRepl(nodes, edges);
-  }, [nodes, edges]);
-
   // 拖拽/删除节点时应用变更
   const onNodesChange = useCallback((changes: NodeChange[]) => {
     setNodes(ns => applyNodeChanges(changes, ns));
@@ -325,9 +320,6 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
         onSave={handleSave}
         onDeleteSaved={handleDeleteSaved}
         onExportJson={handleExportJson}
-        onExportRepl={handleExportRepl}
-        onToggleFullscreen={handleToggleFullscreen}
-        isFullscreen={isFullscreen}
         theme={theme}
         onThemeChange={(theme) => {
           if (['light', 'dark', 'colorful'].includes(theme)) {

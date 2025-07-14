@@ -8,11 +8,8 @@ interface ToolbarProps {
   onSave: () => void;
   onDeleteSaved: () => void;
   onExportJson: () => void;
-  onExportRepl: () => void;
-  onToggleFullscreen: () => void;
-  isFullscreen: boolean;
-  theme: 'light' | 'dark' | 'colorful' | 'soft' | 'neon';
-  onThemeChange: (theme: 'light' | 'dark' | 'colorful' | 'soft' | 'neon') => void;
+  theme: 'light' | 'dark' | 'colorful';
+  onThemeChange: (theme: 'light' | 'dark' | 'colorful') => void;
 }
 
 export const Toolbar: React.FC<ToolbarProps> = ({
@@ -23,9 +20,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   onSave,
   onDeleteSaved,
   onExportJson,
-  onExportRepl,
-  onToggleFullscreen,
-  isFullscreen,
   theme,
   onThemeChange
 }) => (
@@ -44,8 +38,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     <button onClick={onSave} style={{ marginRight: 10 }}>保存</button>
     <button onClick={onDeleteSaved} style={{ marginRight: 10 }}>删除</button>
     <button onClick={onExportJson} style={{ marginRight: 10 }}>导出 JSON</button>
-    <button onClick={onExportRepl} style={{ marginRight: 10 }}>导出 REPL</button>
-    <button onClick={onToggleFullscreen}>{isFullscreen ? '退出全屏' : '全屏'}</button>
     <div style={{ marginLeft: 'auto' }}>
       <select
         value={theme}
@@ -55,8 +47,6 @@ export const Toolbar: React.FC<ToolbarProps> = ({
         <option value="light">Light</option>
         <option value="dark">Dark</option>
         <option value="colorful">Colorful</option>
-        <option value="soft">Soft</option>
-        <option value="neon">Neon</option>
       </select>
     </div>
   </div>

@@ -106,6 +106,8 @@ body {
   background: var(--bg);
   color: var(--text);
 }
+
+/* Toolbar 按钮样式 */
 .toolbar {
   background: var(--toolbar-bg);
   color: var(--toolbar-text);
@@ -124,10 +126,26 @@ body {
   padding: 6px 12px;
   cursor: pointer;
   transition: background 0.2s;
+  margin-right: 8px; /* VS Code 风格的按钮间距 */
 }
 .toolbar button:hover {
   background: #1976d2;
 }
+
+/* 通用表单域样式 */
+select,
+input[type="text"],
+input[type="number"] {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--input-border);
+  border-radius: 4px;
+  margin-top: 4px;
+  box-sizing: border-box;
+  background: var(--input-bg);
+  color: var(--input-text);
+}
+
 .main-content {
   display: flex;
   height: calc(100vh - 48px);
@@ -162,11 +180,4 @@ body {
 }
 .palette-item:active {
   box-shadow: 0 3px 8px rgba(50,50,50,0.07);
-}
-select,
-input[type="text"],
-input[type="number"] {
-  background: var(--input-bg);
-  color: var(--input-text);
-  border: 1px solid var(--input-border);
 }

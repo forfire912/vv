@@ -50,36 +50,7 @@
   pointer-events: auto;
 }
 
-/* 工具栏按钮间距 */
-.toolbar button {
-  margin-right: 8px;
-}
-
-/* 表单域统一样式 */
-label {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 4px;
-}
-select,
-input[type="text"],
-input[type="number"] {
-  width: 100%;
-  padding: 6px 10px;
-  border: 1px solid var(--input-border);
-  border-radius: 4px;
-  margin-top: 4px;
-  box-sizing: border-box;
-  background: var(--input-bg);
-  color: var(--input-text);
-}
-
-/* 下拉选项同色 */
-select option {
-  background: var(--input-bg);
-  color: var(--input-text);
-}
+/* 删除重复的表单域及 .toolbar button margin 样式，已移至 global.css */
 
 /* 画布中间：主背景色 */
 .canvas-panel {
