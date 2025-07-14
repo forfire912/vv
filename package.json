@@ -27,7 +27,8 @@
     "build:react": "webpack",
     "clean": "del-cli dist",
     "compile": "tsc -p ./ --jsx react-jsx",
-    "rebuild": "npm run clean & npm run build & npm run build:react"
+    "rebuild": "npm run clean & npm run build & npm run build:react",
+    "package": "npm run rebuild && vsce package"
   },
   "devDependencies": {
     "@types/node": "^24.0.10",
@@ -49,5 +50,6 @@
     "react-dom": "^19.1.0",
     "reactflow": "^11.11.4",
     "vsce": "^2.15.0"
-  }
+  },
+  "publisher": "your-publisher-name"
 }
