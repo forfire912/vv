@@ -1,7 +1,113 @@
 import * as vscode from 'vscode';
+import { machineIdSync } from 'node-machine-id';
+import * as os from 'os';
+import { execSync } from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as crypto from 'crypto';
 import { startVlabViewer } from './views/VlabViewerPanel';
 
-export function activate(context: vscode.ExtensionContext) {
+// 自定义硬件特征获取：优先 CPU 序列号，其次取第一个非内部网卡的 MAC，最后回退到 machineId
+function getHardwareId(): string {
+  try {
+    if (process.platform === 'win32') {
+      const out = execSync('wmic cpu get ProcessorId /value').toString();
+      const match = out.match(/ProcessorId=(.+)/i);
+      if (match && match[1].trim()) return match[1].trim();
+    }
+  } catch {
+    // 忽略错误，尝试下一个方法
+  }
+  const nets = os.networkInterfaces();
+  for (const name of Object.keys(nets)) {
+    for (const ni of nets[name]!) {
+      if (!ni.internal && ni.mac && ni.mac !== '00:00:00:00:00:00') {
+        return ni.mac;
+      }
+    }
+  }
+  // 最后回退
+  return machineIdSync();
+}
+
+// 使用 HMAC 签名校验 license
+function verifyLicense(token: string | undefined, id: string): boolean {
+  if (!token) return false;
+  const [data, sig] = token.split('.');
+  if (!data || !sig) return false;
+  // 与生成脚本中一致的 SECRET，请替换为你的私钥
+  const SECRET = 'replace_with_your_secret';
+  // 校验签名
+  const payload = Buffer.from(data, 'base64').toString('utf8');
+  const expected = crypto.createHmac('sha256', SECRET).update(payload).digest('hex');
+  if (sig !== expected) return false;
+  try {
+    const info = JSON.parse(payload);
+    // 校验硬件 ID
+    if (info.hardwareId !== id) return false;
+    // 校验到期日（可选）
+    if (info.exp) {
+      const expire = new Date(info.exp);
+      if (expire < new Date()) return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function activate(context: vscode.ExtensionContext) {
+  // 1. 准备本地存储目录
+  const storagePath = context.globalStorageUri.fsPath;
+  fs.mkdirSync(storagePath, { recursive: true });
+
+  // 2. Machine ID 文件：读取或生成
+  const machineIdFile = path.join(storagePath, 'machine.id');
+  let id: string;
+  if (fs.existsSync(machineIdFile)) {
+    id = fs.readFileSync(machineIdFile, 'utf8').trim();
+  } else {
+    id = getHardwareId();
+    fs.writeFileSync(machineIdFile, id, 'utf8');
+  }
+
+  // 3. License 文件：读取或输入
+  const licenseFile = path.join(storagePath, 'license.key');
+  let licenseKey: string | undefined;
+  if (fs.existsSync(licenseFile)) {
+    try { licenseKey = fs.readFileSync(licenseFile, 'utf8').trim(); }
+    catch { /* ignore */ }
+  }
+
+  // 新增：试用期逻辑（30 天）
+  const trialFile = path.join(storagePath, 'trial.start');
+  if (!licenseKey) {
+    let start = fs.existsSync(trialFile)
+      ? new Date(fs.readFileSync(trialFile, 'utf8'))
+      : (fs.writeFileSync(trialFile, new Date().toISOString(), 'utf8'), new Date());
+    const days = Math.floor((Date.now() - start.getTime()) / (1000*60*60*24));
+    const trialDays = 30;
+    if (days < trialDays) {
+      vscode.window.showInformationMessage(`试用版剩余 ${trialDays - days} 天`);
+    } else {
+      // 试用到期，强制输入 license
+      licenseKey = await vscode.window.showInputBox({ prompt: `试用已结束，请输入许可证 (机器ID: ${id})` });
+      if (!licenseKey) {
+        vscode.window.showErrorMessage('许可证为必填，插件已禁用');
+        return;
+      }
+      fs.writeFileSync(licenseFile, licenseKey, 'utf8');
+    }
+  }
+
+  // 5. 验证不通过则报错并退出
+  if (licenseKey) {
+    if (!verifyLicense(licenseKey, id)) {
+      vscode.window.showErrorMessage('无效或已过期的许可证，请联系供应商');
+      return;
+    }
+  }
+
   let disposable = vscode.commands.registerCommand('vlabviewer.start', () => {
     const panel = startVlabViewer(context);
 

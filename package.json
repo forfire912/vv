@@ -21,14 +21,23 @@
       }
     ]
   },
+  "bin": {
+    "vlab-machineid": "./dist/scripts/gen-machineid.js",
+    "vlab-gen-license": "./dist/scripts/gen-license.js"
+  },
   "scripts": {
+    "gen:license": "node scripts/gen-license.js",
     "watch:tsc": "tsc -w",
     "build": "tsc",
     "build:react": "webpack",
     "clean": "del-cli dist",
     "compile": "tsc -p ./ --jsx react-jsx",
     "rebuild": "npm run clean & npm run build & npm run build:react",
-    "package": "npm run rebuild && vsce package"
+    "package": "npm run rebuild && vsce package",
+    "gen:machineid": "ts-node scripts/gen-machineid.ts",
+    "build:cli": "tsc && node -e \"require('fs').mkdirSync('dist/scripts',{ recursive:true }); require('fs').copyFileSync('scripts/gen-license.js','dist/scripts/gen-license.js')\"",
+    "build:extension": "npm run build && npm run build:react",
+    "build:all": "npm run build:cli && npm run build:extension && vsce package"
   },
   "devDependencies": {
     "@types/node": "^24.0.10",
@@ -46,10 +55,16 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "node-machine-id": "^1.1.12",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "reactflow": "^11.11.4",
     "vsce": "^2.15.0"
   },
-  "publisher": "your-publisher-name"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forfire912/vvr.git"
+  },
+  "license": "MIT",
+  "publisher": "forfire912"
 }

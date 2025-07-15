@@ -6,7 +6,8 @@ module.exports = {
   devtool: 'source-map', // 生成 source map，便于调试
   entry: './src/views/react/index.tsx', // 你的 React 入口文件
   output: {
-    filename: 'main.js',
+    filename: '[name].js',
+    chunkFilename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
   },
   resolve: {
@@ -36,8 +37,12 @@ module.exports = {
   ],
 
   performance: {
-    maxAssetSize: 500000,  // 设置较大的文件大小限制（例如 500 KiB）
-    maxEntrypointSize: 500000,  // 设置入口文件大小限制
-    hints: 'warning'  // 将警告级别设置为 "warning" 或 "none"
+    hints: false
+  },
+
+  optimization: {
+    splitChunks: {
+      chunks: 'all'
+    }
   }
 };
