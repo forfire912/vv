@@ -54,10 +54,29 @@
 
 /* 画布中间：主背景色 */
 .canvas-panel {
+  /* 保留底色 */
   background: var(--bg);
+  /* 点阵背景：10px 间距的灰色小点 */
+  background-image: radial-gradient(var(--node-border) 1px, transparent 1px);
+  background-size: 10px 10px;
 }
 
 /* 右侧属性面板：略微区分 */
 .properties-panel {
   background: var(--palette-item-bg);
+}
+
+/* 本地 toast 提示 */
+.toast {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  z-index: 10000;
+  font-size: 14px;
+  pointer-events: none;
 }

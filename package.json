@@ -2,7 +2,7 @@
   "name": "vlabviewer",
   "displayName": "VlabViewer",
   "description": "A visual Renode configuration builder for embedded systems",
-  "version": "0.2.0",
+  "version": "0.2.3",
   "engines": {
     "vscode": "^1.80.0"
   },
@@ -10,7 +10,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:vlabviewer.start"
+    "onCommand:vlabviewer.start",
+    "onStartupFinished"
   ],
   "main": "./dist/extension.js",
   "contributes": {
@@ -26,18 +27,20 @@
     "vlab-gen-license": "./dist/scripts/gen-license.js"
   },
   "scripts": {
-    "gen:license": "node scripts/gen-license.js",
     "watch:tsc": "tsc -w",
-    "build": "tsc",
-    "build:react": "webpack",
-    "clean": "del-cli dist",
-    "compile": "tsc -p ./ --jsx react-jsx",
-    "rebuild": "npm run clean & npm run build & npm run build:react",
-    "package": "npm run rebuild && vsce package",
     "gen:machineid": "ts-node scripts/gen-machineid.ts",
-    "build:cli": "tsc && node -e \"require('fs').mkdirSync('dist/scripts',{ recursive:true }); require('fs').copyFileSync('scripts/gen-license.js','dist/scripts/gen-license.js')\"",
-    "build:extension": "npm run build && npm run build:react",
-    "build:all": "npm run build:cli && npm run build:extension && vsce package"
+    "gen:license": "node scripts/gen-license.js",
+
+    "clean": "del-cli dist cli-dist *.vsix",
+    "build:ts": "tsc",
+    "build:react": "webpack",
+    "build:extension": "npm run build:ts && npm run build:react",
+    "build:cli": "tsc && node -e \"require('fs').mkdirSync('src/dist/scripts',{ recursive:true }); require('fs').copyFileSync('src/scripts/gen-license.js','dist/scripts/gen-license.js')\"",
+    "build:all": "npm run clean && npm run build:cli && npm run build:extension",
+
+    "package:cli": "npm run build:cli && node -e \"require('fs').mkdirSync('cli-dist',{ recursive:true });\" && npm pack --pack-destination cli-dist",
+    "package:vsix": "node src/scripts/package-vsix.js",
+    "package:all": "npm run build:all && npm run package:cli && npm run package:vsix"
   },
   "devDependencies": {
     "@types/node": "^24.0.10",

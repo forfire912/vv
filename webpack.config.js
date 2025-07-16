@@ -4,11 +4,11 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
   mode: 'development', // 或 'production'，根据你的需求选择
   devtool: 'source-map', // 生成 source map，便于调试
-  entry: './src/views/react/index.tsx', // 你的 React 入口文件
+  entry: './src/views/react/index.tsx',
   output: {
     filename: '[name].js',
-    chunkFilename: '[name].js',
-    path: path.resolve(__dirname, 'dist'),
+    chunkFilename: '[name].[contenthash].js',
+    path: path.resolve(__dirname, 'dist/webview'),
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
@@ -31,18 +31,12 @@ module.exports = {
   plugins: [
     new CopyWebpackPlugin({
       patterns: [
-        { from: 'src/config', to: 'config' }
+        { from: 'src/config', to: path.resolve(__dirname, 'dist/config') }
       ]
     })
   ],
 
   performance: {
     hints: false
-  },
-
-  optimization: {
-    splitChunks: {
-      chunks: 'all'
-    }
   }
 };

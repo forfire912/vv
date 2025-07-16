@@ -57,61 +57,11 @@ function verifyLicense(token: string | undefined, id: string): boolean {
 }
 
 export async function activate(context: vscode.ExtensionContext) {
-  // 1. 准备本地存储目录
-  const storagePath = context.globalStorageUri.fsPath;
-  fs.mkdirSync(storagePath, { recursive: true });
-
-  // 2. Machine ID 文件：读取或生成
-  const machineIdFile = path.join(storagePath, 'machine.id');
-  let id: string;
-  if (fs.existsSync(machineIdFile)) {
-    id = fs.readFileSync(machineIdFile, 'utf8').trim();
-  } else {
-    id = getHardwareId();
-    fs.writeFileSync(machineIdFile, id, 'utf8');
-  }
-
-  // 3. License 文件：读取或输入
-  const licenseFile = path.join(storagePath, 'license.key');
-  let licenseKey: string | undefined;
-  if (fs.existsSync(licenseFile)) {
-    try { licenseKey = fs.readFileSync(licenseFile, 'utf8').trim(); }
-    catch { /* ignore */ }
-  }
-
-  // 新增：试用期逻辑（30 天）
-  const trialFile = path.join(storagePath, 'trial.start');
-  if (!licenseKey) {
-    let start = fs.existsSync(trialFile)
-      ? new Date(fs.readFileSync(trialFile, 'utf8'))
-      : (fs.writeFileSync(trialFile, new Date().toISOString(), 'utf8'), new Date());
-    const days = Math.floor((Date.now() - start.getTime()) / (1000*60*60*24));
-    const trialDays = 30;
-    if (days < trialDays) {
-      vscode.window.showInformationMessage(`试用版剩余 ${trialDays - days} 天`);
-    } else {
-      // 试用到期，强制输入 license
-      licenseKey = await vscode.window.showInputBox({ prompt: `试用已结束，请输入许可证 (机器ID: ${id})` });
-      if (!licenseKey) {
-        vscode.window.showErrorMessage('许可证为必填，插件已禁用');
-        return;
-      }
-      fs.writeFileSync(licenseFile, licenseKey, 'utf8');
-    }
-  }
-
-  // 5. 验证不通过则报错并退出
-  if (licenseKey) {
-    if (!verifyLicense(licenseKey, id)) {
-      vscode.window.showErrorMessage('无效或已过期的许可证，请联系供应商');
-      return;
-    }
-  }
-
-  let disposable = vscode.commands.registerCommand('vlabviewer.start', () => {
+  console.log('Activating VlabViewer extension...');
+  const handler = () => {
+    console.log('Command vlabviewer.start executed.');
     const panel = startVlabViewer(context);
-
-    // 监听来自 Webview 的消息
+    // 监听消息...
     panel.webview.onDidReceiveMessage(async msg => {
       if (msg.type === 'prompt') {
         const val = await vscode.window.showInputBox({ prompt: msg.text });
@@ -124,9 +74,70 @@ export async function activate(context: vscode.ExtensionContext) {
           action: msg.action,
           name: msg.name
         });
+      } else if (msg.type === 'info') {
+        // 模态信息提示，仅带“OK”按钮
+        await vscode.window.showInformationMessage(msg.text, { modal: true }, 'OK');
       }
     });
-  });
+  };
+  context.subscriptions.push(
+    vscode.commands.registerCommand('vlabviewer.start', handler)
+  );
+  console.log('Command vlabviewer.start registered.');
 
-  context.subscriptions.push(disposable);
+  // 后续存储与许可逻辑包裹在 try-catch，不影响命令注册
+  try {
+    // 1. 准备本地存储目录（兼容 globalStorageUri 与 globalStoragePath）
+    const storagePath = context.globalStorageUri?.fsPath || context.globalStoragePath;
+    fs.mkdirSync(storagePath, { recursive: true });
+
+    // 2. Machine ID 文件：读取或生成
+    const machineIdFile = path.join(storagePath, 'machine.id');
+    let id: string;
+    if (fs.existsSync(machineIdFile)) {
+      id = fs.readFileSync(machineIdFile, 'utf8').trim();
+    } else {
+      id = getHardwareId();
+      fs.writeFileSync(machineIdFile, id, 'utf8');
+    }
+
+    // 3. License 文件：读取或输入
+    const licenseFile = path.join(storagePath, 'license.key');
+    let licenseKey: string | undefined;
+    if (fs.existsSync(licenseFile)) {
+      try { licenseKey = fs.readFileSync(licenseFile, 'utf8').trim(); }
+      catch { /* ignore */ }
+    }
+
+    // 新增：试用期逻辑（30 天）
+    const trialFile = path.join(storagePath, 'trial.start');
+    if (!licenseKey) {
+      let start = fs.existsSync(trialFile)
+        ? new Date(fs.readFileSync(trialFile, 'utf8'))
+        : (fs.writeFileSync(trialFile, new Date().toISOString(), 'utf8'), new Date());
+      const days = Math.floor((Date.now() - start.getTime()) / (1000*60*60*24));
+      const trialDays = 30;
+      if (days < trialDays) {
+        vscode.window.showInformationMessage(`试用版剩余 ${trialDays - days} 天`);
+      } else {
+        // 试用到期，强制输入 license
+        licenseKey = await vscode.window.showInputBox({ prompt: `试用已结束，请输入许可证 (机器ID: ${id})` });
+        if (!licenseKey) {
+          vscode.window.showErrorMessage('许可证为必填，插件已禁用');
+          return;
+        }
+        fs.writeFileSync(licenseFile, licenseKey, 'utf8');
+      }
+    }
+
+    // 5. 验证不通过则报错并退出
+    if (licenseKey) {
+      if (!verifyLicense(licenseKey, id)) {
+        vscode.window.showErrorMessage('无效或已过期的许可证，请联系供应商');
+        return;
+      }
+    }
+  } catch (e) {
+    console.error('VlabViewer activate error:', e);
+  }
 }

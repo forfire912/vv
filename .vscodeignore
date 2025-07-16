@@ -1,5 +1,5 @@
 node_modules
-src
+/src
 webpack.config.js
 tsconfig.json
 .vscode
@@ -8,3 +8,5 @@ tsconfig.json
 README.md
 *.log
 *.map
+!dist/extension.js
+!dist/webview/

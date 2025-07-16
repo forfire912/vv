@@ -28,6 +28,9 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
   const [currentName, setCurrentName] = useState<string>('');
   const [isDirty, setIsDirty] = useState(false);
 
+  // 本地提示
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
@@ -47,6 +50,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
           setNodes(data.nodes);
           setEdges(data.edges);
           setCurrentName(name);
+          setIsDirty(false);
         }
       } else if (action === 'deletePrompt') {
         vscode.postMessage({
@@ -59,6 +63,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
         // 默认当作保存
         setCurrentName(name);
         saveTopologyByName(name, nodes, edges);
+        setIsDirty(false);
       }
       setSavedList(getSavedTopologyNames());
     }
@@ -73,17 +78,21 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
       if (!action) return;
 
       if (action === 'delete') {
-        deleteTopologyByName(name);
-        setSavedList(getSavedTopologyNames());
-        setCurrentName('');
-        setNodes([]);
-        setEdges([]);
+        if (confirmed) {
+          deleteTopologyByName(name);
+          setSavedList(getSavedTopologyNames());
+          setCurrentName('');
+          setNodes([]);
+          setEdges([]);
+        }
+        return;
       }
       else if (action === 'select') {
         // 用户选择要打开的新拓扑
         // 如果确认保存，则先保存当前
         if (confirmed && currentName) {
           saveTopologyByName(currentName, nodes, edges);
+          setIsDirty(false);
         }
         // 打开选中的拓扑
         const data = loadTopologyByName(name);
@@ -91,12 +100,14 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
           setNodes(data.nodes);
           setEdges(data.edges);
           setCurrentName(name);
+          setIsDirty(false);
         }
         setSavedList(getSavedTopologyNames());
       }
       else if (action === 'new') {
         if (confirmed && currentName) {
           saveTopologyByName(currentName, nodes, edges);
+          setIsDirty(false);
         }
         setNodes([]); setEdges([]); setCurrentName(''); setIsDirty(false);
       }
@@ -105,6 +116,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
         if (confirmed) {
           if (currentName) {
             saveTopologyByName(currentName, nodes, edges);
+            setIsDirty(false);
           } else {
             vscode.postMessage({ type: 'prompt', text: '请输入保存名称:' });
           }
@@ -156,6 +168,9 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
     saveTopologyByName(currentName, nodes, edges);
     setSavedList(getSavedTopologyNames());
     setIsDirty(false);
+    // 显示本地 toast
+    setToastMsg('保存成功');
+    setTimeout(() => setToastMsg(null), 2000);
   }, [currentName, nodes, edges]);
 
   const handleDeleteSaved = useCallback(() => {
@@ -389,6 +404,8 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
           )}
         </div>
       </div>
+      {/* toast 提示 */}
+      {toastMsg && <div className="toast">{toastMsg}</div>}
     </div>
   );
 };
