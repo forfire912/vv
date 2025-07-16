@@ -132,16 +132,22 @@ function verifyLicense(token: string, id: string): boolean {
  * @param context 扩展上下文
  */
 export async function activate(context: vscode.ExtensionContext) {
+  // 确保日志在控制台和开发者工具中都可见
+  function logToConsole(message: string) {
+    console.log(message);
+    // 如果在开发模式，也输出到输出面板
+    const channel = vscode.window.createOutputChannel('VlabViewer');
+    channel.appendLine(message);
+    channel.show();
+  }
+
+  logToConsole('🔄 VlabViewer 扩展激活中...');
+  
   try {
-    log.info('正在激活 VlabViewer 扩展...');
-    
-    // 确保命令始终注册，无论打包环境如何
-    const commandId = 'vlabviewer.start'; // 命令ID必须与package.json中的完全一致
-    
-    // 直接在全局范围注册命令，确保在打包环境中可用
-    const commandHandler = () => {
+    // 简化命令注册 - 直接方式
+    const disposable = vscode.commands.registerCommand('vlabviewer.start', () => {
+      logToConsole('✅ 命令 vlabviewer.start 被执行');
       try {
-        log.info(`命令 ${commandId} 被执行`);
         const panel = startVlabViewer(context);
         
         panel.webview.onDidReceiveMessage(async msg => {
@@ -158,40 +164,39 @@ export async function activate(context: vscode.ExtensionContext) {
                 name: msg.name
               });
             }
-            //else if (msg.type === 'info') {
-            //  // 模态信息提示，仅带"OK"按钮
-            //  await vscode.window.showInformationMessage(msg.text, { modal: true }, 'OK');
-            //}
           } catch (err) {
-            console.error('Error handling message:', err);
+            log.error('处理消息时发生错误', err);
           }
         });
+        
+        log.info('VlabViewer 面板已成功创建');
       } catch (err) {
-        console.error('Error executing command:', err);
-        vscode.window.showErrorMessage(`Error executing command: ${err}`);
+        logToConsole(`❌ 执行命令错误: ${err}`);
+        vscode.window.showErrorMessage(`执行命令错误: ${err}`);
       }
-    };
+    });
     
-    // 注册多个命令 - 使用不同的注册方式，确保至少有一个可以工作
-    // 方式1: 直接使用字符串常量
-    const cmd1 = vscode.commands.registerCommand('vlabviewer.start', commandHandler);
-    context.subscriptions.push(cmd1);
-    console.log(`Command 'vlabviewer.start' registered (method 1).`);
-
-    // 方式2: 使用替代命令名称
-    const cmd2 = vscode.commands.registerCommand('extension.startVlabViewer', commandHandler);
-    context.subscriptions.push(cmd2);
-    console.log(`Command 'extension.startVlabViewer' registered (method 2).`);
-
-    // 方式3: 使用 vscode.commands.executeCommand 确保命令可执行
-    vscode.commands.executeCommand('setContext', 'vlabviewer.enabled', true);
-    console.log(`Command context set.`);
-
-    // 后续存储与许可逻辑包裹在 try-catch，不影响命令注册
-    try {
-      // 1. 准备本地存储目录（兼容 globalStorageUri 与 globalStoragePath）
-      const storagePath = context.globalStorageUri?.fsPath || context.globalStoragePath;
-      fs.mkdirSync(storagePath, { recursive: true });
+    context.subscriptions.push(disposable);
+    
+    // 确认命令注册
+    setTimeout(async () => {
+      const commands = await vscode.commands.getCommands();
+      if (commands.includes('vlabviewer.start')) {
+        logToConsole('✅ 命令已成功注册: vlabviewer.start');
+      } else {
+        logToConsole('❌ 命令注册失败: vlabviewer.start');
+        // 尝试再次注册
+        const fallbackCmd = vscode.commands.registerCommand('vlabviewer.start', 
+          () => vscode.window.showInformationMessage('VlabViewer backup command executed'));
+        context.subscriptions.push(fallbackCmd);
+      }
+    }, 1000);
+    
+    // 许可证验证和其他逻辑
+    setImmediate(async () => {
+      try {
+        const storagePath = context.globalStorageUri?.fsPath || context.globalStoragePath;
+        fs.mkdirSync(storagePath, { recursive: true });
 
       // 2. Machine ID 文件：读取或生成
       const machineIdFile = path.join(storagePath, 'machine.id');
@@ -232,23 +237,25 @@ export async function activate(context: vscode.ExtensionContext) {
         }
       }
 
-      // 5. 验证不通过则报错并退出
-      if (licenseKey) {
-        if (!verifyLicense(licenseKey, id)) {
-          vscode.window.showErrorMessage('无效或已过期的许可证，请联系供应商');
-          return;
+        // 验证许可证
+        if (licenseKey) {
+          if (!verifyLicense(licenseKey, id)) {
+            vscode.window.showErrorMessage('无效或已过期的许可证，请联系供应商');
+            return;
+          }
         }
+        
+        log.info('许可证验证完成');
+      } catch (e) {
+        log.error('许可证验证失败', e);
       }
-    } catch (e) {
-      console.error('VlabViewer license verification error:', e);
-      // 许可校验失败不影响命令注册
-    }
+    });
 
-    // 打印扩展激活成功的日志
-    console.log('VlabViewer extension activated successfully.');
+    logToConsole('✅ VlabViewer 扩展激活成功');
   } catch (e) {
-    // 捕获整个激活过程的异常
-    console.error('VlabViewer extension activation error:', e);
-    vscode.window.showErrorMessage(`VlabViewer extension activation error: ${e}`);
+    logToConsole(`❌ VlabViewer 扩展激活失败: ${e}`);
+    vscode.window.showErrorMessage(`VlabViewer 扩展激活失败: ${e}`);
   }
 }
+
+export function deactivate() {}

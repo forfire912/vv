@@ -27,28 +27,21 @@
     "topology"
   ],
   "activationEvents": [
-    "onStartupFinished"
+    "*"
   ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "vlabviewer.start",
-        "title": "Start VlabViewer"
-      },
-      {
-        "command": "extension.startVlabViewer",
-        "title": "Start VlabViewer (Alternative)"
+        "title": "Start VlabViewer",
+        "category": "VlabViewer"
       }
     ],
     "menus": {
       "commandPalette": [
         {
           "command": "vlabviewer.start",
-          "when": "true"
-        },
-        {
-          "command": "extension.startVlabViewer",
           "when": "true"
         }
       ],

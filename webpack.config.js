@@ -10,15 +10,22 @@ if (process.stdout.isTTY) {
   }
 }
 
-module.exports = {
-  mode: process.env.NODE_ENV || 'development',
-  devtool: process.env.NODE_ENV === 'production' ? 'hidden-source-map' : 'source-map', // 生产态隐藏源码映射
-  entry: './src/views/react/index.tsx',
-  output: {
-    filename: 'main.js',
-    path: path.resolve(__dirname, 'dist', 'webview'), // 输出到 webview 子目录，保持与扩展调用一致
-    charset: true, // 确保输出文件使用UTF-8编码
-  },
+module.exports = [
+  // 扩展主进程代码（Node.js环境）
+  {
+  // 扩展主进程代码（Node.js环境）
+    name: 'extension',
+    target: 'node',
+    entry: './src/extension.ts',
+    externals: {
+      vscode: 'commonjs vscode' // vscode模块不应该被打包
+    },
+    output: {
+      path: path.resolve(__dirname, 'dist'),
+      filename: 'extension.js',
+      libraryTarget: 'commonjs2',
+      charset: true // 确保输出文件使用UTF-8编码
+    },
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],
   },
@@ -52,4 +59,39 @@ module.exports = {
     maxEntrypointSize: 500000,  // 设置入口文件大小限制
     hints: 'warning'  // 将警告级别设置为 "warning" 或 "none"
   }
-};
+  },
+  // Webview 前端代码（浏览器环境）
+  {
+    name: 'webview',
+    target: 'web',
+    entry: './src/views/react/index.tsx',
+    output: {
+      path: path.resolve(__dirname, 'dist', 'webview'),
+      filename: 'main.js',
+      charset: true // 确保输出文件使用UTF-8编码
+    },
+    resolve: {
+      extensions: ['.ts', '.tsx', '.js']
+    },
+    module: {
+      rules: [
+        {
+          test: /\.tsx?$/,
+          use: 'ts-loader',
+          exclude: /node_modules/,
+        },
+        {
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader'],
+        }
+      ]
+    },
+    plugins: [
+      new CopyWebpackPlugin({
+        patterns: [
+          { from: 'src/styles', to: path.resolve(__dirname, 'dist', 'webview', 'styles') }
+        ]
+      })
+    ]
+  }
+];
