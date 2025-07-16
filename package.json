@@ -1,14 +1,30 @@
 {
   "name": "vlabviewer",
   "displayName": "VlabViewer",
-  "description": "A visual Renode configuration builder for embedded systems",
+  "description": "可视化的Renode嵌入式系统配置生成器",
   "version": "0.3.0",
   "publisher": "forfire912",
+  "author": {
+    "name": "forfire912"
+  },
+  "homepage": "https://github.com/forfire912/vvr",
+  "bugs": {
+    "url": "https://github.com/forfire912/vvr/issues"
+  },
   "engines": {
     "vscode": "^1.80.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Visualization",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "embedded",
+    "renode",
+    "simulation",
+    "hardware",
+    "topology"
   ],
   "activationEvents": [
     "onStartupFinished"
@@ -64,19 +80,29 @@
   },
   "scripts": {
     "watch:tsc": "tsc -w",
+    "watch:react": "webpack --mode development --watch",
+    "watch": "npm-run-all --parallel watch:tsc watch:react",
+    
     "gen:machineid": "ts-node scripts/gen-machineid.ts",
     "gen:license": "node scripts/gen-license.js",
 
     "clean": "del-cli dist cli-dist *.vsix",
+    "clean:logs": "del-cli *.log",
     "build:ts": "tsc",
     "build:react": "webpack --mode production",
-    "build:extension": "npm run build:ts && npm run build:react",
+    "build:encoding": "node src/scripts/ensure-encoding.js convert",
+    "build:extension": "npm run build:ts && npm run build:react && npm run build:encoding",
     "build:cli": "tsc && node -e \"require('fs').mkdirSync('src/dist/scripts',{ recursive:true }); require('fs').copyFileSync('src/scripts/gen-license.js','dist/scripts/gen-license.js')\"",
     "build:all": "npm run clean && npm run build:cli && npm run build:extension",
 
     "package:cli": "npm run build:cli && node -e \"require('fs').mkdirSync('cli-dist',{ recursive:true });\" && npm pack --pack-destination cli-dist",
     "package:vsix": "node src/scripts/package-vsix.js",
-    "package:all": "npm run build:all && npm run package:cli && npm run package:vsix"
+    "package:all": "npm run build:all && npm run package:cli && npm run package:vsix",
+    
+    "start:dev": "npm run build:extension && code --extensionDevelopmentPath=${workspaceFolder}",
+    "lint": "eslint src --ext ts,tsx",
+    "test:encoding": "node src/scripts/test-encoding.js",
+    "postinstall": "echo 安装完成，请运行 npm run build:all 构建扩展"
   },
   "devDependencies": {
     "@types/node": "^24.0.10",
@@ -86,6 +112,7 @@
     "copy-webpack-plugin": "^13.0.0",
     "css-loader": "^7.1.2",
     "del-cli": "^6.0.0",
+    "iconv-lite": "^0.6.3",
     "rimraf": "^6.0.1",
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.2",
@@ -104,6 +131,5 @@
     "type": "git",
     "url": "https://github.com/forfire912/vvr.git"
   },
-  "license": "MIT",
-  "publisher": "forfire912"
+  "license": "MIT"
 }

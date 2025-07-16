@@ -1,5 +1,14 @@
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const fs = require('fs');
+
+// 确保构建脚本使用 UTF-8 编码
+if (process.stdout.isTTY) {
+  if (process.platform === 'win32') {
+    process.stdout.setEncoding('utf8');
+    process.stderr.setEncoding('utf8');
+  }
+}
 
 module.exports = {
   mode: process.env.NODE_ENV || 'development',
@@ -8,6 +17,7 @@ module.exports = {
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist', 'webview'), // 输出到 webview 子目录，保持与扩展调用一致
+    charset: true, // 确保输出文件使用UTF-8编码
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js'],

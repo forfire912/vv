@@ -20,5 +20,14 @@ if (!fs.existsSync(webviewPath)) {
   process.exit(1);
 }
 
+// 修复字符集
+console.log('修复文件字符集编码...');
+try {
+  execSync('node src/scripts/ensure-encoding.js convert', { stdio: 'inherit' });
+  console.log('✅ 字符集修复完成');
+} catch (e) {
+  console.error('❌ 字符集修复失败，但仍将继续打包', e);
+}
+
 // 4. 调用 vsce 打包，并利用 package.json 中的 version
 execSync(`vsce package --out vlabviewer-${version}.vsix`, { stdio: 'inherit' });

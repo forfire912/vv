@@ -7,58 +7,133 @@ import * as path from 'path';
 import * as crypto from 'crypto';
 import { startVlabViewer } from './views/VlabViewerPanel';
 
+// 日志工具函数
+const LOG_PREFIX = '[VlabViewer]';
+const log = {
+  info: (message: string) => console.log(`${LOG_PREFIX} INFO: ${message}`),
+  warn: (message: string) => console.warn(`${LOG_PREFIX} WARN: ${message}`),
+  error: (message: string, error?: any) => {
+    console.error(`${LOG_PREFIX} ERROR: ${message}`);
+    if (error) console.error(error);
+  },
+  debug: (message: string) => console.debug(`${LOG_PREFIX} DEBUG: ${message}`)
+};
+
 // 自定义硬件特征获取：优先 CPU 序列号，其次取第一个非内部网卡的 MAC，最后回退到 machineId
 function getHardwareId(): string {
+  log.debug('获取硬件标识...');
   try {
     if (process.platform === 'win32') {
+      log.debug('尝试获取 CPU 序列号...');
       const out = execSync('wmic cpu get ProcessorId /value').toString();
       const match = out.match(/ProcessorId=(.+)/i);
-      if (match && match[1].trim()) return match[1].trim();
-    }
-  } catch {
-    // 忽略错误，尝试下一个方法
-  }
-  const nets = os.networkInterfaces();
-  for (const name of Object.keys(nets)) {
-    for (const ni of nets[name]!) {
-      if (!ni.internal && ni.mac && ni.mac !== '00:00:00:00:00:00') {
-        return ni.mac;
+      if (match && match[1].trim()) {
+        const id = match[1].trim();
+        log.debug(`已获取 CPU 序列号: ${id.substring(0, 4)}...`);
+        return id;
       }
     }
+  } catch (err) {
+    log.debug(`获取 CPU 序列号失败: ${err instanceof Error ? err.message : String(err)}`);
   }
-  // 最后回退
-  return machineIdSync();
+  
+  try {
+    log.debug('尝试获取网卡 MAC 地址...');
+    const nets = os.networkInterfaces();
+    for (const name of Object.keys(nets)) {
+      for (const ni of nets[name]!) {
+        if (!ni.internal && ni.mac && ni.mac !== '00:00:00:00:00:00') {
+          log.debug(`已获取网卡 MAC 地址: ${ni.mac}`);
+          return ni.mac;
+        }
+      }
+    }
+  } catch (err) {
+    log.debug(`获取网卡 MAC 地址失败: ${err instanceof Error ? err.message : String(err)}`);
+  }
+  
+  // 最后回退到 machineId
+  log.debug('回退到 machineId...');
+  try {
+    const id = machineIdSync();
+    log.debug('已获取 machineId');
+    return id;
+  } catch (err) {
+    log.error('获取所有硬件标识均失败', err);
+    throw new Error('无法获取可用的硬件标识');
+  }
 }
 
 // 使用 HMAC 签名校验 license
+/**
+ * 验证许可证有效性
+ * @param token 许可证字符串
+ * @param id 硬件ID
+ * @returns 许可证是否有效
+ */
 function verifyLicense(token: string, id: string): boolean {
-  if (!token) return false;
+  if (!token) {
+    log.warn('许可证为空');
+    return false;
+  }
+  
+  // 解析许可证格式
   const [data, sig] = token.split('.');
-  if (!data || !sig) return false;
+  if (!data || !sig) {
+    log.warn('许可证格式不正确');
+    return false;
+  }
+  
   // 与生成脚本中一致的 SECRET，请替换为你的私钥
   const SECRET = 'replace_with_your_secret';
-  // 校验签名
-  const payload = Buffer.from(data, 'base64').toString('utf8');
-  const expected = crypto.createHmac('sha256', SECRET).update(payload).digest('hex');
-  if (sig !== expected) return false;
+  
   try {
+    // 校验签名
+    log.debug('校验许可证签名...');
+    const payload = Buffer.from(data, 'base64').toString('utf8');
+    const expected = crypto.createHmac('sha256', SECRET).update(payload).digest('hex');
+    
+    if (sig !== expected) {
+      log.warn('许可证签名无效');
+      return false;
+    }
+    
     const info = JSON.parse(payload);
+    
     // 校验硬件 ID
-    if (info.hardwareId !== id) return false;
+    if (info.hardwareId !== id) {
+      log.warn(`许可证硬件ID不匹配 (期望: ${info.hardwareId.substring(0, 4)}..., 实际: ${id.substring(0, 4)}...)`);
+      return false;
+    }
+    
     // 校验到期日（可选）
     if (info.exp) {
       const expire = new Date(info.exp);
-      if (expire < new Date()) return false;
+      const now = new Date();
+      if (expire < now) {
+        log.warn(`许可证已过期 (${expire.toLocaleDateString()})`);
+        return false;
+      }
+      log.info(`许可证有效期至: ${expire.toLocaleDateString()}`);
+    } else {
+      log.info('永久有效的许可证');
     }
+    
+    log.info('许可证验证通过');
     return true;
-  } catch {
+  } catch (err) {
+    log.error('许可证验证过程出错', err);
     return false;
   }
 }
 
+/**
+ * 扩展激活入口点
+ * @param context 扩展上下文
+ */
 export async function activate(context: vscode.ExtensionContext) {
   try {
-    console.log('Activating VlabViewer extension...');
+    log.info('正在激活 VlabViewer 扩展...');
     
     // 确保命令始终注册，无论打包环境如何
     const commandId = 'vlabviewer.start'; // 命令ID必须与package.json中的完全一致
@@ -66,7 +141,7 @@ export async function activate(context: vscode.ExtensionContext) {
     // 直接在全局范围注册命令，确保在打包环境中可用
     const commandHandler = () => {
       try {
-        console.log(`Command ${commandId} executed.`);
+        log.info(`命令 ${commandId} 被执行`);
         const panel = startVlabViewer(context);
         
         panel.webview.onDidReceiveMessage(async msg => {
