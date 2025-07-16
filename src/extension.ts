@@ -58,8 +58,11 @@ function verifyLicense(token: string | undefined, id: string): boolean {
 
 export async function activate(context: vscode.ExtensionContext) {
   console.log('Activating VlabViewer extension...');
+
+  const commandName = 'vlabviewer.start';
+
   const handler = () => {
-    console.log('Command vlabviewer.start executed.');
+    console.log(`Command ${commandName} executed.`);
     const panel = startVlabViewer(context);
     // 监听消息...
     panel.webview.onDidReceiveMessage(async msg => {
@@ -74,16 +77,18 @@ export async function activate(context: vscode.ExtensionContext) {
           action: msg.action,
           name: msg.name
         });
-      } else if (msg.type === 'info') {
-        // 模态信息提示，仅带“OK”按钮
-        await vscode.window.showInformationMessage(msg.text, { modal: true }, 'OK');
-      }
+      } 
+      //else if (msg.type === 'info') {
+      //  // 模态信息提示，仅带“OK”按钮
+      //  await vscode.window.showInformationMessage(msg.text, { modal: true }, 'OK');
+      //}
     });
   };
+
   context.subscriptions.push(
-    vscode.commands.registerCommand('vlabviewer.start', handler)
+    vscode.commands.registerCommand(commandName, handler)
   );
-  console.log('Command vlabviewer.start registered.');
+  console.log(`Command ${commandName} registered.`);
 
   // 后续存储与许可逻辑包裹在 try-catch，不影响命令注册
   try {
@@ -140,4 +145,7 @@ export async function activate(context: vscode.ExtensionContext) {
   } catch (e) {
     console.error('VlabViewer activate error:', e);
   }
+
+  // 打印扩展激活成功的日志
+  console.log('VlabViewer extension activated successfully.');
 }

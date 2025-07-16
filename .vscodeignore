@@ -6,7 +6,7 @@ tsconfig.json
 .git
 .gitignore
 README.md
+!dist/**  # 包含整个 dist 目录及所有子文件
 *.log
+# 只排除 map 文件，但 dist/** 已白名单，map 文件仍会被含在 VSIX，但可根据需要移除此行
 *.map
-!dist/extension.js
-!dist/webview/

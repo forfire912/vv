@@ -9,7 +9,7 @@ export function startVlabViewer(context: vscode.ExtensionContext): vscode.Webvie
     {
       enableScripts: true,
       retainContextWhenHidden: true,
-      localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'dist', 'webview'))]
+      localResourceRoots: [vscode.Uri.file(path.join(context.extensionPath, 'dist'))] //', 'webview'))]
     }
   );
 
@@ -18,11 +18,14 @@ export function startVlabViewer(context: vscode.ExtensionContext): vscode.Webvie
 }
 
 function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri): string {
-  const runtimeUri = webview.asWebviewUri(
-    vscode.Uri.joinPath(extensionUri, 'dist', 'webview', 'runtime.js')
-  );
+  // const runtimeUri = webview.asWebviewUri(
+  //   vscode.Uri.joinPath(extensionUri, 'dist', 'webview', 'runtime.js')
+  // );
   const mainUri = webview.asWebviewUri(
     vscode.Uri.joinPath(extensionUri, 'dist', 'webview', 'main.js')
+  );
+  const configUri = webview.asWebviewUri(
+    vscode.Uri.joinPath(extensionUri, 'dist', 'webview', 'config')
   );
   return `
   <!DOCTYPE html>
@@ -39,7 +42,6 @@ function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri): s
   </head>
   <body>
     <div id="app"></div>
-    <script src="${runtimeUri}"></script>
     <script src="${mainUri}"></script>
   </body>
   </html>

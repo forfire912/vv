@@ -2,17 +2,14 @@
   "name": "vlabviewer",
   "displayName": "VlabViewer",
   "description": "A visual Renode configuration builder for embedded systems",
-  "version": "0.2.3",
+  "version": "0.2.6",
   "engines": {
     "vscode": "^1.80.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onCommand:vlabviewer.start",
-    "onStartupFinished"
-  ],
+  "activationEvents": ["onStartupFinished"],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
@@ -33,7 +30,7 @@
 
     "clean": "del-cli dist cli-dist *.vsix",
     "build:ts": "tsc",
-    "build:react": "webpack",
+    "build:react": "webpack --mode production",
     "build:extension": "npm run build:ts && npm run build:react",
     "build:cli": "tsc && node -e \"require('fs').mkdirSync('src/dist/scripts',{ recursive:true }); require('fs').copyFileSync('src/scripts/gen-license.js','dist/scripts/gen-license.js')\"",
     "build:all": "npm run clean && npm run build:cli && npm run build:extension",
