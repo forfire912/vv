@@ -1,0 +1,44 @@
+import * as vscode from 'vscode';
+import { startVlabViewer } from './views/VlabViewerPanel';
+
+// 一个简化的扩展示例，专注于基本功能
+export function activate(context: vscode.ExtensionContext) {
+  console.log('VlabViewer extension is now active');
+  
+  // 注册 vlabviewer.start 命令
+  const startCommand = vscode.commands.registerCommand('vlabviewer.start', () => {
+    try {
+      console.log('VlabViewer start command executed');
+      const panel = startVlabViewer(context);
+      
+      panel.webview.onDidReceiveMessage(async msg => {
+        try {
+          if (msg.type === 'prompt') {
+            const val = await vscode.window.showInputBox({ prompt: msg.text });
+            panel.webview.postMessage({ type: 'promptResponse', value: val, action: msg.action });
+          } else if (msg.type === 'confirm') {
+            const pick = await vscode.window.showInformationMessage(msg.text, 'Yes', 'No');
+            panel.webview.postMessage({
+              type: 'confirmResponse',
+              confirmed: pick === 'Yes',
+              action: msg.action,
+              name: msg.name
+            });
+          }
+        } catch (err) {
+          console.error('Error handling message:', err);
+        }
+      });
+    } catch (err) {
+      vscode.window.showErrorMessage(`Failed to start VlabViewer: ${err}`);
+    }
+  });
+  
+  // 添加命令到订阅列表
+  context.subscriptions.push(startCommand);
+}
+
+// 当扩展被停用时调用
+export function deactivate() {
+  console.log('VlabViewer extension has been deactivated');
+}

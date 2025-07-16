@@ -31,7 +31,7 @@ function getHardwareId(): string {
 }
 
 // 使用 HMAC 签名校验 license
-function verifyLicense(token: string | undefined, id: string): boolean {
+function verifyLicense(token: string, id: string): boolean {
   if (!token) return false;
   const [data, sig] = token.split('.');
   if (!data || !sig) return false;
@@ -57,95 +57,123 @@ function verifyLicense(token: string | undefined, id: string): boolean {
 }
 
 export async function activate(context: vscode.ExtensionContext) {
-  console.log('Activating VlabViewer extension...');
-
-  const commandName = 'vlabviewer.start';
-
-  const handler = () => {
-    console.log(`Command ${commandName} executed.`);
-    const panel = startVlabViewer(context);
-    // 监听消息...
-    panel.webview.onDidReceiveMessage(async msg => {
-      if (msg.type === 'prompt') {
-        const val = await vscode.window.showInputBox({ prompt: msg.text });
-        panel.webview.postMessage({ type: 'promptResponse', value: val, action: msg.action });
-      } else if (msg.type === 'confirm') {
-        const pick = await vscode.window.showInformationMessage(msg.text, 'Yes', 'No');
-        panel.webview.postMessage({
-          type: 'confirmResponse',
-          confirmed: pick === 'Yes',
-          action: msg.action,
-          name: msg.name
-        });
-      } 
-      //else if (msg.type === 'info') {
-      //  // 模态信息提示，仅带“OK”按钮
-      //  await vscode.window.showInformationMessage(msg.text, { modal: true }, 'OK');
-      //}
-    });
-  };
-
-  context.subscriptions.push(
-    vscode.commands.registerCommand(commandName, handler)
-  );
-  console.log(`Command ${commandName} registered.`);
-
-  // 后续存储与许可逻辑包裹在 try-catch，不影响命令注册
   try {
-    // 1. 准备本地存储目录（兼容 globalStorageUri 与 globalStoragePath）
-    const storagePath = context.globalStorageUri?.fsPath || context.globalStoragePath;
-    fs.mkdirSync(storagePath, { recursive: true });
+    console.log('Activating VlabViewer extension...');
+    
+    // 确保命令始终注册，无论打包环境如何
+    const commandId = 'vlabviewer.start'; // 命令ID必须与package.json中的完全一致
+    
+    // 直接在全局范围注册命令，确保在打包环境中可用
+    const commandHandler = () => {
+      try {
+        console.log(`Command ${commandId} executed.`);
+        const panel = startVlabViewer(context);
+        
+        panel.webview.onDidReceiveMessage(async msg => {
+          try {
+            if (msg.type === 'prompt') {
+              const val = await vscode.window.showInputBox({ prompt: msg.text });
+              panel.webview.postMessage({ type: 'promptResponse', value: val, action: msg.action });
+            } else if (msg.type === 'confirm') {
+              const pick = await vscode.window.showInformationMessage(msg.text, 'Yes', 'No');
+              panel.webview.postMessage({
+                type: 'confirmResponse',
+                confirmed: pick === 'Yes',
+                action: msg.action,
+                name: msg.name
+              });
+            }
+            //else if (msg.type === 'info') {
+            //  // 模态信息提示，仅带"OK"按钮
+            //  await vscode.window.showInformationMessage(msg.text, { modal: true }, 'OK');
+            //}
+          } catch (err) {
+            console.error('Error handling message:', err);
+          }
+        });
+      } catch (err) {
+        console.error('Error executing command:', err);
+        vscode.window.showErrorMessage(`Error executing command: ${err}`);
+      }
+    };
+    
+    // 注册多个命令 - 使用不同的注册方式，确保至少有一个可以工作
+    // 方式1: 直接使用字符串常量
+    const cmd1 = vscode.commands.registerCommand('vlabviewer.start', commandHandler);
+    context.subscriptions.push(cmd1);
+    console.log(`Command 'vlabviewer.start' registered (method 1).`);
 
-    // 2. Machine ID 文件：读取或生成
-    const machineIdFile = path.join(storagePath, 'machine.id');
-    let id: string;
-    if (fs.existsSync(machineIdFile)) {
-      id = fs.readFileSync(machineIdFile, 'utf8').trim();
-    } else {
-      id = getHardwareId();
-      fs.writeFileSync(machineIdFile, id, 'utf8');
-    }
+    // 方式2: 使用替代命令名称
+    const cmd2 = vscode.commands.registerCommand('extension.startVlabViewer', commandHandler);
+    context.subscriptions.push(cmd2);
+    console.log(`Command 'extension.startVlabViewer' registered (method 2).`);
 
-    // 3. License 文件：读取或输入
-    const licenseFile = path.join(storagePath, 'license.key');
-    let licenseKey: string | undefined;
-    if (fs.existsSync(licenseFile)) {
-      try { licenseKey = fs.readFileSync(licenseFile, 'utf8').trim(); }
-      catch { /* ignore */ }
-    }
+    // 方式3: 使用 vscode.commands.executeCommand 确保命令可执行
+    vscode.commands.executeCommand('setContext', 'vlabviewer.enabled', true);
+    console.log(`Command context set.`);
 
-    // 新增：试用期逻辑（30 天）
-    const trialFile = path.join(storagePath, 'trial.start');
-    if (!licenseKey) {
-      let start = fs.existsSync(trialFile)
-        ? new Date(fs.readFileSync(trialFile, 'utf8'))
-        : (fs.writeFileSync(trialFile, new Date().toISOString(), 'utf8'), new Date());
-      const days = Math.floor((Date.now() - start.getTime()) / (1000*60*60*24));
-      const trialDays = 30;
-      if (days < trialDays) {
-        vscode.window.showInformationMessage(`试用版剩余 ${trialDays - days} 天`);
+    // 后续存储与许可逻辑包裹在 try-catch，不影响命令注册
+    try {
+      // 1. 准备本地存储目录（兼容 globalStorageUri 与 globalStoragePath）
+      const storagePath = context.globalStorageUri?.fsPath || context.globalStoragePath;
+      fs.mkdirSync(storagePath, { recursive: true });
+
+      // 2. Machine ID 文件：读取或生成
+      const machineIdFile = path.join(storagePath, 'machine.id');
+      let id: string;
+      if (fs.existsSync(machineIdFile)) {
+        id = fs.readFileSync(machineIdFile, 'utf8').trim();
       } else {
-        // 试用到期，强制输入 license
-        licenseKey = await vscode.window.showInputBox({ prompt: `试用已结束，请输入许可证 (机器ID: ${id})` });
-        if (!licenseKey) {
-          vscode.window.showErrorMessage('许可证为必填，插件已禁用');
+        id = getHardwareId();
+        fs.writeFileSync(machineIdFile, id, 'utf8');
+      }
+
+      // 3. License 文件：读取或输入
+      const licenseFile = path.join(storagePath, 'license.key');
+      let licenseKey: string | undefined;
+      if (fs.existsSync(licenseFile)) {
+        try { licenseKey = fs.readFileSync(licenseFile, 'utf8').trim(); }
+        catch { /* ignore */ }
+      }
+
+      // 新增：试用期逻辑（30 天）
+      const trialFile = path.join(storagePath, 'trial.start');
+      if (!licenseKey) {
+        let start = fs.existsSync(trialFile)
+          ? new Date(fs.readFileSync(trialFile, 'utf8'))
+          : (fs.writeFileSync(trialFile, new Date().toISOString(), 'utf8'), new Date());
+        const days = Math.floor((Date.now() - start.getTime()) / (1000*60*60*24));
+        const trialDays = 30;
+        if (days < trialDays) {
+          vscode.window.showInformationMessage(`试用版剩余 ${trialDays - days} 天`);
+        } else {
+          // 试用到期，强制输入 license
+          licenseKey = await vscode.window.showInputBox({ prompt: `试用已结束，请输入许可证 (机器ID: ${id})` });
+          if (!licenseKey) {
+            vscode.window.showErrorMessage('许可证为必填，插件已禁用');
+            return;
+          }
+          fs.writeFileSync(licenseFile, licenseKey, 'utf8');
+        }
+      }
+
+      // 5. 验证不通过则报错并退出
+      if (licenseKey) {
+        if (!verifyLicense(licenseKey, id)) {
+          vscode.window.showErrorMessage('无效或已过期的许可证，请联系供应商');
           return;
         }
-        fs.writeFileSync(licenseFile, licenseKey, 'utf8');
       }
+    } catch (e) {
+      console.error('VlabViewer license verification error:', e);
+      // 许可校验失败不影响命令注册
     }
 
-    // 5. 验证不通过则报错并退出
-    if (licenseKey) {
-      if (!verifyLicense(licenseKey, id)) {
-        vscode.window.showErrorMessage('无效或已过期的许可证，请联系供应商');
-        return;
-      }
-    }
+    // 打印扩展激活成功的日志
+    console.log('VlabViewer extension activated successfully.');
   } catch (e) {
-    console.error('VlabViewer activate error:', e);
+    // 捕获整个激活过程的异常
+    console.error('VlabViewer extension activation error:', e);
+    vscode.window.showErrorMessage(`VlabViewer extension activation error: ${e}`);
   }
-
-  // 打印扩展激活成功的日志
-  console.log('VlabViewer extension activated successfully.');
 }

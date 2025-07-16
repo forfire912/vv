@@ -2,20 +2,59 @@
   "name": "vlabviewer",
   "displayName": "VlabViewer",
   "description": "A visual Renode configuration builder for embedded systems",
-  "version": "0.2.6",
+  "version": "0.3.0",
+  "publisher": "forfire912",
   "engines": {
     "vscode": "^1.80.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": ["onStartupFinished"],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       {
         "command": "vlabviewer.start",
         "title": "Start VlabViewer"
+      },
+      {
+        "command": "extension.startVlabViewer",
+        "title": "Start VlabViewer (Alternative)"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "vlabviewer.start",
+          "when": "true"
+        },
+        {
+          "command": "extension.startVlabViewer",
+          "when": "true"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "vlabviewer.start",
+          "group": "navigation"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "vlabviewer.start",
+          "when": "view == explorer",
+          "group": "navigation"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "vlabviewer.start",
+        "key": "ctrl+alt+v",
+        "mac": "cmd+alt+v"
       }
     ]
   },
