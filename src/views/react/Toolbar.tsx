@@ -23,30 +23,46 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   theme,
   onThemeChange
 }) => (
-  <div style={{ display: 'flex', padding: '8px', borderBottom: '1px solid #ccc', background: '#f0f0f0' }}>
-    <select
-      value={currentName}
-      onChange={e => onSelect(e.target.value)}
-      style={{ marginRight: 10, width: '15cm' }}
-    >
-      <option value="">--拓扑列表--</option>
-      {savedList.map(name => (
-        <option key={name} value={name}>{name}</option>
-      ))}
-    </select>
-    <button onClick={onNew} style={{ marginRight: 10 }}>新建</button>
-    <button onClick={onSave} style={{ marginRight: 10 }}>保存</button>
-    <button onClick={onDeleteSaved} style={{ marginRight: 10 }}>删除</button>
-    <button onClick={onExportJson} style={{ marginRight: 10 }}>导出 JSON</button>
-    <div style={{ marginLeft: 'auto' }}>
+  <div className="toolbar">
+    <div className="toolbar-section">
+      <select
+        value={currentName}
+        onChange={e => onSelect(e.target.value)}
+        className="topology-select"
+      >
+        <option value="">--拓扑列表--</option>
+        {savedList.map(name => (
+          <option key={name} value={name}>{name}</option>
+        ))}
+      </select>
+      <div className="toolbar-button-group">
+        <button className="toolbar-button" onClick={onNew}>
+          <i className="toolbar-icon">+</i>
+          <span>新建</span>
+        </button>
+        <button className="toolbar-button" onClick={onSave}>
+          <i className="toolbar-icon">💾</i>
+          <span>保存</span>
+        </button>
+        <button className="toolbar-button" onClick={onDeleteSaved}>
+          <i className="toolbar-icon">🗑️</i>
+          <span>删除</span>
+        </button>
+        <button className="toolbar-button" onClick={onExportJson}>
+          <i className="toolbar-icon">⤓</i>
+          <span>导出</span>
+        </button>
+      </div>
+    </div>
+    <div className="theme-selector">
       <select
         value={theme}
         onChange={e => onThemeChange(e.target.value as any)}
-        style={{ padding: 4, borderRadius: 4 }}
+        className="theme-select"
       >
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-        <option value="colorful">Colorful</option>
+        <option value="light">浅色主题</option>
+        <option value="dark">深色主题</option>
+        <option value="colorful">多彩主题</option>
       </select>
     </div>
   </div>
