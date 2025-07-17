@@ -75,10 +75,8 @@
     "watch:tsc": "tsc -w",
     "watch:react": "webpack --mode development --watch",
     "watch": "npm-run-all --parallel watch:tsc watch:react",
-    
     "gen:machineid": "ts-node scripts/gen-machineid.ts",
     "gen:license": "node scripts/gen-license.js",
-
     "clean": "del-cli dist cli-dist *.vsix",
     "clean:logs": "del-cli *.log",
     "build:ts": "tsc",
@@ -87,11 +85,9 @@
     "build:extension": "npm run build:ts && npm run build:react && npm run build:encoding",
     "build:cli": "tsc && node -e \"require('fs').mkdirSync('src/dist/scripts',{ recursive:true }); require('fs').copyFileSync('src/scripts/gen-license.js','dist/scripts/gen-license.js')\"",
     "build:all": "npm run clean && npm run build:cli && npm run build:extension",
-
     "package:cli": "npm run build:cli && node -e \"require('fs').mkdirSync('cli-dist',{ recursive:true });\" && npm pack --pack-destination cli-dist",
     "package:vsix": "node src/scripts/package-vsix.js",
     "package:all": "npm run build:all && npm run package:cli && npm run package:vsix",
-    
     "start:dev": "npm run build:extension && code --extensionDevelopmentPath=${workspaceFolder}",
     "lint": "eslint src --ext ts,tsx",
     "test:encoding": "node src/scripts/test-encoding.js",
@@ -114,6 +110,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@vscode/codicons": "0.0.38",
     "node-machine-id": "^1.1.12",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

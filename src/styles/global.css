@@ -132,6 +132,30 @@ body {
   background: #1976d2;
 }
 
+/* 优化按钮样式以符合 VS Code 风格 */
+.toolbar-button {
+  display: flex;
+  align-items: center;
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid var(--btn-bg);
+  border-radius: 3px;
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s, border-color 0.2s;
+  min-width: 100px; /* 增加按钮的最小宽度 */
+}
+
+.toolbar-button:hover {
+  background-color: var(--btn-hover-bg, #005a9e);
+  border-color: var(--btn-hover-border, #005a9e);
+}
+
+.toolbar-button i {
+  margin-right: 5px;
+}
+
 /* 通用表单域样式 */
 select,
 input[type="text"],
@@ -358,22 +382,20 @@ input[type="number"] {
 .toolbar-button {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 8px 16px;
-  min-width: 90px;
-  border: none;
-  border-radius: 4px;
-  background: rgba(255,255,255,0.1);
-  color: var(--toolbar-text);
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  border: 1px solid var(--btn-bg);
+  border-radius: 3px;
+  padding: 5px 10px;
   font-size: 14px;
-  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color 0.2s, border-color 0.2s;
+  min-width: 100px; /* 增加按钮的最小宽度 */
 }
 
 .toolbar-button:hover {
-  background: rgba(255,255,255,0.2);
+  background-color: var(--btn-hover-bg, #005a9e);
+  border-color: var(--btn-hover-border, #005a9e);
 }
 
 .toolbar-icon {

@@ -15,7 +15,7 @@ export function startVlabViewer(context: vscode.ExtensionContext): vscode.Webvie
   // 创建 WebView 面板
   const panel = vscode.window.createWebviewPanel(
     'vlabviewer',            // 唯一标识符
-    'VlabViewer',            // 面板标题
+    '仿真配置',            // 面板标题
     vscode.ViewColumn.One,   // 显示在编辑器的第一列
     {
       enableScripts: true,              // 允许在 WebView 中运行脚本

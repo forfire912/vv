@@ -1,4 +1,5 @@
 import React from 'react';
+import '@vscode/codicons/dist/codicon.css';
 
 interface ToolbarProps {
   savedList: string[];
@@ -37,15 +38,15 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       </select>
       <div className="toolbar-button-group">
         <button className="toolbar-button" onClick={onNew}>
-          <i className="toolbar-icon">+</i>
+          <i className="codicon codicon-add"></i>
           <span>新建</span>
         </button>
         <button className="toolbar-button" onClick={onSave}>
-          <i className="toolbar-icon">💾</i>
+          <i className="codicon codicon-save"></i>
           <span>保存</span>
         </button>
         <button className="toolbar-button" onClick={onDeleteSaved}>
-          <i className="toolbar-icon">🗑️</i>
+          <i className="codicon codicon-trash"></i>
           <span>删除</span>
         </button>
         <button className="toolbar-button" onClick={onExportJson}>
