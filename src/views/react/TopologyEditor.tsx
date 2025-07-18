@@ -27,6 +27,10 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
   const [savedList, setSavedList] = useState<string[]>([]);
   const [currentName, setCurrentName] = useState<string>('');
   const [isDirty, setIsDirty] = useState(false);
+  const [rightPanelWidth, setRightPanelWidth] = useState<number>(400); // 右侧面板宽度
+  const [isResizing, setIsResizing] = useState<boolean>(false); // 是否正在拖拽调整
+  const dividerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // 本地提示
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -273,6 +277,47 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
     });
   }, []);
 
+  // 拖拽调整右侧面板宽度的处理函数
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    console.log('Mouse down on divider');
+    e.preventDefault();
+    e.stopPropagation();
+    setIsResizing(true);
+
+    const startX = e.clientX;
+    const startWidth = rightPanelWidth;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!containerRef.current) return;
+      
+      const containerRect = containerRef.current.getBoundingClientRect();
+      // 计算从右边缘到鼠标位置的距离，这就是右侧面板应该占用的最小宽度
+      const newRightPanelWidth = containerRect.right - e.clientX;
+      const minWidth = 300;
+      const maxWidth = containerRect.width * 0.6;
+      
+      console.log('Mouse move:', { newRightPanelWidth, minWidth, maxWidth });
+      
+      if (newRightPanelWidth >= minWidth && newRightPanelWidth <= maxWidth) {
+        setRightPanelWidth(newRightPanelWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      console.log('Mouse up');
+      setIsResizing(false);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+  }, [rightPanelWidth]);
+
   // 拖拽开始逻辑
   const handlePaletteDragStart = useCallback((item: any, event: React.DragEvent) => {
     event.dataTransfer.setData('application/json', JSON.stringify(item));
@@ -352,7 +397,11 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
       />
 
       {/* 主体内容，撑满剩余空间 */}
-      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+      <div 
+        ref={containerRef}
+        className="main-content"
+        style={{ flex: 1, display: 'flex', overflow: 'hidden' }}
+      >
         <ComponentPalette
           cpuList={cpuList.map(cpu => ({ ...cpu, type: 'cpu' }))}
           deviceList={deviceList.map(device => ({ ...device, type: 'device' }))}
@@ -362,7 +411,11 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
         <div
           className="canvas-panel"
           ref={reactFlowWrapper}
-          style={{ flex: 1, position: 'relative' }}
+          style={{ 
+            width: `calc(100% - 240px - 8px - ${rightPanelWidth}px)`,
+            position: 'relative',
+            flexShrink: 0
+          }}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
         >
@@ -395,10 +448,32 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
           )}
         </div>
 
+        {/* 可拖拽分割器 */}
+        <div
+          ref={dividerRef}
+          className={`resizable-divider ${isResizing ? 'resizing' : ''}`}
+          onMouseDown={handleMouseDown}
+          style={{
+            backgroundColor: isResizing ? '#1976d2' : '#e0e0e0',
+            border: '1px solid #ccc',
+            minWidth: '8px',
+            height: '100%'
+          }}
+        >
+          <div className="resizable-divider-handle">
+            ⋮⋮
+          </div>
+        </div>
+
         {/* 属性面板 */}
         <div
           className="properties-panel"
-          style={{ width: '320px', borderLeft: '1px solid #eee', overflowY: 'auto' }}
+          style={{ 
+            flex: 1,
+            borderLeft: 'none',
+            overflowY: 'auto', 
+            minWidth: '300px'
+          }}
         >
           {selectedNodeId && (
             <NodePropertiesPanel

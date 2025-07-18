@@ -176,6 +176,45 @@ input[type="number"] {
   display: flex;
   height: calc(100vh - 48px);
 }
+
+/* 可拖拽分割器样式 */
+.resizable-divider {
+  width: 8px;
+  cursor: col-resize;
+  background-color: #e0e0e0; /* 给一个默认的背景色让它可见 */
+  border-left: 1px solid var(--node-border);
+  border-right: 1px solid var(--node-border);
+  transition: background-color 0.2s;
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.resizable-divider:hover {
+  background-color: var(--node-selected);
+}
+
+.resizable-divider.resizing {
+  background-color: var(--node-selected);
+}
+
+.resizable-divider-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--toolbar-bg);
+  border-radius: 4px;
+  opacity: 0.8; /* 增加透明度让它更明显 */
+  font-size: 10px;
+  color: var(--toolbar-text);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* 添加阴影 */
+}
 .component-palette {
   background: var(--palette-bg);
   color: var(--palette-text);
@@ -264,7 +303,7 @@ input[type="number"] {
 .properties-panel {
   background: var(--palette-bg);
   color: var(--palette-text);
-  width: 280px;
+  /* 移除固定宽度，让组件内联样式控制 */
   border-left: 1px solid var(--node-border);
   height: 100%;
   overflow-y: auto;
