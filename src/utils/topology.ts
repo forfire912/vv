@@ -12,7 +12,13 @@ export function getConnectedCpuNode(selectedNodeId: string, edges: Edge[], cpuNo
   return cpuNodes.find(n => n.id === cpuId);
 }
 
-// 计算 allowed-types 与 CPU 支持的接口类型的交集
+/**
+ * 计算 CPU 和外设支持的接口类型交集
+ * 根据 CPU 节点和外设数据，计算允许的接口类型。
+ * @param cpuNode CPU 节点
+ * @param peripheralData 外设数据
+ * @returns 允许的接口类型数组
+ */
 export function getAllowedPeripheralOptions(cpuNode: Node, peripheralData: any): string[] {
   const cpuIfaces = Array.isArray(cpuNode.data?.interfaces) ? cpuNode.data.interfaces : [];
   let allowedTypes: string[] = [];

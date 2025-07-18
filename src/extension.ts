@@ -19,7 +19,11 @@ const log = {
   debug: (message: string) => console.debug(`${LOG_PREFIX} DEBUG: ${message}`)
 };
 
-// 自定义硬件特征获取：优先 CPU 序列号，其次取第一个非内部网卡的 MAC，最后回退到 machineId
+/**
+ * 获取硬件标识
+ * 优先使用 CPU 序列号，其次是网卡 MAC 地址，最后回退到 machineId。
+ * @returns 硬件标识字符串
+ */
 function getHardwareId(): string {
   log.debug('获取硬件标识...');
   try {
@@ -64,9 +68,9 @@ function getHardwareId(): string {
   }
 }
 
-// 使用 HMAC 签名校验 license
 /**
  * 验证许可证有效性
+ * 使用 HMAC 签名校验许可证的有效性，并检查硬件 ID 和到期日。
  * @param token 许可证字符串
  * @param id 硬件ID
  * @returns 许可证是否有效
@@ -129,6 +133,7 @@ function verifyLicense(token: string, id: string): boolean {
 
 /**
  * 扩展激活入口点
+ * 注册命令、验证许可证并初始化 WebView 面板。
  * @param context 扩展上下文
  */
 export async function activate(context: vscode.ExtensionContext) {
@@ -258,4 +263,8 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 }
 
+/**
+ * 扩展停用入口点
+ * 清理资源。
+ */
 export function deactivate() {}

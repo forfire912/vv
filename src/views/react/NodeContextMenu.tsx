@@ -12,8 +12,8 @@ const NodeContextMenu: React.FC<Props> = ({ x, y, onRename, onDelete, onClose })
   <div
     style={{
       position: "absolute",
-      top: y,
-      left: x,
+      top: y + window.scrollY, // 考虑页面滚动
+      left: x + window.scrollX, // 考虑页面滚动
       background: "#fff",
       border: "1px solid #ccc",
       zIndex: 1000,

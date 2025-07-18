@@ -3,11 +3,15 @@ import * as path from 'path';
 
 /**
  * VlabViewer WebView 面板管理器
- * 负责创建和配置扩展的主要 WebView 界面
+ * 负责创建和配置扩展的主要 WebView 界面。
+ * 可扩展点：
+ * - 添加设备激励管理功能。
+ * - 集成测试管理功能。
  */
 
 /**
  * 启动 VlabViewer WebView 面板
+ * 创建 WebView 面板并设置其 HTML 内容。
  * @param context 扩展上下文
  * @returns 创建的 WebView 面板对象
  */
@@ -31,6 +35,7 @@ export function startVlabViewer(context: vscode.ExtensionContext): vscode.Webvie
 
 /**
  * 生成 WebView HTML 内容
+ * 动态生成 WebView 的 HTML 内容，包括资源 URI 和 CSP 配置。
  * @param webview WebView 对象
  * @param extensionUri 扩展 URI
  * @returns HTML 字符串
@@ -55,6 +60,7 @@ function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri): s
       default-src 'none';
       script-src 'unsafe-eval' ${webview.cspSource};
       style-src ${webview.cspSource} 'unsafe-inline';
+      font-src ${webview.cspSource};
     ">
     <style>html,body,#app{height:100%;margin:0;padding:0;}body{overflow:hidden;}</style>
   </head>

@@ -1,19 +1,22 @@
 import type { Node, Edge } from 'reactflow';
 
-// 保存到本地（localStorage）
+/**
+ * 保存拓扑到本地存储
+ * 将节点和边的状态保存到 localStorage。
+ * @param nodes 节点数组
+ * @param edges 边数组
+ */
 export function saveTopologyToLocalStorage(nodes: Node[], edges: Edge[]) {
   const state = { nodes, edges };
   localStorage.setItem('vlab_topology', JSON.stringify(state, null, 2));
 }
 
-// 新增：定义连接项类型
-// 原来固定 addr，改为动态属性
-type ConnectionItem = {
-  from: { id: string };
-  to: { id: any; [key: string]: any };
-};
-
-// 导出 JSON 文件
+/**
+ * 导出拓扑为 JSON 文件
+ * 构造版本号、组件列表和连接列表，并导出为 JSON 文件。
+ * @param nodes 节点数组
+ * @param edges 边数组
+ */
 export function exportTopologyJson(nodes: Node[], edges: Edge[]) {
   // 构造版本号
   const version = '1.0';
@@ -130,3 +133,8 @@ export function getSavedTopologyNames(): string[] {
 export function deleteTopologyByName(name: string) {
   localStorage.removeItem(`vlab_${name}`);
 }
+
+type ConnectionItem = {
+  from: { id: string };
+  to: { id: any; [key: string]: any };
+};

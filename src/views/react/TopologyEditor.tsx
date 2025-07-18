@@ -225,7 +225,12 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
   // 右键菜单逻辑
   const handleNodeContextMenu: NodeMouseHandler = useCallback((event, node) => {
     event.preventDefault();
-    setContextMenu({ x: event.clientX, y: event.clientY, nodeId: node.id });
+    if (reactFlowWrapper.current) {
+      const canvasBounds = reactFlowWrapper.current.getBoundingClientRect();
+      const x = event.clientX - canvasBounds.left;
+      const y = event.clientY - canvasBounds.top;
+      setContextMenu({ x, y, nodeId: node.id });
+    }
   }, []);
 
   // 删除节点逻辑
@@ -241,9 +246,12 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
     setIsDirty(true);
     const newLabel = prompt('请输入新名称:');
     if (newLabel) {
-      setNodes(ns =>
-        ns.map(n => (n.id === nodeId ? { ...n, data: { ...n.data, label: newLabel } } : n))
-      );
+      setNodes(ns => {
+        const updatedNodes = ns.map(n => (
+          n.id === nodeId ? { ...n, data: { ...n.data, label: newLabel, displayName: newLabel } } : n
+        ));
+        return [...updatedNodes];
+      });
     }
   }, []);
 

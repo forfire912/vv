@@ -136,20 +136,22 @@ body {
 .toolbar-button {
   display: flex;
   align-items: center;
+  justify-content: center; /* 确保内容居中 */
   background-color: var(--btn-bg);
   color: var(--btn-text);
   border: 1px solid var(--btn-bg);
   border-radius: 3px;
-  padding: 5px 10px;
+  padding: 5px 8px; /* 减小按钮内边距 */
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.2s, border-color 0.2s;
-  min-width: 100px; /* 增加按钮的最小宽度 */
+  min-width: 80px; /* 减小按钮宽度 */
 }
 
 .toolbar-button:hover {
   background-color: var(--btn-hover-bg, #005a9e);
   border-color: var(--btn-hover-border, #005a9e);
+  color: var(--btn-hover-text, #ffffff); /* 增强对比度 */
 }
 
 .toolbar-button i {
@@ -382,20 +384,22 @@ input[type="number"] {
 .toolbar-button {
   display: flex;
   align-items: center;
+  justify-content: center; /* 确保内容居中 */
   background-color: var(--btn-bg);
   color: var(--btn-text);
   border: 1px solid var(--btn-bg);
   border-radius: 3px;
-  padding: 5px 10px;
+  padding: 5px 8px; /* 减小按钮内边距 */
   font-size: 14px;
   cursor: pointer;
   transition: background-color 0.2s, border-color 0.2s;
-  min-width: 100px; /* 增加按钮的最小宽度 */
+  min-width: 80px; /* 减小按钮宽度 */
 }
 
 .toolbar-button:hover {
   background-color: var(--btn-hover-bg, #005a9e);
   border-color: var(--btn-hover-border, #005a9e);
+  color: var(--btn-hover-text, #ffffff); /* 增强对比度 */
 }
 
 .toolbar-icon {

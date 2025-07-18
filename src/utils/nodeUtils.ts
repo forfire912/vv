@@ -1,14 +1,26 @@
 import type { Node, Edge } from 'reactflow';
 import type { CpuNodeData, PeripheralNodeData, InterfaceItem } from '../types/nodes';
 
-// 查找所有CPU节点
+/**
+ * 查找所有 CPU 节点
+ * 从节点数组中过滤出类型为 CPU 的节点。
+ * @param nodes 节点数组
+ * @returns CPU 节点数组
+ */
 export function getAllCpuNodes(nodes: Node[]): Node<CpuNodeData>[] {
   return nodes.filter(
     n => typeof n.data?.type === 'string' && n.data.type.toLowerCase() === 'cpu'
   ) as Node<CpuNodeData>[];
 }
 
-// 查找与指定外设节点相连的CPU节点
+/**
+ * 查找与指定外设节点相连的 CPU 节点
+ * 根据边数组和 CPU 节点数组，查找与指定节点相连的 CPU 节点。
+ * @param selectedNodeId 外设节点 ID
+ * @param edges 边数组
+ * @param cpuNodes CPU 节点数组
+ * @returns 连接的 CPU 节点
+ */
 export function getConnectedCpuNode(selectedNodeId: string, edges: Edge[], cpuNodes: Node<CpuNodeData>[]): Node<CpuNodeData> | undefined {
   const edge = edges.find(
     e =>
