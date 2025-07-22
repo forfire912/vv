@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+// ...existing code...
 import { getConnectedCpuNode } from "../../utils/topology";
 import type { Node, Edge } from "reactflow";
 
@@ -16,6 +17,7 @@ const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
 }) => {
   const [connectedCpuId, setConnectedCpuId] = useState<string>("");
   const [allowedInterfaces, setAllowedInterfaces] = useState<string[]>([]);
+  // ...existing code...
 
   useEffect(() => {
     if (!selectedNode) {
@@ -66,36 +68,34 @@ const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
     }
   }, [selectedNode, nodes, edges]);
 
+  // ...existing code...
+
   if (!selectedNode) return null;
 
   const cpuNodes = nodes.filter(n => n.data.type === "cpu");
-  const cpuNode = cpuNodes.find(n => n.id === connectedCpuId) 
-                || (selectedNode.data.type === "cpu" ? selectedNode : undefined);
+  const cpuNode = cpuNodes.find(n => n.id === connectedCpuId)
+    || (selectedNode.data.type === "cpu" ? selectedNode : undefined);
 
   return (
     <div className="properties-panel">
       <div className="properties-header">
         <h3>节点属性</h3>
       </div>
-      
       <div className="properties-section">
         <div className="property-group">
           <div className="property-label">标识</div>
           <div className="property-value">{selectedNode.id}</div>
         </div>
-        
         <div className="property-group">
           <div className="property-label">模型</div>
           <div className="property-value">{selectedNode.data.name || selectedNode.data.label}</div>
         </div>
-        
         <div className="property-group">
           <div className="property-label">类型</div>
           <div className="property-value property-tag">
             {selectedNode.data.type === "cpu" ? "处理器" : "外设"}
           </div>
         </div>
-        
         <div className="property-group">
           <div className="property-label">名称</div>
           <input
@@ -106,7 +106,6 @@ const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
             placeholder="输入自定义名称"
           />
         </div>
-
         {selectedNode.data.type === "cpu" && cpuNode && (
           <>
             <h4 className="section-title">接口属性</h4>
@@ -134,7 +133,6 @@ const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
             </div>
           </>
         )}
-
         {selectedNode.data.type === "device" && (
           <>
             <h4 className="section-title">外设连接</h4>
@@ -178,7 +176,6 @@ const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
                 ))}
               </select>
             </div>
-
             {selectedNode.data.config?.selectedInterface && cpuNode && (
               (() => {
                 const ifaceDef = cpuNode.data.interfaces.find((i: any) => i.type === selectedNode.data.config.selectedInterface);
@@ -228,6 +225,6 @@ const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default NodePropertiesPanel;

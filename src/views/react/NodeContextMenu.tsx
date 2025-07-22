@@ -5,10 +5,11 @@ interface Props {
   y: number;
   onRename: () => void;
   onDelete: () => void;
+  onAddStimulus?: () => void;
   onClose: () => void;
 }
 
-const NodeContextMenu: React.FC<Props> = ({ x, y, onRename, onDelete, onClose }) => (
+const NodeContextMenu: React.FC<Props> = ({ x, y, onRename, onDelete, onAddStimulus, onClose }) => (
   <div
     style={{
       position: "absolute",
@@ -21,8 +22,9 @@ const NodeContextMenu: React.FC<Props> = ({ x, y, onRename, onDelete, onClose })
     }}
     onMouseLeave={onClose}
   >
-    <div style={{ padding: 8, cursor: "pointer" }} onClick={() => { onRename(); onClose(); }}>重命名</div>
+    <div style={{ padding: 8, cursor: "pointer" }} onClick={() => { onRename(); onClose(); }}>节点属性</div>
     <div style={{ padding: 8, cursor: "pointer" }} onClick={() => { onDelete(); onClose(); }}>删除</div>
+    <div style={{ padding: 8, cursor: "pointer" }} onClick={() => { onAddStimulus && onAddStimulus(); onClose(); }}>新增激励</div>
   </div>
 );
 

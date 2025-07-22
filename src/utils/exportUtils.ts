@@ -109,12 +109,12 @@ export function exportTopologyRepl(nodes: Node[], edges: Edge[]) {
 }
 
 // 保存到 localStorage（按名称）
-export function saveTopologyByName(name: string, nodes: Node[], edges: Edge[]) {
-  localStorage.setItem(`vlab_${name}`, JSON.stringify({ nodes, edges }));
+export function saveTopologyByName(name: string, nodes: Node[], edges: Edge[], stimulusList?: any[]) {
+  localStorage.setItem(`vlab_${name}`, JSON.stringify({ nodes, edges, stimulusList }));
 }
 
 // 读取指定名称的拓扑
-export function loadTopologyByName(name: string): { nodes: Node[]; edges: Edge[] } | null {
+export function loadTopologyByName(name: string): { nodes: Node[]; edges: Edge[]; stimulusList?: any[] } | null {
   const item = localStorage.getItem(`vlab_${name}`);
   return item ? JSON.parse(item) : null;
 }
