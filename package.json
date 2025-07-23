@@ -113,11 +113,13 @@
     "@types/antd": "0.12.32",
     "@vscode/codicons": "0.0.38",
     "antd": "5.26.6",
-    "node-machine-id": "^1.1.12",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "reactflow": "^11.11.4",
     "vsce": "^2.15.0"
+  },
+  "optionalDependencies": {
+    "node-machine-id": "^1.1.12"
   },
   "repository": {
     "type": "git",

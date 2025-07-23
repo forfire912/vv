@@ -18,7 +18,8 @@ module.exports = [
     target: 'node',
     entry: './src/extension.ts',
     externals: {
-      vscode: 'commonjs vscode' // vscode模块不应该被打包
+      vscode: 'commonjs vscode', // vscode模块不应该被打包
+      'node-machine-id': 'commonjs node-machine-id' // 动态加载，避免打包问题
     },
     output: {
       path: path.resolve(__dirname, 'dist'),

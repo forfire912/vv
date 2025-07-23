@@ -1,11 +1,20 @@
 import * as vscode from 'vscode';
-import { machineIdSync } from 'node-machine-id';
 import * as os from 'os';
 import { execSync } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as crypto from 'crypto';
 import { startVlabViewer } from './views/VlabViewerPanel';
+import { checkExtensionEnvironment, getPlatformInfo, safeExecSync, isFileReadable } from './utils/platform-utils';
+
+// 动态导入 node-machine-id，避免在不支持的平台上出错
+let machineIdSync: any;
+try {
+  machineIdSync = require('node-machine-id').machineIdSync;
+} catch (err) {
+  console.warn('[VlabViewer] node-machine-id 包加载失败，将使用备用方案');
+  machineIdSync = null;
+}
 
 // 日志工具函数
 const LOG_PREFIX = '[VlabViewer]';
@@ -26,21 +35,62 @@ const log = {
  */
 function getHardwareId(): string {
   log.debug('获取硬件标识...');
+  const platformInfo = getPlatformInfo();
+  log.debug(`运行平台: ${platformInfo.platform} ${platformInfo.arch}`);
+  
+  // 1. 尝试获取 CPU 序列号
   try {
-    if (process.platform === 'win32') {
-      log.debug('尝试获取 CPU 序列号...');
-      const out = execSync('wmic cpu get ProcessorId /value').toString();
-      const match = out.match(/ProcessorId=(.+)/i);
-      if (match && match[1].trim()) {
-        const id = match[1].trim();
-        log.debug(`已获取 CPU 序列号: ${id.substring(0, 4)}...`);
-        return id;
+    if (platformInfo.isWindows) {
+      log.debug('Windows 系统，尝试获取 CPU 序列号...');
+      const out = safeExecSync('wmic cpu get ProcessorId /value');
+      if (out) {
+        const match = out.match(/ProcessorId=(.+)/i);
+        if (match && match[1].trim()) {
+          const id = match[1].trim();
+          log.debug(`已获取 CPU 序列号: ${id.substring(0, 4)}...`);
+          return id;
+        }
+      }
+    } else if (platformInfo.isLinux) {
+      log.debug('Linux 系统，尝试获取 CPU 信息...');
+      if (isFileReadable('/proc/cpuinfo')) {
+        try {
+          const cpuInfo = fs.readFileSync('/proc/cpuinfo', 'utf8');
+          const serialMatch = cpuInfo.match(/Serial\s*:\s*([a-f0-9]+)/i);
+          if (serialMatch && serialMatch[1]) {
+            log.debug(`已获取 CPU 序列号: ${serialMatch[1]}`);
+            return serialMatch[1];
+          }
+          
+          // 如果没有序列号，尝试使用 processor 信息创建唯一标识
+          const processorMatch = cpuInfo.match(/processor\s*:\s*(\d+)/);
+          const modelMatch = cpuInfo.match(/model name\s*:\s*(.+)/);
+          if (processorMatch && modelMatch) {
+            const uniqueId = crypto.createHash('md5')
+              .update(modelMatch[1] + processorMatch[1])
+              .digest('hex');
+            log.debug(`使用 CPU 模型信息生成标识: ${uniqueId.substring(0, 8)}...`);
+            return uniqueId;
+          }
+        } catch (err) {
+          log.debug(`读取 /proc/cpuinfo 失败: ${err instanceof Error ? err.message : String(err)}`);
+        }
+      }
+    } else if (platformInfo.isMacOS) {
+      log.debug('macOS 系统，尝试获取硬件 UUID...');
+      const hwUuid = safeExecSync('system_profiler SPHardwareDataType | grep "Hardware UUID"');
+      if (hwUuid) {
+        const match = hwUuid.match(/Hardware UUID:\s*([A-F0-9-]+)/);
+        if (match && match[1]) {
+          log.debug(`已获取硬件 UUID: ${match[1].substring(0, 8)}...`);
+          return match[1];
+        }
       }
     }
   } catch (err) {
     log.debug(`获取 CPU 序列号失败: ${err instanceof Error ? err.message : String(err)}`);
   }
-  
+
   try {
     log.debug('尝试获取网卡 MAC 地址...');
     const nets = os.networkInterfaces();
@@ -55,16 +105,42 @@ function getHardwareId(): string {
   } catch (err) {
     log.debug(`获取网卡 MAC 地址失败: ${err instanceof Error ? err.message : String(err)}`);
   }
-  
-  // 最后回退到 machineId
-  log.debug('回退到 machineId...');
+
+  // 3. 使用 node-machine-id（如果可用）
+  if (machineIdSync) {
+    log.debug('尝试使用 node-machine-id...');
+    try {
+      const id = machineIdSync();
+      log.debug('已获取 machineId');
+      return id;
+    } catch (err) {
+      log.debug(`node-machine-id 获取失败: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }
+
+  // 4. 最后的备用方案：使用系统信息生成唯一标识
+  log.debug('使用系统信息生成备用标识...');
   try {
-    const id = machineIdSync();
-    log.debug('已获取 machineId');
-    return id;
+    const systemInfo = {
+      platform: platformInfo.platform,
+      arch: platformInfo.arch,
+      hostname: platformInfo.hostname,
+      userInfo: platformInfo.username,
+      release: platformInfo.release
+    };
+    
+    const fallbackId = crypto.createHash('md5')
+      .update(JSON.stringify(systemInfo))
+      .digest('hex');
+    
+    log.debug(`生成备用标识: ${fallbackId.substring(0, 8)}...`);
+    return fallbackId;
   } catch (err) {
-    log.error('获取所有硬件标识均失败', err);
-    throw new Error('无法获取可用的硬件标识');
+    log.error('生成备用标识失败', err);
+    // 如果所有方法都失败，使用随机标识
+    const randomId = crypto.randomBytes(16).toString('hex');
+    log.warn(`使用随机标识: ${randomId.substring(0, 8)}...`);
+    return randomId;
   }
 }
 
@@ -147,6 +223,29 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 
   logToConsole('🔄 VlabViewer 扩展激活中...');
+  
+  // 环境检查
+  try {
+    const envCheck = checkExtensionEnvironment();
+    if (!envCheck.isValid) {
+      log.warn('环境检查发现问题:');
+      envCheck.issues.forEach(issue => log.warn(`  - ${issue}`));
+      logToConsole(`⚠️ 环境问题: ${envCheck.issues.join(', ')}`);
+      vscode.window.showWarningMessage(
+        `VlabViewer: 检测到环境问题，可能影响部分功能。详情请查看输出面板。`,
+        '查看详情'
+      ).then(selection => {
+        if (selection === '查看详情') {
+          vscode.commands.executeCommand('workbench.action.output.toggleOutput');
+        }
+      });
+    } else {
+      log.info(`环境检查通过 - 平台: ${envCheck.info.platform} ${envCheck.info.arch}`);
+      logToConsole(`✅ 环境检查通过 - 平台: ${envCheck.info.platform} ${envCheck.info.arch}`);
+    }
+  } catch (err) {
+    logToConsole(`❌ 环境检查失败: ${err}`);
+  }
   
   try {
     // 简化命令注册 - 直接方式
