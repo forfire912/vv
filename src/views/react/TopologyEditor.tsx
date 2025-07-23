@@ -6,7 +6,7 @@ import ReactFlow, {
 import StimulusPanel from './StimulusPanel';
 import StimulusEditPanel from './StimulusEditPanel';
 import NodePropertiesPanel from './NodePropertiesPanel';
-import { Tabs } from 'antd';
+import { Tabs, Button } from 'antd';
 import ComponentPalette from './ComponentPalette';
 import NodeContextMenu from './NodeContextMenu'; // 确保正确导入
 import { useConfigContext } from '../../context/ConfigContext';
@@ -267,6 +267,10 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
         setStimulusList(stimuli); // 加载处理后的激励列表
         setCurrentName(name);
         
+        // 重置激励作用目标过滤器为未选中状态
+        // 这样激励列表会显示所有激励，不会因为上一个拓扑的过滤条件而看不到部分激励
+        setStimulusTargetFilter(undefined);
+        
         // 显示加载提示
         const message = nodeNameMap.size === fixedNodes.length 
           ? `已加载拓扑 "${name}"，包含 ${stimuli.length} 个激励项`
@@ -292,6 +296,8 @@ const handleNew = useCallback(() => {
         setStimulusList([]);
         setCurrentName('');
         setIsDirty(false);
+        // 重置激励作用目标过滤器
+        setStimulusTargetFilter(undefined);
         setToastMsg('新建成功'); // 提示新建成功
         setTimeout(() => setToastMsg(null), 2000);
     }
@@ -357,11 +363,21 @@ const handleNew = useCallback(() => {
 
   // 节点选中逻辑
   const handleNodeClick: NodeMouseHandler = useCallback((_, node) => {
+    // 如果正在编辑激励，询问用户是否要切换节点（这会取消当前编辑）
+    if (editStimulus && rightTab === 'stimulus') {
+      // 暂时简化处理：直接切换，不弹确认框
+      // 未来可以添加确认对话框
+      setEditStimulus(null);
+    }
+    
     setSelectedNodeId(node.id);
     // 选中节点后，将节点名称作为激励列表作用目标筛选值
     const nodeName = node.data.displayName || node.data.label || node.data.name || node.id;
     setStimulusTargetFilter(nodeName);
-  }, []);
+    
+    // 默认切到节点属性标签
+    setRightTab('props');
+  }, [editStimulus, rightTab]);
 
   // 右键菜单逻辑
   const handleNodeContextMenu: NodeMouseHandler = useCallback((event, node) => {
@@ -540,13 +556,52 @@ const handleNew = useCallback(() => {
 
   // 新增激励
   const handleAddStimulus = () => {
-    setEditStimulus({}); // 传递空对象，弹出编辑面板
-    setRightTab('stimulus'); // 新增时自动切到激励编辑Tab
+    // 先设置为null
+    setEditStimulus(null);
+    
+    // 切换到激励编辑Tab
+    setRightTab('stimulus');
+    
+    // 延迟设置激励对象，确保组件已更新
+    setTimeout(() => {
+      const enhancedStimulus = {
+        _timestamp: Date.now(), // 添加时间戳，强制组件认为是新数据
+        _key: Math.random().toString(36).substring(2), // 增加随机键
+        isNew: true // 标记为新增
+      };
+      console.log('新增激励:', enhancedStimulus);
+      setEditStimulus(enhancedStimulus);
+    }, 100);
   };
   // 编辑激励
   const handleEditStimulus = (stimulus: Stimulus) => {
-    setEditStimulus(stimulus);
-    setRightTab('stimulus'); // 编辑时自动切到激励编辑Tab
+    console.log('编辑激励, 原始数据:', stimulus);
+    
+    // 创建带有唯一标记的激励数据副本
+    const enhancedStimulus = {
+      ...stimulus,
+      _timestamp: Date.now(), // 添加时间戳，强制组件认为是新数据
+      _key: Math.random().toString(36).substring(2) // 增加随机键，进一步确保数据变化
+    };
+    
+    // 立即切换到激励Tab
+    setRightTab('stimulus');
+    
+    // 先设置为null，然后再设置为新值，强制组件重新挂载
+    setEditStimulus(null);
+    
+    // 添加一个较长延迟，确保状态更新完成且组件已卸载
+    setTimeout(() => {
+      console.log('设置编辑激励数据:', enhancedStimulus);
+      
+      // 保存要编辑的激励数据
+      setEditStimulus(enhancedStimulus);
+      
+      // 如果编辑激励前没有选中节点，记录一下状态，方便后续恢复
+      if (!selectedNodeId) {
+        console.log('无选中节点，编辑激励:', enhancedStimulus);
+      }
+    }, 100); // 增加延迟时间，给足够的时间让React更新DOM
   };
   // 删除激励
   const handleDeleteStimulus = (key: string) => {
@@ -600,8 +655,13 @@ const handleNew = useCallback(() => {
     
     // 更新状态
     setStimulusList(updatedStimulusList);
-    setEditStimulus(null); // 清空激励编辑表单
-    setRightTab('stimulus'); // 保存后自动切回激励编辑Tab
+    
+    // 先清空激励编辑状态
+    setEditStimulus(null);
+    
+    // 保存完成后立即显示激励列表Tab，而非继续停留在编辑Tab
+    // 这样用户可以看到刚保存的激励已经出现在列表中
+    setRightTab('stimulus');
     
     // 自动保存拓扑（如果有名称）
     if (currentName) {
@@ -693,18 +753,29 @@ const handleNew = useCallback(() => {
                         const node = nodes.find(n => n.id === contextMenu.nodeId);
                         const nodeName = node?.data?.displayName || node?.data?.label || node?.data?.name || node?.id;
                         
-                        // 设置激励编辑状态，并确保 targetName 被正确设置
-                        setEditStimulus({ 
-                          targetName: nodeName,
-                          target: nodeName, // 同时设置两个字段，确保一致性
-                          isNew: true // 标记为新增激励
-                        });
+                        // 先设置为null，然后切换Tab
+                        setEditStimulus(null);
+                        
+                        // 切换到激励编辑面板
+                        setRightTab('stimulus');
                         
                         // 设置激励目标过滤器，确保在保存后能看到该节点的所有激励
                         setStimulusTargetFilter(nodeName);
                         
-                        // 切换到激励编辑面板
-                        setRightTab('stimulus');
+                        // 延迟设置激励编辑状态，确保组件已更新
+                        setTimeout(() => {
+                          // 创建带有唯一标记的激励数据
+                          const enhancedStimulus = { 
+                            targetName: nodeName,
+                            target: nodeName, // 同时设置两个字段，确保一致性
+                            isNew: true, // 标记为新增激励
+                            _timestamp: Date.now(), // 添加时间戳，强制组件认为是新数据
+                            _key: Math.random().toString(36).substring(2) // 增加随机键
+                          };
+                          
+                          console.log('右键菜单新增激励:', enhancedStimulus);
+                          setEditStimulus(enhancedStimulus);
+                        }, 100);
                       }}
                       onClose={() => setContextMenu(null)}
                     />
@@ -799,15 +870,23 @@ const handleNew = useCallback(() => {
             flexShrink: 0, // 防止属性面板被压缩
           }}
         >
-          {selectedNodeId && (
+          {/* 只要是编辑激励或者选中了节点，就显示Tab页 */}
+          {(selectedNodeId || editStimulus) && (
             <Tabs
               activeKey={rightTab}
-              onChange={key => setRightTab(key as 'props' | 'stimulus')}
+              onChange={key => {
+                // 当从激励编辑切换到其他标签页时，如果没有选中节点，清空激励编辑状态
+                if (key !== 'stimulus' && !selectedNodeId && editStimulus) {
+                  setEditStimulus(null);
+                }
+                setRightTab(key as 'props' | 'stimulus');
+              }}
               items={[
                 {
                   key: 'props',
                   label: '节点属性',
-                  children: (
+                  disabled: !selectedNodeId, // 没有选中节点时禁用节点属性Tab
+                  children: selectedNodeId ? (
                     <NodePropertiesPanel
                       selectedNode={nodes.find(n => n.id === selectedNodeId) || null}
                       nodes={nodes}
@@ -816,19 +895,46 @@ const handleNew = useCallback(() => {
                       onCpuChange={handleCpuChange}
                       lang={lang}
                     />
-                  ),
+                  ) : <div className="empty-panel">请先选择一个节点</div>
                 },
                 {
                   key: 'stimulus',
                   label: '激励编辑',
-                  children: (
+                  children: editStimulus ? (
                     <StimulusEditPanel
+                      key={`stimulus-edit-${editStimulus._timestamp || Date.now()}`}
+                      stimulus={editStimulus}
                       initialValues={editStimulus}
                       onSave={handleSaveStimulus}
                       onCancel={() => setEditStimulus(null)}
                       nodeNames={nodes.filter(n => n.data?.type === 'cpu' || n.data?.type === 'device').map(n => n.data.displayName || n.data.label || n.data.name || n.id)}
                       theme={theme}
                     />
+                  ) : (
+                    <div style={{ padding: 20, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                      <div>正在准备编辑面板，请稍候...</div>
+                      <div style={{ fontSize: '12px', color: '#888' }}>
+                        (如果长时间未显示，请尝试再次点击激励列表中的"编辑"按钮)
+                      </div>
+                      <Button
+                        size="small" 
+                        type="link"
+                        onClick={() => {
+                          // 强制重新创建编辑面板
+                          setEditStimulus(null);
+                          setTimeout(() => {
+                            const forceStimulus = {
+                              _timestamp: Date.now(),
+                              _key: Math.random().toString(36).substring(2),
+                              _forceRefresh: true
+                            };
+                            setEditStimulus(forceStimulus);
+                          }, 100);
+                        }}
+                      >
+                        点击这里刷新
+                      </Button>
+                    </div>
                   ),
                 }
               ]}

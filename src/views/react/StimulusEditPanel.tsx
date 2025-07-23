@@ -24,18 +24,84 @@ interface StimulusEditPanelProps {
 const StimulusEditPanel: React.FC<StimulusEditPanelProps> = ({ stimulus, onSave, onCancel, nodeNames = [], initialValues, theme = 'light' }) => {
     const [form] = Form.useForm();
 
+    // 添加状态追踪组件的渲染情况
+    const [initialized, setInitialized] = React.useState(false);
+    const prevPropsRef = React.useRef({ stimulus, initialValues });
+    // 添加一个组件挂载状态追踪
+    const isMountedRef = React.useRef(false);
+    const initAttemptRef = React.useRef(0);
+
+    // 组件挂载时设置标志
+    React.useEffect(() => {
+        isMountedRef.current = true;
+        
+        return () => {
+            // 组件卸载时清除标志
+            isMountedRef.current = false;
+            initAttemptRef.current = 0;
+            setInitialized(false);
+        };
+    }, []);
+
     // 组件挂载或 stimulus/initialValues 变化时，重置表单
     React.useEffect(() => {
-        // 设置表单初始值的优先级：stimulus > initialValues
+        // 如果组件未挂载，不执行任何操作
+        if (!isMountedRef.current) return;
+        
+        // 获取真正有效的初始数据
         const initData = stimulus || initialValues || {};
+        const prevProps = prevPropsRef.current;
         
-        // 调试输出初始数据
-        console.log('StimulusEditPanel 初始数据:', initData);
+        // 增加尝试计数
+        initAttemptRef.current += 1;
         
-        // 重置表单并设置初始值
+        console.log('StimulusEditPanel 渲染:', { 
+            initialized, 
+            initAttempt: initAttemptRef.current,
+            hasData: Object.keys(initData).length > 0,
+            hasTimestamp: !!initData._timestamp,
+            hasKey: !!initData._key
+        });
+        
+        // 更新引用，用于下次比较
+        prevPropsRef.current = { stimulus, initialValues };
+        
+        // 重置并初始化表单
         form.resetFields();
+        
+        // 如果有初始值，设置到表单
         if (Object.keys(initData).length > 0) {
-            form.setFieldsValue(initData);
+            // 使用多级嵌套的 setTimeout 确保在不同浏览器中也能正确设置表单值
+            // 每次尝试的延迟时间递增，确保有足够的时间等待 DOM 更新
+            const delay = Math.min(initAttemptRef.current * 30, 200);
+            
+            setTimeout(() => {
+                if (!isMountedRef.current) return; // 再次检查组件是否已卸载
+                
+                try {
+                    console.log(`设置表单值 (延迟 ${delay}ms):`, initData);
+                    form.setFieldsValue(initData);
+                    setInitialized(true);
+                } catch (e) {
+                    console.error('设置表单值失败:', e);
+                    // 如果失败且尝试次数小于5次，再次尝试
+                    if (initAttemptRef.current < 5 && isMountedRef.current) {
+                        setTimeout(() => {
+                            if (isMountedRef.current) {
+                                try {
+                                    console.log('重试设置表单值:', initData);
+                                    form.setFieldsValue(initData);
+                                    setInitialized(true);
+                                } catch (e2) {
+                                    console.error('重试设置表单值失败:', e2);
+                                }
+                            }
+                        }, 100);
+                    }
+                }
+            }, delay);
+        } else {
+            setInitialized(true);
         }
     }, [stimulus, initialValues, form]);
 
@@ -122,7 +188,15 @@ const StimulusEditPanel: React.FC<StimulusEditPanelProps> = ({ stimulus, onSave,
       <div style={{ borderTop: '1px dashed #bbb', margin: '8px 0' }} />
       {/* 其余属性（如有）可继续分组或单独展示 */}
       <Form.Item wrapperCol={{ span: 24 }} style={{ textAlign: 'right', marginBottom: 0 }}>
-        <Button type="primary" size="small" onClick={handleSave}>保存</Button>
+        <Space>
+          {onCancel && (
+            <Button size="small" onClick={() => {
+              form.resetFields();
+              onCancel();
+            }}>取消</Button>
+          )}
+          <Button type="primary" size="small" onClick={handleSave}>保存</Button>
+        </Space>
       </Form.Item>
     </Form>
   );
