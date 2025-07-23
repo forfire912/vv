@@ -29,11 +29,31 @@ interface StimulusPanelProps {
 const StimulusPanel: React.FC<StimulusPanelProps> = ({ data = [], nodeNames = [], onAdd, onEdit, onDelete, targetFilter, onTargetFilterChange, theme = 'light' }) => {
   const [search, setSearch] = useState('');
 
-  const filteredData = data.filter(item => {
-    const matchTarget = !targetFilter || item.target === targetFilter;
-    const matchSearch = !search || item.name.includes(search) || item.description.includes(search);
+  // 确保 data 是数组并包含有效数据
+  const validData = Array.isArray(data) ? data : [];
+  
+  // 调试输出，查看数据内容
+  console.log('StimulusPanel data:', validData);
+
+  const filteredData = validData.filter(item => {
+    if (!item) return false; // 排除无效项
+    
+    // 对目标过滤的处理，检查 target 和 targetName 两个可能的字段
+    const matchTarget = !targetFilter || 
+      item.target === targetFilter || 
+      item.targetName === targetFilter;
+    
+    // 对搜索的处理
+    const matchSearch = !search || 
+      (item.name && item.name.includes(search)) || 
+      (item.description && item.description.includes(search));
+    
     return matchTarget && matchSearch;
   });
+  
+  // 调试输出过滤结果
+  console.log('过滤条件:', { targetFilter, search });
+  console.log('过滤后激励数据:', filteredData);
 
   // 操作列
   const actionColumn = {
@@ -73,12 +93,25 @@ const StimulusPanel: React.FC<StimulusPanelProps> = ({ data = [], nodeNames = []
         />
         <Button type="primary" onClick={() => onAdd && onAdd()}>增加</Button>
       </Space>
+      {/* 显示数据条数信息 */}
+      <div style={{ marginBottom: 4 }}>总计 {validData.length} 条数据，过滤后 {filteredData.length} 条</div>
       <Table
         columns={[...columns, actionColumn]}
         dataSource={filteredData}
         pagination={false}
         size="small"
         rowKey="key"
+        expandable={{
+          expandedRowRender: record => (
+            <div>
+              <p>Key: {record.key}</p>
+              <p>时间类型: {record.timeType}</p>
+              <p>位置类型: {record.placeType}</p>
+              <p>激励次数: {record.count}</p>
+              <p>其他数据: {JSON.stringify(record)}</p>
+            </div>
+          ),
+        }}
       />
     </div>
   );

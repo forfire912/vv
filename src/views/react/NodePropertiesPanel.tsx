@@ -98,13 +98,31 @@ const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
         </div>
         <div className="property-group">
           <div className="property-label">名称</div>
-          <input
-            className="properties-input"
-            type="text"
-            value={selectedNode.data.displayName || ""}
-            onChange={e => onChange(selectedNode.id, "displayName", e.target.value)}
-            placeholder="输入自定义名称"
-          />
+          <div style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+            <input
+              className="properties-input"
+              type="text"
+              value={selectedNode.data.displayName || ""}
+              onChange={e => onChange(selectedNode.id, "displayName", e.target.value)}
+              placeholder="输入自定义名称"
+              style={{ 
+                borderColor: nodes.some(node => 
+                  node.id !== selectedNode.id && 
+                  (node.data.displayName === selectedNode.data.displayName || 
+                   node.data.label === selectedNode.data.displayName)
+                ) ? 'red' : undefined 
+              }}
+            />
+            {nodes.some(node => 
+              node.id !== selectedNode.id && 
+              (node.data.displayName === selectedNode.data.displayName || 
+               node.data.label === selectedNode.data.displayName)
+            ) && (
+              <div style={{ color: 'red', fontSize: '12px', marginTop: '2px' }}>
+                警告：该名称已被其他节点使用
+              </div>
+            )}
+          </div>
         </div>
         {selectedNode.data.type === "cpu" && cpuNode && (
           <>

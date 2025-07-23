@@ -31,15 +31,43 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
   const [isDirty, setIsDirty] = useState(false);
   // 保存拓扑，支持输入名称
   const handleSave = useCallback(() => {
+    // 检查节点名称是否唯一
+    const nodeNames = new Map();
+    let hasDuplicates = false;
+    
+    nodes.forEach(node => {
+      const displayName = node.data.displayName || node.data.label;
+      if (nodeNames.has(displayName)) {
+        hasDuplicates = true;
+        nodeNames.set(displayName, nodeNames.get(displayName) + 1);
+      } else {
+        nodeNames.set(displayName, 1);
+      }
+    });
+    
+    // 如果存在重复名称，提示用户并阻止保存
+    if (hasDuplicates) {
+      // 生成重复名称列表
+      const duplicates = Array.from(nodeNames.entries())
+        .filter(([_, count]) => count > 1)
+        .map(([name, _]) => name)
+        .join(', ');
+      
+      setToastMsg(`保存失败：存在重复的节点名称 (${duplicates})，请修改后再保存`);
+      setTimeout(() => setToastMsg(null), 4000);
+      return;
+    }
+    
+    // 名称检查通过，正常保存
     if (currentName) {
-      saveTopologyByName(currentName, nodes, edges); // 只保存 nodes 和 edges
+      saveTopologyByName(currentName, nodes, edges, stimulusList); // 保存 nodes、edges 和 stimulusList
       setIsDirty(false);
       setToastMsg('保存成功');
       setTimeout(() => setToastMsg(null), 2000);
     } else {
       vscode.postMessage({ type: 'prompt', text: '请输入保存名称:' });
     }
-  }, [currentName, nodes, edges, vscode]);
+  }, [currentName, nodes, edges, stimulusList, vscode]);
   const [reactFlowInstance, setReactFlowInstance] = useState<ReactFlowInstance | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark' | 'colorful'>('light');
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -87,7 +115,8 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
         if (data) {
           setNodes(data.nodes);
           setEdges(data.edges);
-          setStimulusList([]); // 切换拓扑时清空激励列表
+          // 如果有激励数据则加载，否则初始化为空数组
+          setStimulusList(data.stimulusList || []); 
           setCurrentName(name);
           setIsDirty(false);
         }
@@ -101,8 +130,8 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
       } else {
         // 默认当作保存
         setCurrentName(name);
-        console.log('保存拓扑:', name, nodes, edges);
-        saveTopologyByName(name, nodes, edges); // 只保存 nodes 和 edges
+        console.log('保存拓扑:', name, nodes, edges, stimulusList);
+        saveTopologyByName(name, nodes, edges, stimulusList); // 保存 nodes、edges 和 stimulusList
         setIsDirty(false);
       }
       setSavedList(getSavedTopologyNames());
@@ -132,7 +161,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
         // 用户选择要打开的新拓扑
         // 如果确认保存，则先保存当前
         if (confirmed && currentName) {
-          saveTopologyByName(currentName, nodes, edges); // 只保存 nodes 和 edges
+          saveTopologyByName(currentName, nodes, edges, stimulusList); // 保存 nodes、edges 和 stimulusList
           setIsDirty(false);
         }
         // 打开选中的拓扑
@@ -140,7 +169,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
         if (data) {
           setNodes(data.nodes);
           setEdges(data.edges);
-          setStimulusList([]); // 切换拓扑时清空激励列表
+          setStimulusList(data.stimulusList || []); // 加载保存的激励列表或初始化为空数组
           setCurrentName(name);
           setIsDirty(false);
         }
@@ -148,7 +177,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
       }
       else if (action === 'new') {
         if (confirmed && currentName) {
-          saveTopologyByName(currentName, nodes, edges); // 只保存 nodes 和 edges
+          saveTopologyByName(currentName, nodes, edges, stimulusList); // 保存 nodes、edges 和 stimulusList
           setIsDirty(false);
           setToastMsg('保存成功'); // 提示保存成功
           setTimeout(() => setToastMsg(null), 2000);
@@ -159,7 +188,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
         // 用户确认保存当前（action 可省略）
         if (confirmed) {
           if (currentName) {
-            saveTopologyByName(currentName, nodes, edges); // 只保存 nodes 和 edges
+            saveTopologyByName(currentName, nodes, edges, stimulusList); // 保存 nodes、edges 和 stimulusList
             setIsDirty(false);
           } else {
             vscode.postMessage({ type: 'prompt', text: '请输入保存名称:' });
@@ -185,10 +214,66 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
       const data = loadTopologyByName(name);
       if (data) {
         console.log('直接切换加载拓扑:', name, data);
-        setNodes(data.nodes);
+        console.log('加载的激励列表:', data.stimulusList);
+        
+        // 确保激励列表是一个数组且数据完整
+        let stimuli = Array.isArray(data.stimulusList) ? [...data.stimulusList] : [];
+        
+        // 确保每个激励项都有唯一的 key 字段
+        stimuli = stimuli.map(item => {
+          if (!item.key) {
+            return { ...item, key: `stim_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` };
+          }
+          return item;
+        });
+        
+        console.log('处理后的激励列表:', stimuli);
+        
+        // 检查并修复可能的节点名称重复问题
+        const loadedNodes = [...data.nodes];
+        const nodeNameMap = new Map();
+        const fixedNodes = loadedNodes.map((node, index) => {
+          const displayName = node.data.displayName || node.data.label;
+          
+          // 如果名称已存在，添加后缀编号
+          if (nodeNameMap.has(displayName)) {
+            const counter = nodeNameMap.get(displayName) + 1;
+            nodeNameMap.set(displayName, counter);
+            const newName = `${displayName}_${counter}`;
+            
+            // 提示用户节点名称已被修改
+            if (index === 0) { // 只显示一次提示，避免大量提示扰乱用户
+              console.log(`检测到重复节点名称 "${displayName}"，已自动重命名为 "${newName}"`);
+            }
+            
+            // 返回带有修正名称的节点
+            return {
+              ...node,
+              data: {
+                ...node.data,
+                displayName: newName,
+                label: newName
+              }
+            };
+          } else {
+            // 记录该名称已存在
+            nodeNameMap.set(displayName, 0);
+            return node;
+          }
+        });
+        
+        setNodes(fixedNodes);
         setEdges(data.edges);
-        setStimulusList([]); // 切换拓扑时清空激励列表
+        setStimulusList(stimuli); // 加载处理后的激励列表
         setCurrentName(name);
+        
+        // 显示加载提示
+        const message = nodeNameMap.size === fixedNodes.length 
+          ? `已加载拓扑 "${name}"，包含 ${stimuli.length} 个激励项`
+          : `已加载拓扑 "${name}"，包含 ${stimuli.length} 个激励项（已修复重复的节点名称）`;
+          
+        setToastMsg(message);
+        setTimeout(() => setToastMsg(null), 2000);
       }
       setIsDirty(false);
     }
@@ -228,8 +313,23 @@ const handleNew = useCallback(() => {
     }
   }, [currentName, savedList]);
 
-  // 节点拖动逻辑
+  // 节点拖动和属性更新逻辑
   const handleNodeChange = useCallback((id: string, key: string, value: any) => {
+    // 如果是修改节点名称，检查名称是否重复
+    if (key === 'displayName') {
+      // 检查是否有其他节点使用相同的名称
+      const isDuplicate = nodes.some(node => 
+        node.id !== id && 
+        (node.data.displayName === value || node.data.label === value)
+      );
+      
+      if (isDuplicate) {
+        setToastMsg('节点名称不能重复，请使用其他名称');
+        setTimeout(() => setToastMsg(null), 2000);
+        return; // 不更新节点名称
+      }
+    }
+    
     setIsDirty(true);
     setNodes(ns =>
       ns.map(n => {
@@ -244,7 +344,7 @@ const handleNew = useCallback(() => {
         return { ...n, data: newData };
       })
     );
-  }, []);
+  }, [nodes]);
 
   // 连线处理逻辑
   const handleConnect = useCallback((params: Connection | FlowEdge) => {
@@ -379,23 +479,44 @@ const handleNew = useCallback(() => {
     });
 
     const id = `${item.type}_${Date.now()}`;
-    const initName = item.label || item.name;
-    setNodes(ns => [
-      ...ns,
-      {
-        id,
-        type: 'default',
-        position,
-        data: {
-          label: initName,
-          displayName: initName,
-          type: item.type,
-          name: item.name,
-          interfaces: item.interfaces,
-          config: {},
+    let initName = item.label || item.name;
+    
+    // 检查名称是否重复，如果重复则自动添加后缀编号
+    setNodes(ns => {
+      // 检查是否有同名节点
+      const existingNames = ns.map(node => node.data.displayName || node.data.label);
+      
+      // 如果名称重复，添加后缀编号
+      if (existingNames.includes(initName)) {
+        let counter = 1;
+        let newName = `${initName}_${counter}`;
+        
+        // 循环递增计数器，直到找到一个不重复的名称
+        while (existingNames.includes(newName)) {
+          counter++;
+          newName = `${initName}_${counter}`;
+        }
+        
+        initName = newName;
+      }
+      
+      return [
+        ...ns,
+        {
+          id,
+          type: 'default',
+          position,
+          data: {
+            label: initName,
+            displayName: initName,
+            type: item.type,
+            name: item.name,
+            interfaces: item.interfaces,
+            config: {},
+          },
         },
-      },
-    ]);
+      ];
+    });
   }, [reactFlowInstance]);
 
   const handleDragOver = useCallback((event: React.DragEvent) => {
@@ -429,34 +550,69 @@ const handleNew = useCallback(() => {
   };
   // 删除激励
   const handleDeleteStimulus = (key: string) => {
+    setIsDirty(true); // 标记修改状态，以便提示保存
     setStimulusList(list => list.filter(item => item.key !== key));
     // 如果正在编辑被删除项，则清理编辑状态
     if (editStimulus && editStimulus.key === key) setEditStimulus(null);
   };
   // 保存激励
   const handleSaveStimulus = (values: any) => {
+    console.log('开始保存激励:', values);
+    console.log('当前激励列表:', stimulusList);
+    
+    // 验证输入数据的完整性
+    if (!values || !values.name || !values.targetName) {
+      setToastMsg('激励数据不完整，请检查必填字段');
+      setTimeout(() => setToastMsg(null), 2000);
+      return;
+    }
+    
     // 校验激励名称不能重复（除当前编辑项外）
     const nameExists = stimulusList.some(item => item.name === values.name && (!editStimulus || item.key !== editStimulus.key));
     if (nameExists) {
-        setToastMsg('激励名称不能重复');
-        setTimeout(() => setToastMsg(null), 2000);
-        return;
+      setToastMsg('激励名称不能重复');
+      setTimeout(() => setToastMsg(null), 2000);
+      return;
     }
+    
+    // 标记修改状态，以便提示保存
+    setIsDirty(true);
+    
     // 保证作用对象字段正确，并绑定当前拓扑名
     const newStimulus = {
         ...values,
         target: values.targetName, // 修正为表单的 targetName 字段
-        key: editStimulus ? editStimulus.key : `${Date.now()}`,
-        topologyName: currentName // 新增字段，绑定当前拓扑
+        targetName: values.targetName, // 确保两个字段保持一致
+        key: editStimulus ? editStimulus.key : `stim_${Date.now()}`,
+        topologyName: currentName, // 新增字段，绑定当前拓扑
+        timestamp: Date.now() // 添加时间戳，便于排序和调试
     };
+    
+    // 创建更新后的激励列表
+    let updatedStimulusList: Stimulus[];
     if (editStimulus) {
-        setStimulusList(list => list.map(item => item.key === editStimulus.key ? newStimulus : item));
+        updatedStimulusList = stimulusList.map(item => 
+            item.key === editStimulus.key ? newStimulus : item
+        );
     } else {
-        setStimulusList(list => [...list, newStimulus]); // 确保新增激励正确添加到列表
+        updatedStimulusList = [...stimulusList, newStimulus];
     }
+    
+    // 更新状态
+    setStimulusList(updatedStimulusList);
     setEditStimulus(null); // 清空激励编辑表单
     setRightTab('stimulus'); // 保存后自动切回激励编辑Tab
-    setToastMsg('激励保存成功');
+    
+    // 自动保存拓扑（如果有名称）
+    if (currentName) {
+        // 使用更新后的激励列表直接保存，而不是等待状态更新
+        console.log('保存激励到拓扑, 更新后的激励列表:', updatedStimulusList);
+        saveTopologyByName(currentName, nodes, edges, updatedStimulusList);
+        setToastMsg('激励已保存并更新拓扑');
+        setIsDirty(false);
+    } else {
+        setToastMsg('激励已添加，请保存拓扑以持久化');
+    }
     setTimeout(() => setToastMsg(null), 2000);
   };
 
@@ -536,7 +692,18 @@ const handleNew = useCallback(() => {
                       onAddStimulus={() => {
                         const node = nodes.find(n => n.id === contextMenu.nodeId);
                         const nodeName = node?.data?.displayName || node?.data?.label || node?.data?.name || node?.id;
-                        setEditStimulus({ targetName: nodeName });
+                        
+                        // 设置激励编辑状态，并确保 targetName 被正确设置
+                        setEditStimulus({ 
+                          targetName: nodeName,
+                          target: nodeName, // 同时设置两个字段，确保一致性
+                          isNew: true // 标记为新增激励
+                        });
+                        
+                        // 设置激励目标过滤器，确保在保存后能看到该节点的所有激励
+                        setStimulusTargetFilter(nodeName);
+                        
+                        // 切换到激励编辑面板
                         setRightTab('stimulus');
                       }}
                       onClose={() => setContextMenu(null)}

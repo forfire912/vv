@@ -24,9 +24,28 @@ interface StimulusEditPanelProps {
 const StimulusEditPanel: React.FC<StimulusEditPanelProps> = ({ stimulus, onSave, onCancel, nodeNames = [], initialValues, theme = 'light' }) => {
     const [form] = Form.useForm();
 
+    // 组件挂载或 stimulus/initialValues 变化时，重置表单
+    React.useEffect(() => {
+        // 设置表单初始值的优先级：stimulus > initialValues
+        const initData = stimulus || initialValues || {};
+        
+        // 调试输出初始数据
+        console.log('StimulusEditPanel 初始数据:', initData);
+        
+        // 重置表单并设置初始值
+        form.resetFields();
+        if (Object.keys(initData).length > 0) {
+            form.setFieldsValue(initData);
+        }
+    }, [stimulus, initialValues, form]);
+
     const handleSave = () => {
         form.validateFields().then(values => {
             if (onSave) {
+                // 保存时也传递原始激励数据的关键信息
+                if (stimulus) {
+                    values.key = stimulus.key; // 保留原始 key
+                }
                 onSave(values);
             }
             // 保存成功后清空表单，确保可以新增多个激励
