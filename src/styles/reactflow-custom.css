@@ -1,41 +1,25 @@
+/* VS Code 风格的 ReactFlow 样式 */
+
+/* 节点选中和悬停状态 */
 .react-flow__node.selected {
-  outline: 3px solid var(--node-selected);
+  outline: 2px solid var(--node-selected);
+  outline-offset: 1px;
   z-index: 2;
 }
+
 .react-flow__node.hovered {
-  outline: 2px solid var(--node-hover);
+  outline: 1px solid var(--node-hover);
+  outline-offset: 1px;
 }
 
-/* Palette 样式优化 */
-.component-palette {
-  background: var(--palette-bg);
-  padding: 12px;
-  border-radius: 4px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-}
-.palette-section h4 {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-.palette-item {
-  background: #f8f9fa;
-  border: 1px solid #ddd;
-  padding: 8px 12px;
-  border-radius: 4px;
-  margin-bottom: 6px;
-  transition: background 0.2s;
-}
-.palette-item:hover {
-  background: #e3f2fd;
-}
-
-/* ReactFlow 节点样式 */
+/* ReactFlow 节点基础样式 */
 .react-flow__node {
   background: var(--node-bg);
   border: 1px solid var(--node-border);
-  border-radius: 4px;
+  border-radius: 2px; /* VS Code 小圆角 */
   color: var(--text);
+  font-size: 12px; /* 更小的字体 */
+  font-family: inherit;
   max-width: 120px;
   min-width: 60px;
   white-space: nowrap;
@@ -43,40 +27,107 @@
   text-overflow: ellipsis;
   padding: 4px 8px;
   box-sizing: border-box;
+  box-shadow: 0 1px 3px var(--shadow);
+  transition: box-shadow 0.1s ease;
 }
 
-/* 画布交互正常 */
-.react-flow__renderer {
-  pointer-events: auto;
+.react-flow__node:hover {
+  box-shadow: 0 2px 6px var(--shadow);
 }
 
-/* 删除重复的表单域及 .toolbar button margin 样式，已移至 global.css */
-
-/* 画布中间：主背景色 */
+/* 画布背景 - 使用新的拓扑面板背景色 */
 .canvas-panel {
-  /* 保留底色 */
-  background: var(--bg);
-  /* 点阵背景：10px 间距的灰色小点 */
-  background-image: radial-gradient(var(--node-border) 1px, transparent 1px);
-  background-size: 10px 10px;
+  background: var(--canvas-bg, var(--bg));
+  /* VS Code 风格的点阵背景 */
+  background-image: radial-gradient(circle, var(--divider) 0.5px, transparent 0.5px);
+  background-size: 20px 20px; /* 更大的网格间距 */
+  background-position: 0 0, 10px 10px;
 }
 
-/* 右侧属性面板：略微区分 */
-.properties-panel {
-  background: var(--palette-item-bg);
+/* 连接线样式 */
+.react-flow__edge-path {
+  stroke: var(--node-border);
+  stroke-width: 2;
 }
 
-/* 本地 toast 提示 */
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: var(--node-selected);
+  stroke-width: 3;
+}
+
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke: var(--node-hover);
+}
+
+/* 连接点样式 */
+.react-flow__handle {
+  background: var(--node-border);
+  border: 2px solid var(--node-bg);
+  width: 8px;
+  height: 8px;
+}
+
+.react-flow__handle.connectable:hover {
+  background: var(--node-selected);
+}
+
+.react-flow__handle.connecting {
+  background: var(--node-selected);
+}
+
+/* 控制按钮样式 */
+.react-flow__controls {
+  background: var(--palette-bg);
+  border: 1px solid var(--divider);
+  border-radius: 2px;
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.react-flow__controls-button {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border-bottom: 1px solid var(--divider);
+  width: 24px;
+  height: 24px;
+  font-size: 12px;
+}
+
+.react-flow__controls-button:hover {
+  background: var(--btn-hover-bg);
+}
+
+/* 迷你地图样式 */
+.react-flow__minimap {
+  background: var(--palette-bg);
+  border: 1px solid var(--divider);
+  border-radius: 2px;
+}
+
+.react-flow__minimap-mask {
+  fill: var(--node-selected);
+  fill-opacity: 0.2;
+  stroke: var(--node-selected);
+  stroke-width: 1;
+}
+
+.react-flow__minimap-node {
+  fill: var(--node-border);
+  stroke: none;
+}
+
+/* Toast 提示 */
 .toast {
-  position: absolute;
+  position: fixed;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(0,0,0,0.7);
-  color: #fff;
+  background: var(--toolbar-bg);
+  color: var(--toolbar-text);
   padding: 8px 16px;
-  border-radius: 4px;
+  border-radius: 2px;
   z-index: 10000;
-  font-size: 14px;
+  font-size: 13px;
   pointer-events: none;
+  box-shadow: 0 2px 8px var(--shadow);
+  border: 1px solid var(--divider);
 }

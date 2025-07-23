@@ -1,201 +1,328 @@
-/* 主题变量定义 */
+/* VS Code 主题变量定义 */
 :root[data-theme="light"] {
-  --bg: #fafafa;
-  --text: #333;
-  --toolbar-bg: #1976d2;
-  --toolbar-text: #fff;
-  --btn-bg: #fff;
-  --btn-text: #1976d2;
-  --palette-bg: #fff;
-  --palette-text: #000;
-  --palette-item-bg: #f0f0f0;
-  --palette-item-hover: #e0e0e0;
-  --node-bg: #fff;
-  --node-border: #bbb;
-  --node-selected: #1976d2;
-  --node-hover: #90caf9;
-  --input-bg: #fff;
-  --input-text: #000;
-  --input-border: #ccc;
+  /* VS Code Light (Default Light+) */
+  --bg: #ffffff;
+  --text: #3c3c3c;
+  --toolbar-bg: #f3f3f3;
+  --toolbar-text: #3c3c3c;
+  --btn-bg: transparent;
+  --btn-text: #3c3c3c;
+  --btn-hover-bg: rgba(0, 0, 0, 0.05);
+  --btn-hover-border: rgba(0, 0, 0, 0.1);
+  --btn-hover-text: #3c3c3c;
+  --palette-bg: #f8f8f8;
+  --palette-text: #3c3c3c;
+  --palette-item-bg: #ffffff;
+  --palette-item-hover: #e5e5e5;
+  --node-bg: #ffffff;
+  --node-border: #d4d4d4;
+  --node-selected: #0078d4;
+  --node-hover: #005a9e;
+  --input-bg: #ffffff;
+  --input-text: #3c3c3c;
+  --input-border: #d4d4d4;
+  --input-focus-border: #0078d4;
+  --shadow: rgba(0, 0, 0, 0.132);
+  --divider: #e5e5e5;
+  --section-header-bg: #f0f0f0;
+  --scrollbar-thumb: #c1c1c1;
+  --scrollbar-track: #f1f1f1;
+  /* 统一标签和标题文字颜色 */
+  --label-text: #2c2c2c; /* 深色标签文字 */
+  --title-text: #1a1a1a; /* 更深的标题文字 */
+  --secondary-text: #6a6a6a; /* 次要文字 */
+  /* 拓扑面板专用背景色 */
+  --canvas-bg: #fafafa; /* 稍微灰一些的拓扑面板背景 */
 }
 
 :root[data-theme="dark"] {
+  /* VS Code Dark (Default Dark+) */
   --bg: #1e1e1e;
-  --text: #ddd;
-  --toolbar-bg: #333;
-  --toolbar-text: #bb86fc;
-  --btn-bg: #555;
-  --btn-text: #fff;
-  --palette-bg: #2e2e2e;
-  --palette-text: #ddd;
-  --palette-item-bg: #3e3e3e;
-  --palette-item-hover: #555;
-  --node-bg: #2a2a2a;
-  --node-border: #444;
-  --node-selected: #bb86fc;
-  --node-hover: #ae94f4;
-  --input-bg: #555555;
-  --input-text: #fff;
-  --input-border: #777777;
+  --text: #cccccc;
+  --toolbar-bg: #2d2d30;
+  --toolbar-text: #cccccc;
+  --btn-bg: transparent;
+  --btn-text: #cccccc;
+  --btn-hover-bg: rgba(255, 255, 255, 0.1);
+  --btn-hover-border: rgba(255, 255, 255, 0.2);
+  --btn-hover-text: #ffffff;
+  --palette-bg: #252526;
+  --palette-text: #cccccc;
+  --palette-item-bg: #2d2d30;
+  --palette-item-hover: #37373d;
+  --node-bg: #2d2d30;
+  --node-border: #3e3e42;
+  --node-selected: #007acc;
+  --node-hover: #1177bb;
+  --input-bg: #3c3c3c;
+  --input-text: #cccccc;
+  --input-border: #3e3e42;
+  --input-focus-border: #007acc;
+  --shadow: rgba(0, 0, 0, 0.36);
+  --divider: #3e3e42;
+  --section-header-bg: #37373d;
+  --scrollbar-thumb: #424242;
+  --scrollbar-track: #2e2e2e;
+  /* 增强深色主题下的文字对比度 */
+  --label-text: #e5e5e5; /* 更亮的标签文字 */
+  --title-text: #ffffff; /* 更亮的标题文字 */
+  --secondary-text: #b3b3b3; /* 次要文字 */
+  /* 拓扑面板专用背景色 - 稍微亮一些 */
+  --canvas-bg: #2a2a2a; /* 比主背景稍亮的拓扑面板背景 */
 }
 
 :root[data-theme="colorful"] {
-  --bg: #f0f2f5;
-  --text: #212121;
-  --toolbar-bg: linear-gradient(45deg, #ff5722, #ff9800);
-  --toolbar-text: #fff;
-  --btn-bg: #2196f3;
-  --btn-text: #fff;
-  --palette-bg: #212121;
-  --palette-text: #fff;
-  --palette-item-bg: #424242;
-  --palette-item-hover: #1e88e5;
-  --node-bg: #fff;
-  --node-border: #2196f3;
-  --node-selected: #ff9800;
-  --node-hover: #ffc107;
+  /* VS Code High Contrast Light 风格 */
+  --bg: #ffffff;
+  --text: #000000;
+  --toolbar-bg: #0f4a85;
+  --toolbar-text: #ffffff;
+  --btn-bg: #ffffff;
+  --btn-text: #000000;
+  --btn-hover-bg: #0f4a85;
+  --btn-hover-border: #0f4a85;
+  --btn-hover-text: #ffffff;
+  --palette-bg: #f8f8f8;
+  --palette-text: #000000;
+  --palette-item-bg: #ffffff;
+  --palette-item-hover: #0f4a85;
+  --node-bg: #ffffff;
+  --node-border: #0f4a85;
+  --node-selected: #bf0000;
+  --node-hover: #7f0000;
   --input-bg: #ffffff;
-  --input-text: #212121;
-  --input-border: #cbd5e0;
+  --input-text: #000000;
+  --input-border: #0f4a85;
+  --input-focus-border: #bf0000;
+  --shadow: rgba(0, 0, 0, 0.25);
+  --divider: #0f4a85;
+  --section-header-bg: #e3f2fd;
+  --scrollbar-thumb: #0f4a85;
+  --scrollbar-track: #f0f0f0;
+  /* 高对比度文字颜色 */
+  --label-text: #000000; /* 纯黑标签文字 */
+  --title-text: #000000; /* 纯黑标题文字 */
+  --secondary-text: #333333; /* 深灰次要文字 */
+  /* 拓扑面板专用背景色 */
+  --canvas-bg: #f5f5f5; /* 稍微灰一些的拓扑面板背景 */
+  /* 高对比度按钮专用颜色 */
+  --btn-primary-bg: #bf0000; /* 主要按钮背景 */
+  --btn-primary-text: #ffffff; /* 主要按钮文字 */
+  --btn-primary-hover-bg: #7f0000; /* 主要按钮悬停背景 */
 }
 
-:root[data-theme="soft"] {
-  --bg: #f3f4f6;
-  --text: #2d3748;
-  --toolbar-bg: #e2e8f0;
-  --toolbar-text: #2d3748;
-  --btn-bg: #edf2f7;
-  --btn-text: #2d3748;
-  --palette-bg: #fff;
-  --palette-text: #2d3748;
-  --palette-item-bg: #edf2f7;
-  --palette-item-hover: #e2e8f0;
-  --node-bg: #fff;
-  --node-border: #cbd5e0;
-  --node-selected: #667eea;
-  --node-hover: #a3bffa;
-  --input-bg: #fff;
-  --input-text: #2d3748;
-  --input-border: #cbd5e0;
+/* VS Code 风格的滚动条 */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
 }
 
-:root[data-theme="neon"] {
-  --bg: #000;
-  --text: #0ff;
-  --toolbar-bg: #111;
-  --toolbar-text: #0ff;
-  --btn-bg: #0ff;
-  --btn-text: #000;
-  --palette-bg: #111;
-  --palette-text: #0ff;
-  --palette-item-bg: #222;
-  --palette-item-hover: #0ff;
-  --node-bg: #111;
-  --node-border: #0ff;
-  --node-selected: #f0f;
-  --node-hover: #ff0;
-  --input-bg: #333333;
-  --input-text: #0ff;
-  --input-border: #0ff;
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 5px;
+  border: 2px solid var(--scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--node-selected);
+}
+
+::-webkit-scrollbar-corner {
+  background: var(--scrollbar-track);
 }
 
 /* 应用变量 */
 body {
   margin: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* VS Code 使用的字体栈 */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', system-ui, 'Ubuntu', 'Droid Sans', sans-serif;
+  font-size: 13px; /* VS Code 默认字体大小 */
+  line-height: 1.4;
   background: var(--bg);
   color: var(--text);
+  overflow: hidden;
 }
 
-/* Toolbar 按钮样式 */
+/* VS Code 风格的工具栏 */
 .toolbar {
   background: var(--toolbar-bg);
   color: var(--toolbar-text);
-  border-bottom: none;
-  padding: 8px 16px;
+  border-bottom: 1px solid var(--divider);
+  padding: 4px 12px; /* 减少顶部和底部padding */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 36px; /* 稍微增加高度给内容更多空间 */
+  box-sizing: border-box;
+  font-size: 13px;
+  box-shadow: 0 1px 3px var(--shadow);
+}
+
+.toolbar-section {
   display: flex;
   align-items: center;
   gap: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-.toolbar button {
-  background: var(--btn-bg);
-  color: var(--btn-text);
-  border: none;
-  border-radius: 4px;
-  padding: 6px 12px;
-  cursor: pointer;
-  transition: background 0.2s;
-  margin-right: 8px; /* VS Code 风格的按钮间距 */
-}
-.toolbar button:hover {
-  background: #1976d2;
 }
 
-/* 优化按钮样式以符合 VS Code 风格 */
-.toolbar-button {
+.toolbar-button-group {
   display: flex;
+  gap: 2px; /* VS Code 紧密按钮间距 */
+}
+
+/* VS Code 风格按钮 */
+.toolbar-button {
+  display: inline-flex;
   align-items: center;
-  justify-content: center; /* 确保内容居中 */
-  background-color: var(--btn-bg);
+  justify-content: center;
+  background: var(--btn-bg);
   color: var(--btn-text);
-  border: 1px solid var(--btn-bg);
-  border-radius: 3px;
-  padding: 5px 8px; /* 减小按钮内边距 */
-  font-size: 14px;
+  border: 1px solid transparent;
+  border-radius: 2px; /* VS Code 圆角更小 */
+  padding: 3px 8px; /* 稍微减少padding */
+  font-size: 13px;
+  height: 24px; /* 与输入框高度保持一致 */
+  min-width: 24px;
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s;
-  min-width: 80px; /* 减小按钮宽度 */
+  transition: background-color 0.1s ease, border-color 0.1s ease;
+  white-space: nowrap;
+  line-height: 1.2; /* 减少行高 */
+  font-weight: 500; /* 增加字体粗细 */
 }
 
 .toolbar-button:hover {
-  background-color: var(--btn-hover-bg, #005a9e);
-  border-color: var(--btn-hover-border, #005a9e);
-  color: var(--btn-hover-text, #ffffff); /* 增强对比度 */
+  background: var(--btn-hover-bg);
+  border-color: var(--btn-hover-border);
+  color: var(--btn-hover-text);
+}
+
+.toolbar-button:active {
+  background: var(--btn-hover-bg);
+  opacity: 0.8;
 }
 
 .toolbar-button i {
-  margin-right: 5px;
+  margin-right: 4px;
+  font-size: 16px; /* VS Code 图标大小 */
 }
 
-/* 通用表单域样式 */
+.toolbar-button span {
+  font-size: 13px;
+}
+
+/* 高对比度主题下工具栏按钮的特殊样式 */
+:root[data-theme="colorful"] .toolbar-button {
+  border: 1px solid var(--btn-text) !important; /* 添加可见边框 */
+  font-weight: 600 !important; /* 更粗的字体 */
+}
+
+:root[data-theme="colorful"] .toolbar-button:hover {
+  border: 2px solid var(--btn-hover-border) !important; /* 悬停时更粗的边框 */
+  font-weight: 700 !important;
+}
+
+/* VS Code 风格的选择器和输入控件 */
+.topology-select,
+.theme-select,
 select,
 input[type="text"],
 input[type="number"] {
-  width: 100%;
-  padding: 6px 10px;
+  background: var(--input-bg);
+  color: var(--input-text);
   border: 1px solid var(--input-border);
-  border-radius: 4px;
-  margin-top: 4px;
+  border-radius: 2px; /* VS Code 使用更小的圆角 */
+  padding: 3px 6px; /* 增加padding，给文字更多空间 */
+  font-size: 13px;
+  height: 26px; /* 增加高度，确保文字完全显示 */
   box-sizing: border-box;
+  font-family: inherit;
+  line-height: 1.3; /* 调整行高，确保文字居中显示 */
+  transition: border-color 0.1s ease;
+  vertical-align: middle; /* 确保垂直居中 */
+}
+
+.topology-select {
+  min-width: 200px;
   background: var(--input-bg);
   color: var(--input-text);
 }
 
-.main-content {
-  display: flex;
-  height: calc(100vh - 48px);
+.theme-select {
+  min-width: 120px;
+  background: var(--input-bg);
+  color: var(--input-text);
 }
 
-/* 可拖拽分割器样式 */
+select:focus,
+input[type="text"]:focus,
+input[type="number"]:focus {
+  outline: none;
+  border-color: var(--input-focus-border);
+  box-shadow: 0 0 0 1px var(--input-focus-border);
+}
+
+/* 下拉选项样式 */
+select option {
+  background: var(--input-bg);
+  color: var(--input-text);
+  padding: 6px 8px; /* 增加padding，确保选项有足够空间 */
+  line-height: 1.4; /* 确保选项文字完整显示 */
+  min-height: 22px; /* 增加最小高度 */
+  font-size: 13px; /* 确保字体大小一致 */
+}
+
+/* 通用表单域样式 */
+.properties-input,
+.properties-select {
+  width: 100%;
+  background: var(--input-bg);
+  color: var(--input-text);
+  border: 1px solid var(--input-border);
+  border-radius: 2px;
+  padding: 5px 8px; /* 增加padding确保文字完整显示 */
+  font-size: 13px;
+  margin-top: 4px;
+  min-height: 26px; /* 增加最小高度确保文字显示 */
+  box-sizing: border-box;
+  font-family: inherit;
+  line-height: 1.3; /* 调整行高确保文字居中 */
+}
+
+.properties-input:focus,
+.properties-select:focus {
+  outline: none;
+  border-color: var(--input-focus-border);
+  box-shadow: 0 0 0 1px var(--input-focus-border);
+}
+
+/* 主内容区域 */
+.main-content {
+  display: flex;
+  height: calc(100vh - 36px); /* 调整为新的工具栏高度 */
+  overflow: hidden;
+}
+
+/* VS Code 风格的可拖拽分割器 */
 .resizable-divider {
-  width: 8px;
+  width: 4px; /* VS Code 分割器宽度 */
   cursor: col-resize;
-  background-color: #e0e0e0; /* 给一个默认的背景色让它可见 */
-  border-left: 1px solid var(--node-border);
-  border-right: 1px solid var(--node-border);
-  transition: background-color 0.2s;
+  background: var(--divider);
+  border: none;
+  transition: background-color 0.1s ease;
   position: relative;
   z-index: 10;
   flex-shrink: 0;
 }
 
 .resizable-divider:hover {
-  background-color: var(--node-selected);
+  background: var(--node-selected);
 }
 
 .resizable-divider.resizing {
-  background-color: var(--node-selected);
+  background: var(--node-selected);
 }
 
 .resizable-divider-handle {
@@ -203,265 +330,708 @@ input[type="number"] {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 20px;
-  height: 30px;
+  width: 12px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--toolbar-bg);
-  border-radius: 4px;
-  opacity: 0.8; /* 增加透明度让它更明显 */
-  font-size: 10px;
+  background: var(--toolbar-bg);
+  border-radius: 2px;
+  opacity: 0;
+  font-size: 8px;
   color: var(--toolbar-text);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* 添加阴影 */
+  box-shadow: 0 1px 3px var(--shadow);
+  transition: opacity 0.1s ease;
 }
+
+.resizable-divider:hover .resizable-divider-handle {
+  opacity: 0.8;
+}
+/* VS Code 风格的组件面板 */
 .component-palette {
   background: var(--palette-bg);
   color: var(--palette-text);
-  width: 240px;
-  border-right: 1px solid var(--node-border);
+  width: 250px; /* VS Code 标准侧边栏宽度 */
+  min-width: 200px;
+  max-width: 400px;
+  border-right: 1px solid var(--divider);
   height: 100%;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  font-size: 13px;
 }
 
 .palette-header {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--node-border);
-  background: var(--toolbar-bg);
-  color: var(--toolbar-text);
+  padding: 6px 12px; /* 减少padding */
+  border-bottom: 1px solid var(--divider);
+  background: var(--section-header-bg);
+  color: var(--title-text, var(--text)); /* 使用增强的标题文字颜色 */
+  font-weight: 700; /* 增强字体粗细 */
+  flex-shrink: 0; /* 防止标题被压缩 */
 }
 
 .palette-header h3 {
   margin: 0;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 700; /* 增强字体粗细 */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.2; /* 减少行高 */
+  color: inherit; /* 继承父元素的增强颜色 */
 }
 
 .palette-section {
-  margin-bottom: 8px;
+  margin-bottom: 0;
 }
 
 .palette-section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
+  padding: 4px 12px; /* 减少padding */
   cursor: pointer;
-  background: rgba(0,0,0,0.03);
-  border-bottom: 1px solid var(--node-border);
+  background: var(--section-header-bg);
+  border-bottom: 1px solid var(--divider);
+  font-size: 13px;
+  user-select: none;
+  min-height: 20px; /* 设置最小高度确保内容显示 */
+}
+
+.palette-section-header:hover {
+  background: var(--palette-item-hover);
 }
 
 .palette-section h4 {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 600; /* 保持合适的字体粗细 */
   margin: 0;
-  color: var(--node-selected);
+  color: var(--label-text, var(--text)); /* 使用增强的标签文字颜色 */
+  line-height: 1.2; /* 减少行高 */
 }
 
 .section-toggle {
-  font-size: 16px;
-  font-weight: bold;
-  color: var(--node-selected);
+  font-size: 12px;
+  font-weight: normal;
+  color: var(--text);
+  opacity: 0.7;
 }
 
 .palette-items {
-  padding: 8px;
+  padding: 4px 8px;
 }
 
 .palette-item {
   background: var(--palette-item-bg);
-  border: 1px solid var(--node-border);
-  padding: 10px 12px;
-  border-radius: 6px;
-  margin-bottom: 8px;
-  transition: all 0.2s;
+  border: 1px solid var(--divider);
+  padding: 6px 8px;
+  border-radius: 2px;
+  margin-bottom: 2px;
+  transition: all 0.1s ease;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   cursor: grab;
+  font-size: 13px;
+  user-select: none;
 }
 
 .palette-item:hover {
   background: var(--palette-item-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   border-color: var(--node-selected);
 }
 
+.palette-item:active {
+  cursor: grabbing;
+}
+
 .item-icon {
-  font-size: 16px;
+  font-size: 14px;
+  width: 16px;
+  text-align: center;
+  opacity: 0.8;
 }
 
 .item-label {
   font-size: 13px;
   flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* 属性面板样式 */
+/* VS Code 风格的属性面板 */
 .properties-panel {
   background: var(--palette-bg);
   color: var(--palette-text);
-  /* 移除固定宽度，让组件内联样式控制 */
-  border-left: 1px solid var(--node-border);
+  border-left: 1px solid var(--divider);
   height: 100%;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  font-size: 13px;
 }
 
 .properties-header {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--node-border);
-  background: var(--toolbar-bg);
-  color: var(--toolbar-text);
-  margin-bottom: 12px;
+  padding: 6px 12px; /* 减少padding */
+  border-bottom: 1px solid var(--divider);
+  background: var(--section-header-bg);
+  color: var(--title-text, var(--text)); /* 使用增强的标题文字颜色 */
+  font-weight: 700; /* 增强字体粗细 */
+  flex-shrink: 0; /* 防止标题被压缩 */
 }
 
 .properties-header h3 {
   margin: 0;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 13px;
+  font-weight: 700; /* 增强字体粗细 */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.2; /* 减少行高 */
+  color: inherit; /* 继承父元素的增强颜色 */
 }
 
 .properties-section {
-  padding: 0 16px 16px;
+  padding: 6px 12px; /* 减少padding */
+  flex: 1; /* 让内容区域占用剩余空间 */
 }
 
 .property-group {
-  margin-bottom: 12px;
-  border-bottom: 1px dashed var(--node-border);
-  padding-bottom: 8px;
+  margin-bottom: 8px; /* 减少间距 */
+  border-bottom: 1px solid var(--divider);
+  padding-bottom: 6px; /* 减少padding */
+}
+
+.property-group:last-child {
+  border-bottom: none;
 }
 
 .property-label {
   font-size: 12px;
-  color: var(--node-selected);
-  margin-bottom: 4px;
-  font-weight: 500;
+  color: var(--label-text, var(--text)); /* 使用增强的标签文字颜色 */
+  margin-bottom: 2px; /* 减少margin */
+  font-weight: 600; /* 增强字体粗细提高可读性 */
+  opacity: 1; /* 移除透明度，确保最大对比度 */
+  line-height: 1.2; /* 减少行高 */
 }
 
 .property-value {
-  font-size: 14px;
+  font-size: 13px;
   word-break: break-all;
+  font-family: 'Consolas', 'Courier New', monospace; /* 代码字体 */
 }
 
 .property-tag {
   display: inline-block;
   background: var(--node-selected);
   color: white;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-}
-
-.properties-input {
-  width: 100%;
-  padding: 8px;
-  margin-top: 4px;
-  background: var(--input-bg);
-  color: var(--input-text);
-  border: 1px solid var(--input-border);
-  border-radius: 4px;
-}
-
-.properties-select {
-  width: 100%;
-  padding: 8px;
-  margin-top: 4px;
-  background: var(--input-bg);
-  color: var(--input-text);
-  border: 1px solid var(--input-border);
-  border-radius: 4px;
-  appearance: auto; /* 保留浏览器原生的下拉样式，便于区分选项 */
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 500;
 }
 
 .section-title {
-  font-size: 15px;
-  font-weight: 500;
-  margin: 16px 0 12px;
-  color: var(--node-selected);
-  border-bottom: 1px solid var(--node-border);
-  padding-bottom: 4px;
+  font-size: 13px;
+  font-weight: 700; /* 增强字体粗细 */
+  margin: 8px 0 6px; /* 减少margin */
+  color: var(--title-text, var(--text)); /* 使用增强的标题文字颜色 */
+  border-bottom: 1px solid var(--divider);
+  padding-bottom: 2px; /* 减少padding */
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.2; /* 减少行高 */
 }
 
-/* 工具栏样式优化 */
-.toolbar {
-  display: flex;
-  padding: 12px 16px;
+/* Toast 提示样式 */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   background: var(--toolbar-bg);
   color: var(--toolbar-text);
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  z-index: 10;
-  width: 100%;
+  padding: 8px 16px;
+  border-radius: 2px;
+  z-index: 10000;
+  font-size: 13px;
+  pointer-events: none;
+  box-shadow: 0 2px 8px var(--shadow);
+  border: 1px solid var(--divider);
 }
 
-.toolbar-section {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+/* 激励编辑面板专用样式增强 */
+.ant-form-item-label > label,
+.ant-typography,
+.ant-typography-title,
+.ant-typography-paragraph,
+.ant-form-item-label,
+label,
+.form-label,
+.field-label {
+  color: var(--label-text, var(--text)) !important;
+  font-weight: 600 !important;
 }
 
-.topology-select {
-  min-width: 200px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  border: none;
-  background: rgba(255,255,255,0.15);
-  color: var(--toolbar-text);
-  font-size: 14px;
+/* Ant Design 组件在深色主题下的标签增强 */
+.ant-form-item-label > label {
+  color: var(--label-text, var(--text)) !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
 }
 
-.toolbar-button-group {
-  display: flex;
-  gap: 8px;
+/* Tab 标签增强 */
+.ant-tabs-tab {
+  color: var(--label-text, var(--text)) !important;
 }
 
-.toolbar-button {
-  display: flex;
-  align-items: center;
-  justify-content: center; /* 确保内容居中 */
-  background-color: var(--btn-bg);
-  color: var(--btn-text);
-  border: 1px solid var(--btn-bg);
-  border-radius: 3px;
-  padding: 5px 8px; /* 减小按钮内边距 */
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s;
-  min-width: 80px; /* 减小按钮宽度 */
+.ant-tabs-tab-active {
+  color: var(--node-selected) !important;
+  font-weight: 600 !important;
 }
 
-.toolbar-button:hover {
-  background-color: var(--btn-hover-bg, #005a9e);
-  border-color: var(--btn-hover-border, #005a9e);
-  color: var(--btn-hover-text, #ffffff); /* 增强对比度 */
+/* 标题类元素通用增强 */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--title-text, var(--text)) !important;
+  font-weight: 700 !important;
 }
 
-.toolbar-icon {
-  font-style: normal;
+/* 表单标签和输入框标签增强 */
+.properties-panel label,
+.properties-section label,
+.form-item label {
+  color: var(--label-text, var(--text)) !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
 }
 
-.theme-selector {
-  display: flex;
-  align-items: center;
+/* Ant Design 表格组件主题适配 - 修复表格主题一致性 */
+.ant-table {
+  background: var(--palette-bg) !important;
+  color: var(--text) !important;
+  border-radius: 2px !important;
 }
 
-.theme-select {
-  padding: 8px 12px;
-  border-radius: 4px;
-  border: none;
-  background: rgba(255,255,255,0.15);
-  color: var(--toolbar-text);
-  font-size: 14px;
+.ant-table-container {
+  background: var(--palette-bg) !important;
+  border-radius: 2px !important;
 }
 
-/* 修复下拉选项的颜色问题 */
-select option {
-  background-color: var(--palette-bg);
-  color: var(--text);
-  padding: 8px;
+.ant-table-content {
+  background: var(--palette-bg) !important;
+}
+
+.ant-table-wrapper {
+  background: var(--palette-bg) !important;
+  border-radius: 2px !important;
+}
+
+/* 表格头部样式 */
+.ant-table-thead > tr > th {
+  background: var(--section-header-bg) !important;
+  color: var(--title-text, var(--text)) !important;
+  border-bottom: 1px solid var(--divider) !important;
+  border-right: 1px solid var(--divider) !important;
+  font-weight: 600 !important;
+}
+
+.ant-table-thead > tr > th:last-child {
+  border-right: none !important;
+}
+
+/* 表格行和单元格样式 */
+.ant-table-tbody > tr > td {
+  background: var(--palette-item-bg) !important;
+  color: var(--text) !important;
+  border-bottom: 1px solid var(--divider) !important;
+  border-right: 1px solid var(--divider) !important;
+}
+
+.ant-table-tbody > tr > td:last-child {
+  border-right: none !important;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: var(--palette-item-hover) !important;
+}
+
+.ant-table-tbody > tr.ant-table-row-selected > td {
+  background: var(--node-selected) !important;
+  color: white !important;
+}
+
+/* 表格空白区域和无数据状态 */
+.ant-table-placeholder {
+  background: var(--palette-bg) !important;
+  color: var(--secondary-text) !important;
+}
+
+.ant-empty {
+  color: var(--secondary-text) !important;
+}
+
+.ant-empty-description {
+  color: var(--secondary-text) !important;
+}
+
+/* 表格外层容器背景确保一致性 */
+.ant-table-wrapper,
+.ant-table-container,
+.ant-table,
+.ant-table-content,
+.ant-table-body {
+  background: var(--palette-bg) !important;
+}
+
+/* 激励面板表格专用样式 - 确保完整背景覆盖 */
+.stimulus-panel .ant-table-wrapper,
+.stimulus-panel .ant-table-container,
+.stimulus-panel .ant-table,
+.stimulus-panel .ant-table-content,
+.stimulus-panel .ant-table-body,
+.stimulus-panel-container .ant-table-wrapper,
+.stimulus-panel-container .ant-table-container,
+.stimulus-panel-container .ant-table,
+.stimulus-panel-container .ant-table-content,
+.stimulus-panel-container .ant-table-body {
+  background: var(--palette-bg) !important;
+}
+
+/* 修复表格滚动区域背景 */
+.ant-table-body {
+  background: var(--palette-bg) !important;
+}
+
+.ant-table-scroll {
+  background: var(--palette-bg) !important;
+}
+
+/* 表格展开行样式 */
+.ant-table-expanded-row > td {
+  background: var(--section-header-bg) !important;
+}
+
+.ant-table-expanded-row .ant-table-expanded-row-content {
+  background: var(--section-header-bg) !important;
+  color: var(--text) !important;
+  padding: 12px !important;
+}
+
+/* 表格边框样式 */
+.ant-table-bordered .ant-table-container {
+  border: 1px solid var(--divider) !important;
+  border-radius: 2px !important;
+}
+
+.ant-table-bordered .ant-table-content table {
+  border: none !important;
+}
+
+/* 表格容器滚动条支持 - 修复滚动问题 */
+.ant-table-container {
+  max-height: none !important; /* 移除固定高度限制 */
+  overflow: visible !important; /* 让父容器控制滚动 */
+}
+
+.ant-table-body {
+  max-height: none !important; /* 移除固定高度限制 */
+  overflow: visible !important; /* 让父容器控制滚动 */
+}
+
+/* 激励面板容器样式 - 优化滚动 */
+.stimulus-panel-container {
+  background: var(--palette-bg) !important;
+  border: 1px solid var(--divider) !important;
+  border-radius: 2px !important;
+  height: 100% !important; /* 使用100%高度而不是max-height */
+  overflow-y: auto !important;
+  padding: 8px !important;
+  box-sizing: border-box !important;
+}
+
+/* 确保激励表格面板有合适的高度和滚动 - 修复滚动到底部问题 */
+.ant-table-wrapper {
+  height: 100% !important; /* 使用100%高度 */
+  max-height: none !important; /* 移除max-height限制 */
+  overflow: visible !important; /* 让容器控制滚动 */
+  background: var(--palette-bg) !important;
+}
+
+/* 激励面板整体布局优化 - 修复滚动计算 */
+.stimulus-panel {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background: var(--palette-bg) !important;
+  overflow: hidden !important; /* 确保子元素正确处理滚动 */
+}
+
+.stimulus-panel .ant-table-container {
+  flex: 1 !important;
+  overflow: visible !important; /* 让父容器处理滚动 */
+  background: var(--palette-bg) !important;
+}
+
+/* 修复表格内容区域背景 */
+.stimulus-panel .ant-table,
+.stimulus-panel .ant-table-content,
+.stimulus-panel .ant-table-wrapper,
+.stimulus-panel .ant-table-container {
+  background: var(--palette-bg) !important;
+}
+
+/* 表格输入框和搜索框 */
+.ant-input,
+.ant-input-search input {
+  background: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border: 1px solid var(--input-border) !important;
+  border-radius: 2px !important;
+}
+
+.ant-input:focus,
+.ant-input-search input:focus {
+  border-color: var(--input-focus-border) !important;
+  box-shadow: 0 0 0 1px var(--input-focus-border) !important;
+}
+
+.ant-input::placeholder,
+.ant-input-search input::placeholder {
+  color: var(--secondary-text, #999) !important;
+}
+
+/* 按钮组件主题适配 */
+.ant-btn {
+  background: var(--btn-bg) !important;
+  color: var(--btn-text) !important;
+  border: 1px solid var(--input-border) !important;
+  border-radius: 2px !important;
+  font-size: 13px !important;
+  height: 24px !important;
+  line-height: 1.2 !important;
+  font-weight: 500 !important; /* 增加字体粗细提高可读性 */
+}
+
+.ant-btn:hover {
+  background: var(--btn-hover-bg) !important;
+  border-color: var(--btn-hover-border) !important;
+  color: var(--btn-hover-text) !important;
+}
+
+.ant-btn-primary {
+  background: var(--btn-primary-bg, var(--node-selected)) !important;
+  border-color: var(--btn-primary-bg, var(--node-selected)) !important;
+  color: var(--btn-primary-text, white) !important;
+  font-weight: 600 !important; /* 主要按钮更粗的字体 */
+}
+
+.ant-btn-primary:hover {
+  background: var(--btn-primary-hover-bg, var(--node-hover)) !important;
+  border-color: var(--btn-primary-hover-bg, var(--node-hover)) !important;
+  color: var(--btn-primary-text, white) !important;
+}
+
+/* 高对比度主题下的按钮特殊处理 */
+:root[data-theme="colorful"] .ant-btn {
+  border: 2px solid var(--input-border) !important; /* 更粗的边框 */
+  font-weight: 600 !important; /* 更粗的字体 */
+}
+
+:root[data-theme="colorful"] .ant-btn-primary {
+  border: 2px solid var(--btn-primary-bg, var(--node-selected)) !important;
+  font-weight: 700 !important; /* 最粗的字体 */
+  text-shadow: 0 0 1px rgba(0,0,0,0.5) !important; /* 添加文字阴影增加对比度 */
+}
+
+/* 危险按钮在高对比度主题下的样式 */
+:root[data-theme="colorful"] .ant-btn-dangerous,
+:root[data-theme="colorful"] .ant-btn[danger] {
+  background: #bf0000 !important;
+  border-color: #bf0000 !important;
+  color: #ffffff !important;
+  border: 2px solid #bf0000 !important;
+  font-weight: 700 !important;
+  text-shadow: 0 0 1px rgba(0,0,0,0.5) !important;
+}
+
+:root[data-theme="colorful"] .ant-btn-dangerous:hover,
+:root[data-theme="colorful"] .ant-btn[danger]:hover {
+  background: #7f0000 !important;
+  border-color: #7f0000 !important;
+  color: #ffffff !important;
+}
+
+/* 分页器主题适配 */
+.ant-pagination {
+  color: var(--text) !important;
+}
+
+.ant-pagination-item {
+  background: var(--palette-item-bg) !important;
+  border: 1px solid var(--divider) !important;
+}
+
+.ant-pagination-item a {
+  color: var(--text) !important;
+}
+
+.ant-pagination-item:hover {
+  background: var(--palette-item-hover) !important;
+  border-color: var(--node-selected) !important;
+}
+
+.ant-pagination-item-active {
+  background: var(--node-selected) !important;
+  border-color: var(--node-selected) !important;
+}
+
+.ant-pagination-item-active a {
+  color: white !important;
+}
+
+/* 下拉菜单主题适配 */
+.ant-dropdown {
+  background: var(--palette-bg) !important;
+  border: 1px solid var(--divider) !important;
+  border-radius: 2px !important;
+  box-shadow: 0 2px 8px var(--shadow) !important;
+}
+
+.ant-dropdown-menu {
+  background: var(--palette-bg) !important;
+}
+
+.ant-dropdown-menu-item {
+  color: var(--text) !important;
+}
+
+.ant-dropdown-menu-item:hover {
+  background: var(--palette-item-hover) !important;
+}
+
+/* 工具栏在激励面板中的样式 */
+.stimulus-toolbar {
+  background: var(--section-header-bg) !important;
+  padding: 8px 12px !important;
+  border-bottom: 1px solid var(--divider) !important;
+  margin-bottom: 8px !important;
+  flex-shrink: 0 !important; /* 防止工具栏被压缩 */
+}
+
+.stimulus-toolbar .ant-input-search {
+  max-width: 200px !important;
+}
+
+/* Modal/弹窗主题适配 */
+.ant-modal-content {
+  background: var(--palette-bg) !important;
+  color: var(--text) !important;
+}
+
+.ant-modal-header {
+  background: var(--section-header-bg) !important;
+  border-bottom: 1px solid var(--divider) !important;
+}
+
+.ant-modal-title {
+  color: var(--title-text, var(--text)) !important;
+}
+
+.ant-modal-close-x {
+  color: var(--text) !important;
+}
+
+.ant-modal-footer {
+  background: var(--section-header-bg) !important;
+  border-top: 1px solid var(--divider) !important;
+}
+
+/* 选择器组件主题适配 */
+.ant-select {
+  color: var(--text) !important;
+}
+
+.ant-select-selector {
+  background: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
+  color: var(--input-text) !important;
+}
+
+.ant-select-focused .ant-select-selector {
+  border-color: var(--input-focus-border) !important;
+  box-shadow: 0 0 0 1px var(--input-focus-border) !important;
+}
+
+.ant-select-dropdown {
+  background: var(--palette-bg) !important;
+  border: 1px solid var(--divider) !important;
+}
+
+.ant-select-item {
+  color: var(--text) !important;
+}
+
+.ant-select-item-option-selected {
+  background: var(--node-selected) !important;
+  color: white !important;
+}
+
+.ant-select-item-option-active {
+  background: var(--palette-item-hover) !important;
+}
+
+/* 日期选择器主题适配 */
+.ant-picker {
+  background: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
+  color: var(--input-text) !important;
+}
+
+.ant-picker:hover,
+.ant-picker-focused {
+  border-color: var(--input-focus-border) !important;
+}
+
+/* 数字输入框主题适配 */
+.ant-input-number {
+  background: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
+  color: var(--input-text) !important;
+}
+
+.ant-input-number:hover,
+.ant-input-number-focused {
+  border-color: var(--input-focus-border) !important;
+}
+
+/* 文本域主题适配 */
+.ant-input-textarea textarea {
+  background: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border: 1px solid var(--input-border) !important;
+}
+
+.ant-input-textarea-focused textarea {
+  border-color: var(--input-focus-border) !important;
+  box-shadow: 0 0 0 1px var(--input-focus-border) !important;
+}
+
+/* 表单项标签样式 */
+.ant-form-item {
+  margin-bottom: 12px !important;
+}
+
+.ant-form-item-label {
+  padding-bottom: 2px !important;
+}
+
+/* 确保所有Ant Design组件的文字颜色正确 */
+.ant-typography,
+.ant-typography h1,
+.ant-typography h2,
+.ant-typography h3,
+.ant-typography h4,
+.ant-typography h5,
+.ant-typography h6 {
+  color: var(--text) !important;
 }

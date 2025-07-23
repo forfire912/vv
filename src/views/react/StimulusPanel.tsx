@@ -67,14 +67,8 @@ const StimulusPanel: React.FC<StimulusPanelProps> = ({ data = [], nodeNames = []
     ),
   };
 
-  // 根据 theme 设置样式
-  const themeStyles: Record<string, React.CSSProperties> = {
-    light: { background: '#fff', color: '#222' },
-    dark: { background: '#222', color: '#eee' },
-    colorful: { background: 'linear-gradient(90deg,#e3ffe8,#fffbe3,#e3f0ff)', color: '#222' }
-  };
   return (
-    <div style={{ ...themeStyles[theme], padding: '8px' }}>
+    <div className="stimulus-panel-container" style={{ padding: '8px' }}>
       <Space style={{ marginBottom: 8 }}>
         <Select
           allowClear
@@ -103,7 +97,7 @@ const StimulusPanel: React.FC<StimulusPanelProps> = ({ data = [], nodeNames = []
         rowKey="key"
         expandable={{
           expandedRowRender: record => (
-            <div>
+            <div style={{ padding: '12px' }}>
               <p>Key: {record.key}</p>
               <p>时间类型: {record.timeType}</p>
               <p>位置类型: {record.placeType}</p>

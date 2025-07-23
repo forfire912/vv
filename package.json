@@ -100,7 +100,7 @@
     "@types/vscode": "^1.80.0",
     "copy-webpack-plugin": "^13.0.0",
     "css-loader": "^7.1.2",
-    "del-cli": "^6.0.0",
+    "del-cli": "6.0.0",
     "iconv-lite": "^0.6.3",
     "rimraf": "^6.0.1",
     "style-loader": "^4.0.0",
@@ -110,7 +110,9 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
+    "@types/antd": "0.12.32",
     "@vscode/codicons": "0.0.38",
+    "antd": "5.26.6",
     "node-machine-id": "^1.1.12",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

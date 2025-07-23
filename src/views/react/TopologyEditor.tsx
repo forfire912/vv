@@ -72,7 +72,7 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
   const [theme, setTheme] = useState<'light' | 'dark' | 'colorful'>('light');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [savedList, setSavedList] = useState<string[]>([]);
-  const [rightPanelWidth, setRightPanelWidth] = useState<number>(400); // 右侧面板宽度
+  const [rightPanelWidth, setRightPanelWidth] = useState<number>(320); // 右侧面板宽度 - VS Code 标准侧边栏宽度
   const [isResizing, setIsResizing] = useState<boolean>(false); // 是否正在拖拽调整
   const dividerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -864,10 +864,10 @@ const handleNew = useCallback(() => {
             width: rightPanelWidth,
             borderLeft: 'none',
             overflowY: 'auto',
-            minWidth: '300px',
-            maxWidth: '60%', // 限制最大宽度
-            transition: 'width 0.1s',
-            flexShrink: 0, // 防止属性面板被压缩
+            minWidth: '250px', // VS Code 最小侧边栏宽度
+            maxWidth: '50%', // 合理的最大宽度
+            transition: 'width 0.1s ease',
+            flexShrink: 0,
           }}
         >
           {/* 只要是编辑激励或者选中了节点，就显示Tab页 */}

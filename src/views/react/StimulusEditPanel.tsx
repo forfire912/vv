@@ -106,7 +106,7 @@ const StimulusEditPanel: React.FC<StimulusEditPanelProps> = ({ stimulus, onSave,
     }, [stimulus, initialValues, form]);
 
     const handleSave = () => {
-        form.validateFields().then(values => {
+        form.validateFields().then((values: Record<string, any>) => {
             if (onSave) {
                 // 保存时也传递原始激励数据的关键信息
                 if (stimulus) {
@@ -121,36 +121,36 @@ const StimulusEditPanel: React.FC<StimulusEditPanelProps> = ({ stimulus, onSave,
 
     // 根据 theme 设置样式
     const themeStyles: Record<string, React.CSSProperties> = {
-        light: { background: '#fff', color: '#222' },
-        dark: { background: '#222', color: '#eee' },
-        colorful: { background: 'linear-gradient(90deg,#e3ffe8,#fffbe3,#e3f0ff)', color: '#222' }
+        light: { background: 'var(--bg)', color: 'var(--text)' },
+        dark: { background: 'var(--bg)', color: '#FFFFFF', borderColor: 'var(--node-border)' },
+        colorful: { background: 'linear-gradient(90deg,#e3ffe8,#fffbe3,#e3f0ff)', color: 'var(--text)' }
     };
 
     return (
         <Form
             form={form}
             layout="horizontal"
-            style={{ maxWidth: 520, margin: '0 auto', padding: 8, ...themeStyles[theme] }}
-            labelCol={{ span: 8 }}
+            style={{ maxWidth: 520, margin: '0 auto', padding: 8, ...themeStyles[theme], border: theme === 'dark' ? '1px solid var(--node-border)' : undefined }}
+            labelCol={{ span: 8, style: { color: theme === 'dark' ? '#FFFFFF' : 'var(--text)' } }}
             wrapperCol={{ span: 16 }}
             colon={false}
         >
       {/* 第一组：前三个属性 */}
       <Form.Item label="激励名称" name="name" rules={[{ required: true, message: '请输入激励名称' }]} style={{ marginBottom: 4 }}>
-        <Input size="small" />
+        <Input size="small" style={{ background: 'var(--input-bg)', color: theme === 'dark' ? '#FFFFFF' : 'var(--input-text)', border: '1px solid var(--input-border)' }} />
       </Form.Item>
       <Form.Item label="激励描述" name="description" style={{ marginBottom: 4 }}>
-        <Input.TextArea rows={1} size="small" />
+        <Input.TextArea rows={1} size="small" style={{ background: 'var(--input-bg)', color: theme === 'dark' ? '#FFFFFF' : 'var(--input-text)', border: '1px solid var(--input-border)' }} />
       </Form.Item>
       <Form.Item label="激励作用对象" name="targetName" rules={[{ required: true, message: '请选择激励作用对象' }]} style={{ marginBottom: 4 }}>
-        <Select options={nodeNames.map(n => ({ label: n, value: n }))} showSearch size="small" />
+        <Select options={nodeNames.map(n => ({ label: n, value: n }))} showSearch size="small" style={{ background: 'var(--input-bg)', color: theme === 'dark' ? '#FFFFFF' : 'var(--input-text)', border: '1px solid var(--input-border)' }} />
       </Form.Item>
       <div style={{ borderTop: '1px dashed #bbb', margin: '8px 0' }} />
       {/* 第二组：激励时间类型和数值、激励地点类型和数值 */}
       <Form.Item label="激励时间类型" name="timeType" rules={[{ required: true }]} style={{ marginBottom: 4 }}>
         <Select options={timeTypeOptions} size="small" />
       </Form.Item>
-      <Form.Item shouldUpdate={(prev, curr) => prev.timeType !== curr.timeType} noStyle>
+      <Form.Item shouldUpdate={(prev: Record<string, any>, curr: Record<string, any>) => prev.timeType !== curr.timeType} noStyle>
         {({ getFieldValue }) => {
           const type = getFieldValue('timeType');
           const label = type === 'time' ? '指令地址' : '存储地址';
@@ -160,7 +160,7 @@ const StimulusEditPanel: React.FC<StimulusEditPanelProps> = ({ stimulus, onSave,
       <Form.Item label="激励位置类型" name="placeType" rules={[{ required: true }]} style={{ marginBottom: 4 }}>
         <Select options={placeTypeOptions} size="small" />
       </Form.Item>
-      <Form.Item shouldUpdate={(prev, curr) => prev.placeType !== curr.placeType} noStyle>
+      <Form.Item shouldUpdate={(prev: Record<string, any>, curr: Record<string, any>) => prev.placeType !== curr.placeType} noStyle>
         {({ getFieldValue }) => {
           const type = getFieldValue('placeType');
           if (type === 'mem_addr') {
