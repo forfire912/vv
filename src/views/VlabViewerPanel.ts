@@ -48,6 +48,15 @@ function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri): s
   const configUri = webview.asWebviewUri(
     vscode.Uri.joinPath(extensionUri, 'dist', 'webview', 'config')
   );
+  const globalCssUri = webview.asWebviewUri(
+    vscode.Uri.joinPath(extensionUri, 'dist', 'webview', 'styles', 'global.css')
+  );
+  const reactflowCssUri = webview.asWebviewUri(
+    vscode.Uri.joinPath(extensionUri, 'dist', 'webview', 'styles', 'reactflow-custom.css')
+  );
+  const testManagementCssUri = webview.asWebviewUri(
+    vscode.Uri.joinPath(extensionUri, 'dist', 'webview', 'styles', 'test-management', 'test-management.css')
+  );
   return `
   <!DOCTYPE html>
   <html lang="zh-CN">
@@ -62,6 +71,9 @@ function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri): s
       style-src ${webview.cspSource} 'unsafe-inline';
       font-src ${webview.cspSource};
     ">
+    <link rel="stylesheet" href="${globalCssUri}">
+    <link rel="stylesheet" href="${reactflowCssUri}">
+    <link rel="stylesheet" href="${testManagementCssUri}">
     <style>html,body,#app{height:100%;margin:0;padding:0;}body{overflow:hidden;}</style>
   </head>
   <body>

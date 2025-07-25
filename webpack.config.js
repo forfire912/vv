@@ -90,7 +90,8 @@ module.exports = [
     plugins: [
       new CopyWebpackPlugin({
         patterns: [
-          { from: 'src/styles', to: path.resolve(__dirname, 'dist', 'webview', 'styles') }
+          { from: 'src/styles', to: path.resolve(__dirname, 'dist', 'webview', 'styles') },
+          { from: 'src/modules/test-management/styles', to: path.resolve(__dirname, 'dist', 'webview', 'styles', 'test-management') }
         ]
       })
     ]

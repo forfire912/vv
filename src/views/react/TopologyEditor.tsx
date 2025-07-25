@@ -13,9 +13,12 @@ import { useConfigContext } from '../../context/ConfigContext';
 import '../../styles/reactflow-custom.css';
 import { exportTopologyJson, saveTopologyByName, loadTopologyByName, getSavedTopologyNames, deleteTopologyByName } from '../../utils/exportUtils'; // 确保正确导入
 import { Toolbar } from './Toolbar'; // 确保正确导入
+import { TestManagementPanelComplete } from '../../modules/test-management/components/TestManagementPanelComplete';
 import type { Stimulus } from './StimulusPanel';
 
-const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
+const TopologyEditor: React.FC<{ 
+  lang?: 'zh' | 'en';
+}> = ({ lang = 'zh' }) => {
   // 补全缺失的 hooks 和 state
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; nodeId: string } | null>(null);
@@ -88,8 +91,8 @@ const TopologyEditor: React.FC<{ lang?: 'zh' | 'en' }> = ({ lang = 'zh' }) => {
   const [editStimulus, setEditStimulus] = useState<Stimulus | null>(null);
   // 激励列表筛选相关状态
   const [stimulusTargetFilter, setStimulusTargetFilter] = useState<string | undefined>(undefined);
-  // 新增：右侧面板Tab状态
-  const [rightTab, setRightTab] = useState<'props' | 'stimulus'>('props');
+  // 新增：右侧面板Tab状态 - 添加测试管理
+  const [rightTab, setRightTab] = useState<'props' | 'stimulus' | 'testing'>('props');
 
   // Tab切换时自动清理激励编辑状态
   useEffect(() => {
@@ -870,16 +873,15 @@ const handleNew = useCallback(() => {
             flexShrink: 0,
           }}
         >
-          {/* 只要是编辑激励或者选中了节点，就显示Tab页 */}
-          {(selectedNodeId || editStimulus) && (
-            <Tabs
-              activeKey={rightTab}
-              onChange={key => {
-                // 当从激励编辑切换到其他标签页时，如果没有选中节点，清空激励编辑状态
-                if (key !== 'stimulus' && !selectedNodeId && editStimulus) {
-                  setEditStimulus(null);
-                }
-                setRightTab(key as 'props' | 'stimulus');
+          {/* 测试管理标签页始终显示，其他标签页需要选中节点或编辑激励时显示 */}
+          <Tabs
+            activeKey={rightTab}
+            onChange={key => {
+              // 当从激励编辑切换到其他标签页时，如果没有选中节点，清空激励编辑状态
+              if (key !== 'stimulus' && !selectedNodeId && editStimulus) {
+                setEditStimulus(null);
+              }
+              setRightTab(key as 'props' | 'stimulus' | 'testing');
               }}
               items={[
                 {
@@ -936,10 +938,16 @@ const handleNew = useCallback(() => {
                       </Button>
                     </div>
                   ),
+                },
+                {
+                  key: 'testing',
+                  label: '测试管理',
+                  children: (
+                    <TestManagementPanelComplete />
+                  ),
                 }
               ]}
             />
-          )}
         </div>
       </div>
       {/* toast 提示 */}
