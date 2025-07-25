@@ -1,10 +1,13 @@
 /**
- * 测试用例编辑器 - 支持完整的CRUD操作
+ * 测试用例编辑器 - 支持完整的CRUD操作和激励关联
  */
 
 import React, { useState, useEffect } from 'react';
+import { TestCase as FullTestCase, StimulusReference, TestExecutionStatus } from '../types';
+import StimulusSelector from './StimulusSelector';
 
-interface TestCase {
+// 简化接口用于编辑器状态管理
+interface TestCaseFormData {
   id: string;
   name: string;
   description: string;
@@ -13,9 +16,9 @@ interface TestCase {
   steps: TestStep[];
   expectedResults: string;
   associatedNodes: string[];
-  topologySnapshot?: string;
-  createdAt: Date;
-  updatedAt: Date;
+  functionTreePath: string;
+  requirements: string[];
+  stimuli: StimulusReference[];  // 关联的激励
 }
 
 interface TestStep {
@@ -28,9 +31,9 @@ interface TestStep {
 }
 
 interface TestCaseEditorProps {
-  testCase?: TestCase;
+  testCase?: FullTestCase;
   isOpen: boolean;
-  onSave: (testCase: TestCase) => void;
+  onSave: (testCase: FullTestCase) => void;
   onCancel: () => void;
   onDelete?: (id: string) => void;
 }
@@ -42,14 +45,17 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
   onCancel,
   onDelete
 }) => {
-  const [formData, setFormData] = useState<Partial<TestCase>>({
+  const [formData, setFormData] = useState<Partial<TestCaseFormData>>({
     name: '',
     description: '',
     category: 'functional',
     tags: [],
     steps: [],
     expectedResults: '',
-    associatedNodes: []
+    associatedNodes: [],
+    functionTreePath: '',
+    requirements: [],
+    stimuli: []
   });
 
   const [currentStep, setCurrentStep] = useState<Partial<TestStep>>({
@@ -61,10 +67,23 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
   });
 
   const [newTag, setNewTag] = useState('');
+  const [showStimulusSelector, setShowStimulusSelector] = useState(false);
 
   useEffect(() => {
     if (testCase) {
-      setFormData(testCase);
+      setFormData({
+        id: testCase.id,
+        name: testCase.name,
+        description: testCase.description,
+        category: testCase.category,
+        tags: testCase.tags,
+        steps: [], // 暂时简化，后续可以从testConfiguration中提取
+        expectedResults: '', // 暂时简化
+        associatedNodes: testCase.associatedNodes,
+        functionTreePath: testCase.functionTreePath,
+        requirements: testCase.requirements,
+        stimuli: testCase.testConfiguration.stimuli
+      });
     } else {
       setFormData({
         name: '',
@@ -73,13 +92,16 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
         tags: [],
         steps: [],
         expectedResults: '',
-        associatedNodes: []
+        associatedNodes: [],
+        functionTreePath: '',
+        requirements: [],
+        stimuli: []
       });
     }
   }, [testCase]);
 
-  const handleInputChange = (field: keyof TestCase, value: any) => {
-    setFormData(prev => ({
+  const handleInputChange = (field: keyof TestCaseFormData, value: any) => {
+    setFormData((prev: Partial<TestCaseFormData>) => ({
       ...prev,
       [field]: value
     }));
@@ -87,7 +109,7 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
 
   const addTag = () => {
     if (newTag.trim() && !formData.tags?.includes(newTag.trim())) {
-      setFormData(prev => ({
+      setFormData((prev: Partial<TestCaseFormData>) => ({
         ...prev,
         tags: [...(prev.tags || []), newTag.trim()]
       }));
@@ -96,9 +118,9 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
   };
 
   const removeTag = (tagToRemove: string) => {
-    setFormData(prev => ({
+    setFormData((prev: Partial<TestCaseFormData>) => ({
       ...prev,
-      tags: prev.tags?.filter(tag => tag !== tagToRemove) || []
+      tags: prev.tags?.filter((tag: string) => tag !== tagToRemove) || []
     }));
   };
 
@@ -113,7 +135,7 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
         expected: currentStep.expected
       };
       
-      setFormData(prev => ({
+      setFormData((prev: Partial<TestCaseFormData>) => ({
         ...prev,
         steps: [...(prev.steps || []), newStep]
       }));
@@ -129,9 +151,9 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
   };
 
   const removeStep = (stepId: string) => {
-    setFormData(prev => ({
+    setFormData((prev: Partial<TestCaseFormData>) => ({
       ...prev,
-      steps: prev.steps?.filter(step => step.id !== stepId) || []
+      steps: prev.steps?.filter((step: TestStep) => step.id !== stepId) || []
     }));
   };
 
@@ -142,18 +164,51 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
     }
 
     const now = new Date();
-    const savedTestCase: TestCase = {
+    const savedTestCase: FullTestCase = {
       id: testCase?.id || Date.now().toString(),
       name: formData.name!,
       description: formData.description || '',
       category: formData.category || 'functional',
       tags: formData.tags || [],
-      steps: formData.steps || [],
-      expectedResults: formData.expectedResults || '',
       associatedNodes: formData.associatedNodes || [],
-      topologySnapshot: formData.topologySnapshot,
-      createdAt: testCase?.createdAt || now,
-      updatedAt: now
+      functionTreePath: formData.functionTreePath || '',
+      requirements: formData.requirements || [],
+      
+      // 测试配置
+      testConfiguration: {
+        topology: {
+          nodeIds: formData.associatedNodes || [],
+          connectionIds: [],
+          dynamicCapture: true
+        },
+        stimuli: formData.stimuli || [],
+        environment: {
+          name: 'default',
+          version: '1.0.0',
+          variables: {},
+          constraints: []
+        },
+        expectedResults: {
+          outputs: [],
+          behaviors: [],
+          performance: {}
+        }
+      },
+      
+      // 执行信息
+      execution: {
+        status: 'pending' as TestExecutionStatus,
+        attempts: 0
+      },
+      
+      // 元数据
+      metadata: {
+        createdAt: testCase?.metadata?.createdAt || now,
+        createdBy: testCase?.metadata?.createdBy || 'user',
+        updatedAt: now,
+        updatedBy: 'user',
+        version: '1.0.0'
+      }
     };
 
     onSave(savedTestCase);
@@ -170,48 +225,15 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 2000
-    }}>
-      <div style={{
-        backgroundColor: 'var(--vscode-editor-background)',
-        border: '1px solid var(--vscode-panel-border)',
-        borderRadius: '4px',
-        width: '80%',
-        maxWidth: '800px',
-        maxHeight: '80%',
-        overflow: 'auto',
-        padding: '20px'
-      }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '20px',
-          borderBottom: '1px solid var(--vscode-panel-border)',
-          paddingBottom: '10px'
-        }}>
-          <h2 style={{ margin: 0, color: 'var(--vscode-foreground)' }}>
+    <div className="test-modal-overlay">
+      <div className="test-modal-content" style={{ maxWidth: '1000px', width: '90%' }}>
+        <div className="modal-header">
+          <h2 style={{ margin: 0 }}>
             {testCase ? '编辑测试用例' : '新建测试用例'}
           </h2>
           <button 
             onClick={onCancel}
-            style={{
-              background: 'none',
-              border: 'none',
-              color: 'var(--vscode-foreground)',
-              fontSize: '18px',
-              cursor: 'pointer'
-            }}
+            className="close-button"
           >
             ✕
           </button>
@@ -230,14 +252,8 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
                 type="text"
                 value={formData.name || ''}
                 onChange={(e) => handleInputChange('name', e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '6px',
-                  backgroundColor: 'var(--vscode-input-background)',
-                  color: 'var(--vscode-input-foreground)',
-                  border: '1px solid var(--vscode-input-border)',
-                  borderRadius: '2px'
-                }}
+                className="test-input"
+                style={{ width: '100%' }}
                 placeholder="输入测试用例名称"
               />
             </div>
@@ -249,14 +265,8 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
               <select
                 value={formData.category || 'functional'}
                 onChange={(e) => handleInputChange('category', e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '6px',
-                  backgroundColor: 'var(--vscode-input-background)',
-                  color: 'var(--vscode-input-foreground)',
-                  border: '1px solid var(--vscode-input-border)',
-                  borderRadius: '2px'
-                }}
+                className="test-input"
+                style={{ width: '100%' }}
               >
                 <option value="functional">功能测试</option>
                 <option value="integration">集成测试</option>
@@ -273,17 +283,27 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
               <textarea
                 value={formData.description || ''}
                 onChange={(e) => handleInputChange('description', e.target.value)}
+                className="test-input"
                 style={{
                   width: '100%',
                   height: '80px',
-                  padding: '6px',
-                  backgroundColor: 'var(--vscode-input-background)',
-                  color: 'var(--vscode-input-foreground)',
-                  border: '1px solid var(--vscode-input-border)',
-                  borderRadius: '2px',
                   resize: 'vertical'
                 }}
                 placeholder="输入测试用例描述"
+              />
+            </div>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', marginBottom: '4px', fontSize: '12px' }}>
+                功能树路径
+              </label>
+              <input
+                type="text"
+                value={formData.functionTreePath || ''}
+                onChange={(e) => handleInputChange('functionTreePath', e.target.value)}
+                className="test-input"
+                style={{ width: '100%' }}
+                placeholder="例如: /系统功能/用户管理/登录验证"
               />
             </div>
 
@@ -296,40 +316,27 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
                   type="text"
                   value={newTag}
                   onChange={(e) => setNewTag(e.target.value)}
-                  style={{
-                    flex: 1,
-                    padding: '6px',
-                    backgroundColor: 'var(--vscode-input-background)',
-                    color: 'var(--vscode-input-foreground)',
-                    border: '1px solid var(--vscode-input-border)',
-                    borderRadius: '2px'
-                  }}
+                  className="test-input"
+                  style={{ flex: 1 }}
                   placeholder="输入标签"
                   onKeyPress={(e) => e.key === 'Enter' && addTag()}
                 />
                 <button
                   onClick={addTag}
-                  style={{
-                    padding: '6px 12px',
-                    backgroundColor: 'var(--vscode-button-background)',
-                    color: 'var(--vscode-button-foreground)',
-                    border: '1px solid var(--vscode-button-border)',
-                    borderRadius: '2px',
-                    cursor: 'pointer'
-                  }}
+                  className="test-button"
                 >
                   添加
                 </button>
               </div>
               
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                {formData.tags?.map(tag => (
+                {formData.tags?.map((tag: string) => (
                   <span
                     key={tag}
                     style={{
                       padding: '2px 6px',
-                      backgroundColor: 'var(--vscode-badge-background)',
-                      color: 'var(--vscode-badge-foreground)',
+                      backgroundColor: 'var(--node-selected)',
+                      color: 'white',
                       borderRadius: '10px',
                       fontSize: '11px',
                       display: 'flex',
@@ -366,25 +373,13 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
                   type="text"
                   value={currentStep.description || ''}
                   onChange={(e) => setCurrentStep(prev => ({ ...prev, description: e.target.value }))}
-                  style={{
-                    padding: '6px',
-                    backgroundColor: 'var(--vscode-input-background)',
-                    color: 'var(--vscode-input-foreground)',
-                    border: '1px solid var(--vscode-input-border)',
-                    borderRadius: '2px'
-                  }}
+                  className="test-input"
                   placeholder="输入步骤描述"
                 />
                 <select
                   value={currentStep.action || 'click'}
                   onChange={(e) => setCurrentStep(prev => ({ ...prev, action: e.target.value as any }))}
-                  style={{
-                    padding: '6px',
-                    backgroundColor: 'var(--vscode-input-background)',
-                    color: 'var(--vscode-input-foreground)',
-                    border: '1px solid var(--vscode-input-border)',
-                    borderRadius: '2px'
-                  }}
+                  className="test-input"
                 >
                   <option value="click">点击</option>
                   <option value="input">输入</option>
@@ -399,26 +394,14 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
                   type="text"
                   value={currentStep.target || ''}
                   onChange={(e) => setCurrentStep(prev => ({ ...prev, target: e.target.value }))}
-                  style={{
-                    padding: '6px',
-                    backgroundColor: 'var(--vscode-input-background)',
-                    color: 'var(--vscode-input-foreground)',
-                    border: '1px solid var(--vscode-input-border)',
-                    borderRadius: '2px'
-                  }}
+                  className="test-input"
                   placeholder="目标对象"
                 />
                 <input
                   type="text"
                   value={currentStep.value || ''}
                   onChange={(e) => setCurrentStep(prev => ({ ...prev, value: e.target.value }))}
-                  style={{
-                    padding: '6px',
-                    backgroundColor: 'var(--vscode-input-background)',
-                    color: 'var(--vscode-input-foreground)',
-                    border: '1px solid var(--vscode-input-border)',
-                    borderRadius: '2px'
-                  }}
+                  className="test-input"
                   placeholder="输入值"
                 />
               </div>
@@ -428,26 +411,13 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
                   type="text"
                   value={currentStep.expected || ''}
                   onChange={(e) => setCurrentStep(prev => ({ ...prev, expected: e.target.value }))}
-                  style={{
-                    flex: 1,
-                    padding: '6px',
-                    backgroundColor: 'var(--vscode-input-background)',
-                    color: 'var(--vscode-input-foreground)',
-                    border: '1px solid var(--vscode-input-border)',
-                    borderRadius: '2px'
-                  }}
+                  className="test-input"
+                  style={{ flex: 1 }}
                   placeholder="期望结果"
                 />
                 <button
                   onClick={addStep}
-                  style={{
-                    padding: '6px 12px',
-                    backgroundColor: 'var(--vscode-button-background)',
-                    color: 'var(--vscode-button-foreground)',
-                    border: '1px solid var(--vscode-button-border)',
-                    borderRadius: '2px',
-                    cursor: 'pointer'
-                  }}
+                  className="test-button"
                 >
                   添加步骤
                 </button>
@@ -455,14 +425,14 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
             </div>
 
             <div style={{ maxHeight: '200px', overflow: 'auto' }}>
-              {formData.steps?.map((step, index) => (
+              {formData.steps?.map((step: TestStep, index: number) => (
                 <div
                   key={step.id}
                   style={{
                     padding: '8px',
                     marginBottom: '4px',
-                    backgroundColor: 'var(--vscode-input-background)',
-                    border: '1px solid var(--vscode-input-border)',
+                    backgroundColor: 'var(--palette-bg)',
+                    border: '1px solid var(--divider)',
                     borderRadius: '2px',
                     fontSize: '12px'
                   }}
@@ -472,24 +442,19 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
                       <div style={{ fontWeight: 'bold', marginBottom: '2px' }}>
                         {index + 1}. {step.description}
                       </div>
-                      <div style={{ color: 'var(--vscode-descriptionForeground)' }}>
+                      <div style={{ color: 'var(--text-muted)' }}>
                         {step.action} {step.target && `→ ${step.target}`} {step.value && `(${step.value})`}
                       </div>
                       {step.expected && (
-                        <div style={{ color: 'var(--vscode-descriptionForeground)', fontStyle: 'italic' }}>
+                        <div style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>
                           期望: {step.expected}
                         </div>
                       )}
                     </div>
                     <button
                       onClick={() => removeStep(step.id)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        color: 'var(--vscode-errorForeground)',
-                        cursor: 'pointer',
-                        fontSize: '12px'
-                      }}
+                      className="test-button-danger"
+                      style={{ fontSize: '12px', padding: '2px 6px' }}
                     >
                       删除
                     </button>
@@ -498,6 +463,88 @@ const TestCaseEditor: React.FC<TestCaseEditorProps> = ({
               ))}
             </div>
           </div>
+        </div>
+
+        {/* 激励配置区域 */}
+        <div style={{ marginTop: '20px' }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '12px'
+          }}>
+            <h3 style={{ margin: 0 }}>测试激励配置</h3>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                已选择 {formData.stimuli?.length || 0} 个激励
+              </span>
+              <button
+                onClick={() => setShowStimulusSelector(!showStimulusSelector)}
+                className="test-button-secondary"
+              >
+                {showStimulusSelector ? '隐藏选择器' : '选择激励'}
+              </button>
+            </div>
+          </div>
+
+          {/* 已选择的激励预览 */}
+          {formData.stimuli && formData.stimuli.length > 0 && (
+            <div style={{
+              marginBottom: '12px',
+              padding: '8px',
+              backgroundColor: 'var(--palette-bg)',
+              border: '1px solid var(--divider)',
+              borderRadius: '4px'
+            }}>
+              <div style={{ fontSize: '12px', fontWeight: 'bold', marginBottom: '8px' }}>
+                已配置的激励:
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                {formData.stimuli.map((stimulusRef: StimulusReference, index: number) => (
+                  <span
+                    key={`${stimulusRef.stimulusId}-${index}`}
+                    style={{
+                      padding: '4px 8px',
+                      backgroundColor: stimulusRef.enabled ? 'var(--node-selected)' : 'var(--text-muted)',
+                      color: 'white',
+                      borderRadius: '12px',
+                      fontSize: '11px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    {stimulusRef.stimulusId}
+                    {!stimulusRef.enabled && ' (禁用)'}
+                    <button
+                      onClick={() => {
+                        const updatedStimuli = formData.stimuli?.filter((_, i) => i !== index) || [];
+                        handleInputChange('stimuli', updatedStimuli);
+                      }}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        color: 'inherit',
+                        cursor: 'pointer',
+                        fontSize: '10px'
+                      }}
+                    >
+                      ✕
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 激励选择器 */}
+          {showStimulusSelector && (
+            <StimulusSelector
+              selectedStimuli={formData.stimuli || []}
+              onStimuliChange={(stimuli) => handleInputChange('stimuli', stimuli)}
+              associatedComponents={formData.associatedNodes || []}
+            />
+          )}
         </div>
 
         {/* 预期结果 */}
