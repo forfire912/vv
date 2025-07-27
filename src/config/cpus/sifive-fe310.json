@@ -1,0 +1,49 @@
+{
+  "name": "sifive-fe310",
+  "type": "cpu",
+  "interfaces": [
+    {
+      "id": "maskRom",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "otp",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "dtim",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "uart0",
+      "type": "UART.SiFive_UART"
+    },
+    {
+      "id": "uart1",
+      "type": "UART.SiFive_UART"
+    },
+    {
+      "id": "cpu",
+      "type": "CPU.RiscV32"
+    },
+    {
+      "id": "plic",
+      "type": "IRQControllers.PlatformLevelInterruptController"
+    },
+    {
+      "id": "clint",
+      "type": "IRQControllers.CoreLevelInterruptor"
+    },
+    {
+      "id": "qspi0Xip",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "gpioInputs",
+      "type": "GPIOPort.SiFive_GPIO",
+      "props": {
+        "pin_nums": 1
+      }
+    }
+  ]
+}

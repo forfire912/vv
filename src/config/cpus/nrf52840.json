@@ -1,0 +1,148 @@
+{
+  "name": "nrf52840",
+  "type": "cpu",
+  "interfaces": [
+    {
+      "id": "nvic",
+      "type": "IRQControllers.NVIC"
+    },
+    {
+      "id": "cpu",
+      "type": "CPU.CortexM"
+    },
+    {
+      "id": "uart0",
+      "type": "UART.NRF52840_UART"
+    },
+    {
+      "id": "uart1",
+      "type": "UART.NRF52840_UART"
+    },
+    {
+      "id": "rtc0",
+      "type": "Timers.NRF52840_RTC"
+    },
+    {
+      "id": "rtc1",
+      "type": "Timers.NRF52840_RTC"
+    },
+    {
+      "id": "rtc2",
+      "type": "Timers.NRF52840_RTC"
+    },
+    {
+      "id": "wdt",
+      "type": "Timers.NRF52840_Watchdog"
+    },
+    {
+      "id": "ppi",
+      "type": "Miscellaneous.NRF52840_PPI"
+    },
+    {
+      "id": "flash",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "ram",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "clock",
+      "type": "Miscellaneous.NRF_CLOCK"
+    },
+    {
+      "id": "twi0",
+      "type": "I2C.NRF52840_I2C"
+    },
+    {
+      "id": "spi2",
+      "type": "SPI.NRF52840_SPI"
+    },
+    {
+      "id": "gpio0",
+      "type": "GPIOPort.NRF52840_GPIO",
+      "props": {
+        "pin_nums": 1
+      }
+    },
+    {
+      "id": "gpio1",
+      "type": "GPIOPort.NRF52840_GPIO",
+      "props": {
+        "pin_nums": 1
+      }
+    },
+    {
+      "id": "gpiote",
+      "type": "GPIOPort.NRF52840_GPIOTasksEvents"
+    },
+    {
+      "id": "twi1",
+      "type": "I2C.NRF52840_I2C"
+    },
+    {
+      "id": "timer0",
+      "type": "Timers.NRF52840_Timer"
+    },
+    {
+      "id": "timer1",
+      "type": "Timers.NRF52840_Timer"
+    },
+    {
+      "id": "timer2",
+      "type": "Timers.NRF52840_Timer"
+    },
+    {
+      "id": "timer3",
+      "type": "Timers.NRF52840_Timer"
+    },
+    {
+      "id": "timer4",
+      "type": "Timers.NRF52840_Timer"
+    },
+    {
+      "id": "i2s",
+      "type": "Sound.NRF52840_I2S"
+    },
+    {
+      "id": "pdm",
+      "type": "Sound.NRF52840_PDM"
+    },
+    {
+      "id": "radio",
+      "type": "Wireless.NRF52840_Radio"
+    },
+    {
+      "id": "rng",
+      "type": "Miscellaneous.NRF52840_RNG"
+    },
+    {
+      "id": "ecb",
+      "type": "Miscellaneous.NRF52840_ECB"
+    },
+    {
+      "id": "egu0",
+      "type": "Miscellaneous.NRF52840_EGU"
+    },
+    {
+      "id": "egu1",
+      "type": "Miscellaneous.NRF52840_EGU"
+    },
+    {
+      "id": "egu2",
+      "type": "Miscellaneous.NRF52840_EGU"
+    },
+    {
+      "id": "egu3",
+      "type": "Miscellaneous.NRF52840_EGU"
+    },
+    {
+      "id": "egu4",
+      "type": "Miscellaneous.NRF52840_EGU"
+    },
+    {
+      "id": "egu5",
+      "type": "Miscellaneous.NRF52840_EGU"
+    }
+  ]
+}

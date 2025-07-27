@@ -7,9 +7,26 @@ import TestCasePanelEnhanced from './TestCasePanelEnhanced';
 import TestSuitePanelEnhanced from './TestSuitePanelEnhanced';
 import TestExecutionPanelEnhanced from './TestExecutionPanelEnhanced';
 import TestReportPanelEnhanced from './TestReportPanelEnhanced';
-import { TestExecution, TestCase, testExecutionEngine } from '../core/executionEngine';
+import { TestExecution, testExecutionEngine } from '../core/executionEngine';
+import { TestCase } from '../types';
 
 // CSS通过HTML直接加载，不在组件中导入
+
+// 将新的TestCase转换为executionEngine期望的旧格式
+const convertToLegacyTestCase = (testCase: TestCase): any => {
+  return {
+    id: testCase.id,
+    name: testCase.name,
+    description: testCase.description,
+    category: testCase.category,
+    tags: testCase.tags,
+    steps: [], // 从testConfiguration中提取或创建默认步骤
+    expectedResults: testCase.testConfiguration.expectedResults.behaviors.map(b => b.description).join('; '),
+    associatedNodes: testCase.associatedNodes,
+    createdAt: testCase.metadata.createdAt,
+    updatedAt: testCase.metadata.updatedAt
+  };
+};
 
 interface TestManagementPanelProps {
   isVisible?: boolean;
@@ -46,7 +63,7 @@ export const TestManagementPanelComplete: React.FC<TestManagementPanelProps> = (
   // 处理从测试用例执行单个测试
   const handleTestCaseExecution = async (testCase: TestCase) => {
     try {
-      const execution = await testExecutionEngine.executeTestCase(testCase);
+      const execution = await testExecutionEngine.executeTestCase(convertToLegacyTestCase(testCase));
       handleExecutionStart(execution);
     } catch (error) {
       console.error('Failed to start test case execution:', error);
@@ -116,7 +133,7 @@ export const TestManagementPanelComplete: React.FC<TestManagementPanelProps> = (
         {activeTab === 'testsuites' && (
           <TestSuitePanelEnhanced
             onExecutionStart={handleExecutionStart}
-            availableTestCases={testCases}
+            availableTestCases={testCases.map(convertToLegacyTestCase)}
           />
         )}
         
@@ -129,7 +146,7 @@ export const TestManagementPanelComplete: React.FC<TestManagementPanelProps> = (
         {activeTab === 'reports' && (
           <TestReportPanelEnhanced
             executions={executions}
-            testCases={testCases}
+            testCases={testCases.map(convertToLegacyTestCase)}
           />
         )}
       </div>

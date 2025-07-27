@@ -234,12 +234,12 @@ input[type="number"] {
   color: var(--input-text);
   border: 1px solid var(--input-border);
   border-radius: 2px; /* VS Code 使用更小的圆角 */
-  padding: 3px 6px; /* 增加padding，给文字更多空间 */
+  padding: 6px 8px; /* 增加padding，给文字更多空间 */
   font-size: 13px;
-  height: 26px; /* 增加高度，确保文字完全显示 */
+  height: 30px; /* 增加高度，确保文字完全显示 */
   box-sizing: border-box;
   font-family: inherit;
-  line-height: 1.3; /* 调整行高，确保文字居中显示 */
+  line-height: 1.2; /* 调整行高，确保文字居中显示 */
   transition: border-color 0.1s ease;
   vertical-align: middle; /* 确保垂直居中 */
 }
@@ -268,10 +268,12 @@ input[type="number"]:focus {
 select option {
   background: var(--input-bg);
   color: var(--input-text);
-  padding: 6px 8px; /* 增加padding，确保选项有足够空间 */
-  line-height: 1.4; /* 确保选项文字完整显示 */
-  min-height: 22px; /* 增加最小高度 */
+  padding: 8px 10px; /* 增加padding，确保选项有足够空间 */
+  line-height: 1.3; /* 确保选项文字完整显示 */
+  min-height: 26px; /* 增加最小高度 */
   font-size: 13px; /* 确保字体大小一致 */
+  border: none;
+  box-sizing: border-box;
 }
 
 /* 通用表单域样式 */
@@ -282,13 +284,16 @@ select option {
   color: var(--input-text);
   border: 1px solid var(--input-border);
   border-radius: 2px;
-  padding: 5px 8px; /* 增加padding确保文字完整显示 */
+  padding: 6px 8px; /* 增加上下padding确保文字完整显示 */
   font-size: 13px;
   margin-top: 4px;
-  min-height: 26px; /* 增加最小高度确保文字显示 */
+  min-height: 30px; /* 增加最小高度确保文字显示 */
+  height: 30px; /* 固定高度 */
   box-sizing: border-box;
   font-family: inherit;
-  line-height: 1.3; /* 调整行高确保文字居中 */
+  line-height: 1.2; /* 调整行高确保文字居中且不被遮挡 */
+  display: flex;
+  align-items: center; /* 确保内容垂直居中 */
 }
 
 .properties-input:focus,
@@ -296,6 +301,29 @@ select option {
   outline: none;
   border-color: var(--input-focus-border);
   box-shadow: 0 0 0 1px var(--input-focus-border);
+}
+
+/* 确保属性面板的下拉框选项显示正常 */
+.properties-panel .properties-select option {
+  background: var(--input-bg);
+  color: var(--input-text);
+  padding: 8px 10px;
+  line-height: 1.3;
+  min-height: 26px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+/* 修复下拉框文字被遮挡的问题 */
+.properties-select {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23999' d='M6 8L0 2l1.5-1.5L6 5l4.5-4.5L12 2z'/%3E%3C/svg%3E");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 12px;
+  padding-right: 30px; /* 为下拉箭头留出空间 */
+  appearance: none; /* 移除默认样式 */
+  -webkit-appearance: none;
+  -moz-appearance: none;
 }
 
 /* 主内容区域 */

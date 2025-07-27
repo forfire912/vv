@@ -1,0 +1,115 @@
+{
+  "name": "stm32f103",
+  "type": "cpu",
+  "interfaces": [
+    {
+      "id": "fsmcBank1",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "sram",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "flash",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "usart1",
+      "type": "UART.STM32_UART"
+    },
+    {
+      "id": "usart2",
+      "type": "UART.STM32_UART"
+    },
+    {
+      "id": "usart3",
+      "type": "UART.STM32_UART"
+    },
+    {
+      "id": "usart4",
+      "type": "UART.STM32_UART"
+    },
+    {
+      "id": "usart5",
+      "type": "UART.STM32_UART"
+    },
+    {
+      "id": "nvic",
+      "type": "IRQControllers.NVIC"
+    },
+    {
+      "id": "cpu",
+      "type": "CPU.CortexM"
+    },
+    {
+      "id": "i2c1",
+      "type": "I2C.STM32F4_I2C"
+    },
+    {
+      "id": "i2c2",
+      "type": "I2C.STM32F4_I2C"
+    },
+    {
+      "id": "exti",
+      "type": "IRQControllers.STM32F4_EXTI"
+    },
+    {
+      "id": "nvicInput23",
+      "type": "Miscellaneous.CombinedInput"
+    },
+    {
+      "id": "nvicInput40",
+      "type": "Miscellaneous.CombinedInput"
+    },
+    {
+      "id": "gpioPortA",
+      "type": "GPIOPort.STM32F1GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortB",
+      "type": "GPIOPort.STM32F1GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortC",
+      "type": "GPIOPort.STM32F1GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortD",
+      "type": "GPIOPort.STM32F1GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortE",
+      "type": "GPIOPort.STM32F1GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortF",
+      "type": "GPIOPort.STM32F1GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortG",
+      "type": "GPIOPort.STM32F1GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    }
+  ]
+}

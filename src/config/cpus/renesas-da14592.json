@@ -1,0 +1,105 @@
+{
+  "name": "stm32h743",
+  "type": "cpu",
+  "interfaces": [
+    {
+      "id": "nvic_m33",
+      "type": "IRQControllers.NVIC"
+    },
+    {
+      "id": "nvic_cmac",
+      "type": "IRQControllers.NVIC"
+    },
+    {
+      "id": "cpu_m33",
+      "type": "CPU.CortexM"
+    },
+    {
+      "id": "cmac",
+      "type": "CPU.CortexM"
+    },
+    {
+      "id": "rom",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "eflash_data_header",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "eflash_data_text",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "qpic_m",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "sram",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "timer1",
+      "type": "Timers.RenesasDA14_GPT"
+    },
+    {
+      "id": "timer2",
+      "type": "Timers.RenesasDA14_GPT"
+    },
+    {
+      "id": "timer3",
+      "type": "Timers.RenesasDA14_GPT"
+    },
+    {
+      "id": "timer4",
+      "type": "Timers.RenesasDA14_GPT"
+    },
+    {
+      "id": "uart0",
+      "type": "UART.RenesasDA14_UART"
+    },
+    {
+      "id": "uart1",
+      "type": "UART.RenesasDA14_UART"
+    },
+    {
+      "id": "sys_wdog",
+      "type": "Timers.RenesasDA_Watchdog"
+    },
+    {
+      "id": "gpadc",
+      "type": "Analog.RenesasDA14_GPADC"
+    },
+    {
+      "id": "gpio",
+      "type": "GPIOPort.RenesasDA14_GPIO",
+      "props": {
+        "pin_nums": 32
+      }
+    },
+    {
+      "id": "dma",
+      "type": "DMA.RenesasDA14_DMA"
+    },
+    {
+      "id": "i2c",
+      "type": "I2C.RenesasDA_I2C"
+    },
+    {
+      "id": "clock_gen",
+      "type": "Miscellaneous.RenesasDA14_ClockGenerationController"
+    },
+    {
+      "id": "xtal32m_regs",
+      "type": "Miscellaneous.RenesasDA14_XTAL32MRegisters"
+    },
+    {
+      "id": "spi",
+      "type": "SPI.RenesasDA_SPI"
+    },
+    {
+      "id": "gp_regs",
+      "type": "Miscellaneous.RenesasDA14_GeneralPurposeRegisters"
+    }
+  ]
+}

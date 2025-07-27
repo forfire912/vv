@@ -1,0 +1,166 @@
+{
+  "name": "stm32l552",
+  "type": "cpu",
+  "interfaces": [
+    {
+      "id": "nvic",
+      "type": "IRQControllers.NVIC"
+    },
+    {
+      "id": "cpu",
+      "type": "CPU.CortexM"
+    },
+    {
+      "id": "spi1",
+      "type": "SPI.STM32SPI"
+    },
+    {
+      "id": "spi2",
+      "type": "SPI.STM32SPI"
+    },
+    {
+      "id": "spi3",
+      "type": "SPI.STM32SPI"
+    },
+    {
+      "id": "exti",
+      "type": "IRQControllers.STM32F4_EXTI"
+    },
+    {
+      "id": "sram1",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "flash",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "usart1",
+      "type": "UART.STM32F7_USART"
+    },
+    {
+      "id": "usart2",
+      "type": "UART.STM32F7_USART"
+    },
+    {
+      "id": "usart3",
+      "type": "UART.STM32F7_USART"
+    },
+    {
+      "id": "uart4",
+      "type": "UART.STM32F7_USART"
+    },
+    {
+      "id": "uart5",
+      "type": "UART.STM32F7_USART"
+    },
+    {
+      "id": "lpuart1",
+      "type": "UART.STM32F7_USART"
+    },
+    {
+      "id": "dma1",
+      "type": "DMA.STM32LDMA"
+    },
+    {
+      "id": "i2c1",
+      "type": "I2C.STM32F4_I2C"
+    },
+    {
+      "id": "rtc",
+      "type": "STM32L_RTC"
+    },
+    {
+      "id": "gpioPortH",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortG",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortF",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortE",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortD",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortC",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortB",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortA",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "timer2",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer3",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer4",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer5",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer6",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer7",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer15",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer16",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer17",
+      "type": "Timers.STM32_Timer"
+    }
+  ]
+}

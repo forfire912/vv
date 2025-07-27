@@ -1,0 +1,12 @@
+{
+  "name": "bme280",
+  "type": "external",
+  "interfaces": [
+    {
+      "type": "I2C.BME280",
+      "allowed_type": [
+        "I2C"
+      ]
+    }
+  ]
+}

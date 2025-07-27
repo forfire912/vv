@@ -1,0 +1,12 @@
+{
+  "name": "uart",
+  "dev_loc": "onchip",
+  "interfaces": [
+    {
+      "type": "UART",
+      "allowed_type": [
+        "UART"
+      ]
+    }
+  ]
+}

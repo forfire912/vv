@@ -1,0 +1,12 @@
+{
+  "name": "i2c",
+  "dev_loc": "onchip",
+  "interfaces": [
+    {
+      "type": "SPI"
+      "allowed_type": [
+        "SPI"
+      ]
+    }
+  ]
+}

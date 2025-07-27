@@ -1,5 +1,5 @@
 {
-  "name": "stm32f4",
+  "name": "stm32f746",
   "type": "cpu",
   "interfaces": [
     {
@@ -15,35 +15,23 @@
       "type": "Memory.MappedMemory"
     },
     {
-      "id": "flash_controller",
-      "type": "MTD.STM32F4_FlashController"
-    },
-    {
       "id": "usart1",
-      "type": "UART.STM32_UART"
+      "type": "UART.STM32F7_USART"
     },
     {
       "id": "usart2",
-      "type": "UART.STM32_UART"
+      "type": "UART.STM32F7_USART"
     },
     {
       "id": "usart3",
-      "type": "UART.STM32_UART"
+      "type": "UART.STM32F7_USART"
     },
     {
-      "id": "uart4",
-      "type": "UART.STM32_UART"
-    },
-    {
-      "id": "uart5",
-      "type": "UART.STM32_UART"
+      "id": "usart6",
+      "type": "UART.STM32F7_USART"
     },
     {
       "id": "can1",
-      "type": "CAN.STMCAN"
-    },
-    {
-      "id": "can2",
       "type": "CAN.STMCAN"
     },
     {
@@ -53,14 +41,6 @@
     {
       "id": "cpu",
       "type": "CPU.CortexM"
-    },
-    {
-      "id": "pwr",
-      "type": "Miscellaneous.STM32_PWR"
-    },
-    {
-      "id": "crc",
-      "type": "CRC.STM32_CRC"
     },
     {
       "id": "exti",
@@ -117,15 +97,46 @@
       }
     },
     {
+      "id": "gpioPortG",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortH",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortI",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortJ",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortK",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
       "id": "ethernet",
       "type": "Network.SynopsysEthernetMAC"
     },
     {
-      "id": "rom1",
-      "type": "Memory.MappedMemory"
-    },
-    {
-      "id": "rom2",
+      "id": "rom",
       "type": "Memory.MappedMemory"
     },
     {
@@ -141,18 +152,6 @@
       "type": "SPI.STM32SPI"
     },
     {
-      "id": "i2c1",
-      "type": "I2C.STM32F4_I2C"
-    },
-    {
-      "id": "i2c2",
-      "type": "I2C.STM32F4_I2C"
-    },
-    {
-      "id": "i2c3",
-      "type": "I2C.STM32F4_I2C"
-    },
-    {
       "id": "dma1",
       "type": "DMA.STM32DMA"
     },
@@ -161,12 +160,36 @@
       "type": "DMA.STM32DMA"
     },
     {
-      "id": "rng",
-      "type": "Miscellaneous.STM32F4_RNG"
+      "id": "ltdc",
+      "type": "Video.STM32LTDC"
     },
     {
-      "id": "iwdg",
-      "type": "Timers.STM32_IndependentWatchdog"
+      "id": "dma2d",
+      "type": "DMA.STM32DMA2D"
+    },
+    {
+      "id": "i2c1",
+      "type": "I2C.STM32F7_I2C"
+    },
+    {
+      "id": "i2c2",
+      "type": "I2C.STM32F7_I2C"
+    },
+    {
+      "id": "i2c3",
+      "type": "I2C.STM32F7_I2C"
+    },
+    {
+      "id": "i2c4",
+      "type": "I2C.STM32F7_I2C"
+    },
+    {
+      "id": "syscfg",
+      "type": "Miscellaneous.STM32_SYSCFG"
+    },
+    {
+      "id": "lptim1Isr",
+      "type": "Python.PythonPeripheral"
     },
     {
       "id": "rtc",
@@ -177,68 +200,32 @@
       "type": "Miscellaneous.STM32F4_RCC"
     },
     {
-      "id": "timer1",
-      "type": "Timers.STM32_Timer"
+      "id": "rng",
+      "type": "Miscellaneous.STM32F4_RNG"
     },
     {
-      "id": "timer2",
-      "type": "Timers.STM32_Timer"
+      "id": "pwrCr1",
+      "type": "Python.PythonPeripheral"
     },
     {
-      "id": "timer3",
-      "type": "Timers.STM32_Timer"
+      "id": "pwrCsr1",
+      "type": "Python.PythonPeripheral"
     },
     {
-      "id": "timer4",
-      "type": "Timers.STM32_Timer"
+      "id": "sdmmc",
+      "type": "SD.STM32SDMMC"
+    },
+    {
+      "id": "flash_regs",
+      "type": "Memory.MappedMemory"
     },
     {
       "id": "timer5",
-      "type": "Timers.STM32_Timer"
+      "type": "Python.PythonPeripheral"
     },
     {
       "id": "timer6",
       "type": "Timers.STM32_Timer"
-    },
-    {
-      "id": "timer7",
-      "type": "Timers.STM32_Timer"
-    },
-    {
-      "id": "timer8",
-      "type": "Timers.STM32_Timer"
-    },
-    {
-      "id": "timer9",
-      "type": "Timers.STM32_Timer"
-    },
-    {
-      "id": "timer10",
-      "type": "Timers.STM32_Timer"
-    },
-    {
-      "id": "timer11",
-      "type": "Timers.STM32_Timer"
-    },
-    {
-      "id": "timer12",
-      "type": "Timers.STM32_Timer"
-    },
-    {
-      "id": "timer13",
-      "type": "Timers.STM32_Timer"
-    },
-    {
-      "id": "timer14",
-      "type": "Timers.STM32_Timer"
-    },
-    {
-      "id": "bitbandPeripherals",
-      "type": "Miscellaneous.BitBanding"
-    },
-    {
-      "id": "bitbandSram",
-      "type": "Miscellaneous.BitBanding"
     }
   ]
 }

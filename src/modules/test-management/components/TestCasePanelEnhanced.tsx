@@ -5,21 +5,9 @@
 import React, { useState, useEffect } from 'react';
 import TestCaseEditor from './TestCaseEditor';
 import { testExecutionEngine, TestExecution } from '../core/executionEngine';
+import { TestCase } from '../types';
 
-interface TestCase {
-  id: string;
-  name: string;
-  description: string;
-  category: string;
-  tags: string[];
-  steps: TestStep[];
-  expectedResults: string;
-  associatedNodes: string[];
-  topologySnapshot?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
+// 简化的测试步骤接口（用于旧数据兼容）
 interface TestStep {
   id: string;
   description: string;
@@ -34,18 +22,93 @@ interface TestCasePanelEnhancedProps {
   onExecutionStart?: (execution: TestExecution) => void;
 }
 
+// 创建兼容的测试用例数据的辅助函数
+const createCompatibleTestCase = (
+  id: string,
+  name: string,
+  description: string,
+  category: string,
+  tags: string[],
+  steps: TestStep[],
+  expectedResults: string,
+  associatedNodes: string[],
+  createdAt: Date,
+  updatedAt: Date
+): TestCase => {
+  return {
+    id,
+    name,
+    description,
+    category,
+    tags,
+    associatedNodes,
+    functionTreePath: `/${category}/${name}`,
+    requirements: [],
+    testConfiguration: {
+      topology: {
+        nodeIds: associatedNodes,
+        connectionIds: [],
+        dynamicCapture: true
+      },
+      stimuli: [],
+      environment: {
+        name: 'default',
+        version: '1.0.0',
+        variables: {},
+        constraints: []
+      },
+      expectedResults: {
+        outputs: [],
+        behaviors: [{
+          name: 'default',
+          description: expectedResults,
+          criteria: []
+        }],
+        performance: {}
+      }
+    },
+    execution: {
+      status: 'pending' as const,
+      attempts: 0
+    },
+    metadata: {
+      createdAt,
+      createdBy: 'user',
+      updatedAt,
+      updatedBy: 'user',
+      version: '1.0.0'
+    }
+  };
+};
+
+// 将新的TestCase转换为executionEngine期望的旧格式
+const convertToLegacyTestCase = (testCase: TestCase): any => {
+  return {
+    id: testCase.id,
+    name: testCase.name,
+    description: testCase.description,
+    category: testCase.category,
+    tags: testCase.tags,
+    steps: [], // 从testConfiguration中提取或创建默认步骤
+    expectedResults: testCase.testConfiguration.expectedResults.behaviors.map(b => b.description).join('; '),
+    associatedNodes: testCase.associatedNodes,
+    createdAt: testCase.metadata.createdAt,
+    updatedAt: testCase.metadata.updatedAt
+  };
+};
+
 const TestCasePanelEnhanced: React.FC<TestCasePanelEnhancedProps> = ({ 
   onTestCaseUpdate, 
   onExecutionStart 
 }) => {
   const [testCases, setTestCases] = useState<TestCase[]>([
-    {
-      id: '1',
-      name: '基础连接测试',
-      description: '测试基本的连接功能，确保设备能够正常连接',
-      category: 'functional',
-      tags: ['connection', 'basic'],
-      steps: [
+    createCompatibleTestCase(
+      '1',
+      '基础连接测试',
+      '测试基本的连接功能，确保设备能够正常连接',
+      'functional',
+      ['connection', 'basic'],
+      [
         {
           id: '1-1',
           description: '启动设备',
@@ -61,18 +124,18 @@ const TestCasePanelEnhanced: React.FC<TestCasePanelEnhancedProps> = ({
           expected: '显示连接成功'
         }
       ],
-      expectedResults: '设备成功连接并显示正常状态',
-      associatedNodes: ['device-1', 'connector-1'],
-      createdAt: new Date('2024-01-15'),
-      updatedAt: new Date('2024-01-15')
-    },
-    {
-      id: '2',
-      name: '按钮响应测试',
-      description: '测试按钮交互响应是否及时准确',
-      category: 'usability',
-      tags: ['button', 'interaction', 'ui'],
-      steps: [
+      '设备成功连接并显示正常状态',
+      ['device-1', 'connector-1'],
+      new Date('2024-01-15'),
+      new Date('2024-01-15')
+    ),
+    createCompatibleTestCase(
+      '2',
+      '按钮响应测试',
+      '测试按钮交互响应是否及时准确',
+      'usability',
+      ['button', 'interaction', 'ui'],
+      [
         {
           id: '2-1',
           description: '点击按钮',
@@ -88,18 +151,18 @@ const TestCasePanelEnhanced: React.FC<TestCasePanelEnhancedProps> = ({
           expected: '响应时间<100ms'
         }
       ],
-      expectedResults: '按钮响应及时，状态正确',
-      associatedNodes: ['button-1'],
-      createdAt: new Date('2024-01-16'),
-      updatedAt: new Date('2024-01-16')
-    },
-    {
-      id: '3',
-      name: '数据传输测试',
-      description: '测试数据传输功能的准确性和完整性',
-      category: 'integration',
-      tags: ['data', 'transmission', 'integrity'],
-      steps: [
+      '按钮响应及时，状态正确',
+      ['button-1'],
+      new Date('2024-01-16'),
+      new Date('2024-01-16')
+    ),
+    createCompatibleTestCase(
+      '3',
+      '数据传输测试',
+      '测试数据传输功能的准确性和完整性',
+      'integration',
+      ['data', 'transmission', 'integrity'],
+      [
         {
           id: '3-1',
           description: '发送测试数据',
@@ -116,11 +179,11 @@ const TestCasePanelEnhanced: React.FC<TestCasePanelEnhancedProps> = ({
           expected: '接收数据与发送数据一致'
         }
       ],
-      expectedResults: '数据传输准确无误',
-      associatedNodes: ['transmitter-1', 'receiver-1'],
-      createdAt: new Date('2024-01-17'),
-      updatedAt: new Date('2024-01-17')
-    }
+      '数据传输准确无误',
+      ['transmitter-1', 'receiver-1'],
+      new Date('2024-01-17'),
+      new Date('2024-01-17')
+    )
   ]);
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -161,7 +224,7 @@ const TestCasePanelEnhanced: React.FC<TestCasePanelEnhancedProps> = ({
           comparison = a.category.localeCompare(b.category);
           break;
         case 'updatedAt':
-          comparison = a.updatedAt.getTime() - b.updatedAt.getTime();
+          comparison = a.metadata.updatedAt.getTime() - b.metadata.updatedAt.getTime();
           break;
       }
       
@@ -242,7 +305,7 @@ const TestCasePanelEnhanced: React.FC<TestCasePanelEnhancedProps> = ({
   // 运行测试用例
   const handleRunTestCase = async (testCase: TestCase) => {
     try {
-      const execution = await testExecutionEngine.executeTestCase(testCase);
+      const execution = await testExecutionEngine.executeTestCase(convertToLegacyTestCase(testCase));
       if (onExecutionStart) {
         onExecutionStart(execution);
       }
@@ -260,7 +323,7 @@ const TestCasePanelEnhanced: React.FC<TestCasePanelEnhancedProps> = ({
       
       try {
         for (const testCase of selectedTests) {
-          const execution = await testExecutionEngine.executeTestCase(testCase);
+          const execution = await testExecutionEngine.executeTestCase(convertToLegacyTestCase(testCase));
           if (onExecutionStart) {
             onExecutionStart(execution);
           }
@@ -591,8 +654,8 @@ const TestCasePanelEnhanced: React.FC<TestCasePanelEnhancedProps> = ({
                     fontSize: '11px',
                     color: 'var(--vscode-descriptionForeground)'
                   }}>
-                    <span>{testCase.steps.length} 个步骤</span>
-                    <span>更新于 {testCase.updatedAt.toLocaleString()}</span>
+                    <span>{testCase.testConfiguration.stimuli.length} 个激励</span>
+                    <span>更新于 {testCase.metadata.updatedAt.toLocaleString()}</span>
                   </div>
                 </div>
               </div>

@@ -1,0 +1,395 @@
+{
+  "name": "stm32h743",
+  "type": "cpu",
+  "interfaces": [
+    {
+      "id": "cpu",
+      "type": "CPU.CortexM"
+    },
+    {
+      "id": "nvic",
+      "type": "IRQControllers.NVIC"
+    },
+    {
+      "id": "exti",
+      "type": "IRQControllers.STM32H7_EXTI"
+    },
+    {
+      "id": "nvicInput23",
+      "type": "Miscellaneous.CombinedInput"
+    },
+    {
+      "id": "nvicInput40",
+      "type": "Miscellaneous.CombinedInput"
+    },
+    {
+      "id": "nvicInput86",
+      "type": "Miscellaneous.CombinedInput"
+    },
+    {
+      "id": "nvicInput137",
+      "type": "Miscellaneous.CombinedInput"
+    },
+    {
+      "id": "nvicInput142",
+      "type": "Miscellaneous.CombinedInput"
+    },
+    {
+      "id": "nvicInput149",
+      "type": "Miscellaneous.CombinedInput"
+    },
+    {
+      "id": "sdramBank2",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "sdramBank1",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "flashController",
+      "type": "MTD.STM32H7_FlashController"
+    },
+    {
+      "id": "externalFlash",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "flashBank1",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "sramBank2",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "sramBank1",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "adc3",
+      "type": "Analog.STM32F0_ADC"
+    },
+    {
+      "id": "bdma",
+      "type": "DMA.STM32LDMA"
+    },
+    {
+      "id": "gpioPortK",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortJ",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortI",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortH",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortG",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortF",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortE",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortD",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortC",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortB",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "gpioPortA",
+      "type": "GPIOPort.STM32_GPIOPort",
+      "props": {
+        "pin_nums": 16
+      }
+    },
+    {
+      "id": "rtc",
+      "type": "Timers.STM32F4_RTC"
+    },
+    {
+      "id": "spi4",
+      "type": "SPI.STM32H7_SPI"
+    },
+    {
+      "id": "i2c4",
+      "type": "I2C.STM32F7_I2C"
+    },
+    {
+      "id": "lpuart1",
+      "type": "UART.STM32F7_USART"
+    },
+    {
+      "id": "syscfg",
+      "type": "Miscellaneous.STM32_SYSCFG"
+    },
+    {
+      "id": "dma2d",
+      "type": "DMA.STM32DMA2D"
+    },
+    {
+      "id": "ltdc",
+      "type": "Video.STM32LTDC"
+    },
+    {
+      "id": "adcM1S2",
+      "type": "Analog.STM32F0_ADC"
+    },
+    {
+      "id": "rng",
+      "type": "Miscellaneous.STM32F4_RNG"
+    },
+    {
+      "id": "dma2",
+      "type": "DMA.STM32DMA"
+    },
+    {
+      "id": "dma1",
+      "type": "DMA.STM32DMA"
+    },
+    {
+      "id": "timer17",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer16",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer15",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "usart6",
+      "type": "UART.STM32F7_USART"
+    },
+    {
+      "id": "usart1",
+      "type": "UART.STM32F7_USART"
+    },
+    {
+      "id": "timer8",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer1",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "uart8",
+      "type": "UART.STM32F7_USART"
+    },
+    {
+      "id": "uart7",
+      "type": "UART.STM32F7_USART"
+    },
+    {
+      "id": "i2c3",
+      "type": "I2C.STM32F7_I2C"
+    },
+    {
+      "id": "i2c2",
+      "type": "I2C.STM32F7_I2C"
+    },
+    {
+      "id": "i2c1",
+      "type": "I2C.STM32F7_I2C"
+    },
+    {
+      "id": "uart5",
+      "type": "UART.STM32F7_USART"
+    },
+    {
+      "id": "uart4",
+      "type": "UART.STM32F7_USART"
+    },
+    {
+      "id": "usart3",
+      "type": "UART.STM32F7_USART"
+    },
+    {
+      "id": "usart2",
+      "type": "UART.STM32F7_USART"
+    },
+    {
+      "id": "timer14",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer13",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer12",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer7",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer6",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer5",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer4",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer3",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "timer2",
+      "type": "Timers.STM32_Timer"
+    },
+    {
+      "id": "fdcan1",
+      "type": "CAN.MCAN"
+    },
+    {
+      "id": "fdcan2",
+      "type": "CAN.MCAN"
+    },
+    {
+      "id": "canMessageRAM",
+      "type": "Memory.ArrayMemory"
+    },
+    {
+      "id": "backupSram",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "sram4",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "sram3",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "sram2",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "sram1",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "axiSram",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "dtcm",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "ram",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "flashBank2",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "itcm",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "rcc",
+      "type": "Miscellaneous.STM32H7_RCC"
+    },
+    {
+      "id": "crc",
+      "type": "CRC.STM32_CRC"
+    },
+    {
+      "id": "lptimer1",
+      "type": "Timers.STM32L0_LpTimer"
+    },
+    {
+      "id": "lptimer2",
+      "type": "Timers.STM32L0_LpTimer"
+    },
+    {
+      "id": "lptimer3",
+      "type": "Timers.STM32L0_LpTimer"
+    },
+    {
+      "id": "lptimer4",
+      "type": "Timers.STM32L0_LpTimer"
+    },
+    {
+      "id": "lptimer5",
+      "type": "Timers.STM32L0_LpTimer"
+    },
+    {
+      "id": "watchdog",
+      "type": "Timers.STM32_IndependentWatchdog"
+    },
+    {
+      "id": "hsem",
+      "type": "Miscellaneous.STM32H7_HardwareSemaphore"
+    },
+    {
+      "id": "ethernet",
+      "type": "Network.SynopsysDWCEthernetQualityOfService"
+    },
+    {
+      "id": "qspi",
+      "type": "SPI.STM32H7_QuadSPI"
+    }
+  ]
+}

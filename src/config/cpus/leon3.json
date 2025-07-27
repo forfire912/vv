@@ -1,0 +1,57 @@
+{
+  "name": "leon3",
+  "type": "cpu",
+  "interfaces": [
+    {
+      "id": "rom",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "ddr",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "sdram",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "cpu",
+      "type": "CPU.Sparc"
+    },
+    {
+      "id": "ahbInfo",
+      "type": "Bus.GaislerAHBPlugAndPlayInfo"
+    },
+    {
+      "id": "apbController",
+      "type": "Bus.GaislerAPBController"
+    },
+    {
+      "id": "esaMemController",
+      "type": "MemoryControllers.ESAMemoryController"
+    },
+    {
+      "id": "mic",
+      "type": "IRQControllers.GaislerMIC"
+    },
+    {
+      "id": "uart",
+      "type": "UART.GaislerAPBUART"
+    },
+    {
+      "id": "timer",
+      "type": "Timers.Gaisler_GPTimer"
+    },
+    {
+      "id": "eth",
+      "type": "Network.GaislerEth"
+    },
+    {
+      "id": "gpio",
+      "type": "GPIOPort.Gaisler_GPIO",
+      "props": {
+        "pin_nums": 16
+      }
+    }
+  ]
+}

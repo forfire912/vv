@@ -1,0 +1,12 @@
+{
+  "name": "can",
+  "dev_loc": "onchip",
+  "interfaces": [
+    {
+      "type": "CAN"
+      "allowed_type": [
+        "CAN"
+      ]
+    }
+  ]
+}

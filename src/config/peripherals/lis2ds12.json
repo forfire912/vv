@@ -1,0 +1,12 @@
+{
+  "name": "lis2ds12",
+  "dev_loc": "external",
+  "interfaces": [
+    {
+      "type": "Sensors.LIS2DS12",
+      "allowed_type": [
+        "I2C"
+      ]
+    }
+  ]
+}

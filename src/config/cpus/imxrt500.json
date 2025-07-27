@@ -1,0 +1,114 @@
+{
+  "name": "imxrt500",
+  "type": "cpu",
+  "interfaces": [
+    {
+      "id": "cpu0",
+      "type": "CPU.CortexM"
+    },
+    {
+      "id": "nvic0",
+      "type": "IRQControllers.NVIC"
+    },
+    {
+      "id": "ctimer0",
+      "type": "Timers.LPC_CTimer"
+    },
+    {
+      "id": "ctimer1",
+      "type": "Timers.LPC_CTimer"
+    },
+    {
+      "id": "ctimer2",
+      "type": "Timers.LPC_CTimer"
+    },
+    {
+      "id": "ctimer3",
+      "type": "Timers.LPC_CTimer"
+    },
+    {
+      "id": "ctimer4",
+      "type": "Timers.LPC_CTimer"
+    },
+    {
+      "id": "ostimer",
+      "type": "Timers.NXP_OsTimer"
+    },
+    {
+      "id": "flexcomm0",
+      "type": "UART.LPC_USART"
+    },
+    {
+      "id": "flexcomm12",
+      "type": "UART.LPC_USART"
+    },
+    {
+      "id": "flexspi2",
+      "type": "SPI.IMXRT_FlexSPI"
+    },
+    {
+      "id": "flexspi",
+      "type": "SPI.IMXRT_FlexSPI"
+    },
+    {
+      "id": "sram0",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "sram1",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "bootrom",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "flexspi0_mem",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "flexspi1_mem",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "usb_ram",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "clkctl0",
+      "type": "Miscellaneous.LPC_Clock0"
+    },
+    {
+      "id": "trng",
+      "type": "Miscellaneous.IMX_TRNG"
+    },
+    {
+      "id": "dwt",
+      "type": "Miscellaneous.DWT"
+    },
+    {
+      "id": "clkctl1",
+      "type": "Python.PythonPeripheral"
+    },
+    {
+      "id": "reset_flexspi1",
+      "type": "Python.PythonPeripheral"
+    },
+    {
+      "id": "reset_adc0",
+      "type": "Python.PythonPeripheral"
+    },
+    {
+      "id": "reset_flexcomm12",
+      "type": "Python.PythonPeripheral"
+    },
+    {
+      "id": "PRSTCTL2",
+      "type": "Python.PythonPeripheral"
+    },
+    {
+      "id": "reset_hsgpio3",
+      "type": "Python.PythonPeripheral"
+    }
+  ]
+}

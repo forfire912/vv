@@ -1,0 +1,12 @@
+{
+  "name": "icp_101xx",
+  "type": "external",
+  "interfaces": [
+    {
+      "type": "Sensors.ICP_101xx",
+      "allowed_type": [
+        "I2C"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "name": "cc2538",
+  "type": "cpu",
+  "interfaces": [
+    {
+      "id": "uDma",
+      "type": "DMA.UDMA"
+    },
+    {
+      "id": "uart0",
+      "type": "UART.PL011"
+    },
+    {
+      "id": "watchdog",
+      "type": "Timers.CC2538Watchdog"
+    },
+    {
+      "id": "sleepTimer",
+      "type": "Timers.CC2538SleepTimer"
+    },
+    {
+      "id": "uart1",
+      "type": "UART.PL011"
+    },
+    {
+      "id": "ram",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "gpioA",
+      "type": "GPIOPort.CC2538_GPIO"
+    },
+    {
+      "id": "gpioB",
+      "type": "GPIOPort.CC2538_GPIO"
+    },
+    {
+      "id": "gpioC",
+      "type": "GPIOPort.CC2538_GPIO"
+    },
+    {
+      "id": "gpioD",
+      "type": "GPIOPort.CC2538_GPIO"
+    },
+    {
+      "id": "rom",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "flash",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "nvic",
+      "type": "IRQControllers.NVIC"
+    },
+    {
+      "id": "cpu",
+      "type": "CPU.CortexM"
+    },
+    {
+      "id": "radio",
+      "type": "Wireless.CC2538RF"
+    },
+    {
+      "id": "bitband",
+      "type": "Miscellaneous.BitBanding"
+    },
+    {
+      "id": "crypto",
+      "type": "Miscellaneous.CC2538_Cryptoprocessor"
+    },
+    {
+      "id": "flashCtrl",
+      "type": "MTD.CC2538FlashController"
+    },
+    {
+      "id": "ssi0",
+      "type": "SPI.CC2538_SSI"
+    },
+    {
+      "id": "ssi1",
+      "type": "SPI.CC2538_SSI"
+    }
+  ]
+}

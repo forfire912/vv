@@ -1,0 +1,84 @@
+{
+  "name": "gr716",
+  "type": "cpu",
+  "interfaces": [
+    {
+      "id": "bootprom",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "extprom",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "spi0",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "spi1",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "ram",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "sram",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "extram",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "cpu",
+      "type": "CPU.Sparc"
+    },
+    {
+      "id": "mic",
+      "type": "IRQControllers.GaislerMIC"
+    },
+    {
+      "id": "uart",
+      "type": "UART.GaislerAPBUART"
+    },
+    {
+      "id": "uart1",
+      "type": "UART.GaislerAPBUART"
+    },
+    {
+      "id": "uart2",
+      "type": "UART.GaislerAPBUART"
+    },
+    {
+      "id": "uart3",
+      "type": "UART.GaislerAPBUART"
+    },
+    {
+      "id": "uart4",
+      "type": "UART.GaislerAPBUART"
+    },
+    {
+      "id": "uart5",
+      "type": "UART.GaislerAPBUART"
+    },
+    {
+      "id": "timer0",
+      "type": "Timers.Gaisler_GPTimer"
+    },
+    {
+      "id": "gpio0",
+      "type": "GPIOPort.Gaisler_GPIO",
+      "props": {
+        "pin_nums": 32
+      }
+    },
+    {
+      "id": "gpio1",
+      "type": "GPIOPort.Gaisler_GPIO",
+      "props": {
+        "pin_nums": 16
+      }
+    }
+  ]
+}

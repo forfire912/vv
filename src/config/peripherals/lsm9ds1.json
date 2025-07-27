@@ -1,0 +1,18 @@
+{
+  "name": "lsm9ds1",
+  "type": "external",
+  "interfaces": [
+    {
+      "type": "Sensors.LSM9DS1_IMU",
+      "allowed_type": [
+        "I2C"
+      ]
+    },
+    {
+      "type": "Sensors.LSM9DS1_Magnetic",
+      "allowed_type": [
+        "I2C"
+      ]
+    }
+  ]
+}

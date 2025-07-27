@@ -1,0 +1,228 @@
+{
+  "name": "imxrt1064",
+  "type": "cpu",
+  "interfaces": [
+    {
+      "id": "nvic",
+      "type": "IRQControllers.NVIC"
+    },
+    {
+      "id": "cpu",
+      "type": "CPU.CortexM"
+    },
+    {
+      "id": "itcm",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "dtcm",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "ocram2",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "wdog1",
+      "type": "Python.PythonPeripheral"
+    },
+    {
+      "id": "trng",
+      "type": "Miscellaneous.IMX_TRNG"
+    },
+    {
+      "id": "wdog2",
+      "type": "Python.PythonPeripheral"
+    },
+    {
+      "id": "wdog3",
+      "type": "Python.PythonPeripheral"
+    },
+    {
+      "id": "iomuxc",
+      "type": "Python.PythonPeripheral"
+    },
+    {
+      "id": "analog01",
+      "type": "Python.PythonPeripheral"
+    },
+    {
+      "id": "analog03",
+      "type": "Python.PythonPeripheral"
+    },
+    {
+      "id": "dcdc",
+      "type": "Python.PythonPeripheral"
+    },
+    {
+      "id": "gpTimer1",
+      "type": "Timers.IMX_GPTimer"
+    },
+    {
+      "id": "lpuart1",
+      "type": "UART.NXP_LPUART"
+    },
+    {
+      "id": "lpuart2",
+      "type": "UART.NXP_LPUART"
+    },
+    {
+      "id": "lpuart3",
+      "type": "UART.NXP_LPUART"
+    },
+    {
+      "id": "lpuart4",
+      "type": "UART.NXP_LPUART"
+    },
+    {
+      "id": "lpuart5",
+      "type": "UART.NXP_LPUART"
+    },
+    {
+      "id": "lpuart6",
+      "type": "UART.NXP_LPUART"
+    },
+    {
+      "id": "lpuart7",
+      "type": "UART.NXP_LPUART"
+    },
+    {
+      "id": "lpuart8",
+      "type": "UART.NXP_LPUART"
+    },
+    {
+      "id": "gpio1",
+      "type": "GPIOPort.IMXRT_GPIO",
+      "props": {
+        "pin_nums": 1
+      }
+    },
+    {
+      "id": "gpio2",
+      "type": "GPIOPort.IMXRT_GPIO",
+      "props": {
+        "pin_nums": 1
+      }
+    },
+    {
+      "id": "gpio3",
+      "type": "GPIOPort.IMXRT_GPIO",
+      "props": {
+        "pin_nums": 1
+      }
+    },
+    {
+      "id": "gpio4",
+      "type": "GPIOPort.IMXRT_GPIO",
+      "props": {
+        "pin_nums": 1
+      }
+    },
+    {
+      "id": "gpio5",
+      "type": "GPIOPort.IMXRT_GPIO",
+      "props": {
+        "pin_nums": 1
+      }
+    },
+    {
+      "id": "gpio6",
+      "type": "GPIOPort.IMXRT_GPIO",
+      "props": {
+        "pin_nums": 1
+      }
+    },
+    {
+      "id": "gpio7",
+      "type": "GPIOPort.IMXRT_GPIO",
+      "props": {
+        "pin_nums": 1
+      }
+    },
+    {
+      "id": "gpio8",
+      "type": "GPIOPort.IMXRT_GPIO",
+      "props": {
+        "pin_nums": 1
+      }
+    },
+    {
+      "id": "gpio9",
+      "type": "GPIOPort.IMXRT_GPIO",
+      "props": {
+        "pin_nums": 1
+      }
+    },
+    {
+      "id": "gpio10",
+      "type": "GPIOPort.IMXRT_GPIO",
+      "props": {
+        "pin_nums": 1
+      }
+    },
+    {
+      "id": "enetIRQs",
+      "type": "Miscellaneous.CombinedInput"
+    },
+    {
+      "id": "enet2IRQs",
+      "type": "Miscellaneous.CombinedInput"
+    },
+    {
+      "id": "enet",
+      "type": "Network.K6xF_Ethernet"
+    },
+    {
+      "id": "enet2",
+      "type": "Network.K6xF_Ethernet"
+    },
+    {
+      "id": "flex_spi",
+      "type": "SPI.IMXRT_FlexSPI"
+    },
+    {
+      "id": "flex_spi2",
+      "type": "SPI.IMXRT_FlexSPI"
+    },
+    {
+      "id": "lpspi1",
+      "type": "SPI.IMXRT_LPSPI"
+    },
+    {
+      "id": "lpspi2",
+      "type": "SPI.IMXRT_LPSPI"
+    },
+    {
+      "id": "lpspi3",
+      "type": "SPI.IMXRT_LPSPI"
+    },
+    {
+      "id": "lpspi4",
+      "type": "SPI.IMXRT_LPSPI"
+    },
+    {
+      "id": "adc1",
+      "type": "Analog.IMXRT_ADC"
+    },
+    {
+      "id": "adc2",
+      "type": "Analog.IMXRT_ADC"
+    },
+    {
+      "id": "pwm1",
+      "type": "Timers.IMXRT_PWM"
+    },
+    {
+      "id": "pwm2",
+      "type": "Timers.IMXRT_PWM"
+    },
+    {
+      "id": "pwm3",
+      "type": "Timers.IMXRT_PWM"
+    },
+    {
+      "id": "pwm4",
+      "type": "Timers.IMXRT_PWM"
+    }
+  ]
+}

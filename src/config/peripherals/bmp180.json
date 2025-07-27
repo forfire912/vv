@@ -1,0 +1,12 @@
+{
+  "name": "bmp180",
+  "dev_loc": "external",
+  "interfaces": [
+    {
+      "type": "Sensors.BMP180",
+      "allowed_type": [
+        "I2C"
+      ]
+    }
+  ]
+}

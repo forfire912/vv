@@ -1,0 +1,12 @@
+{
+  "name": "sht45",
+  "type": "external",
+  "interfaces": [
+    {
+      "type": "I2C.SHT45",
+      "allowed_type": [
+        "I2C"
+      ]
+    }
+  ]
+}

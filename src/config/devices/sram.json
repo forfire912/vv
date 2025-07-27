@@ -1,0 +1,12 @@
+{
+  "name": "sram",
+  "dev_loc": "onchip",
+  "interfaces": [
+    {
+      "type": "Memory",
+      "allowed_type": [
+        "Memory"
+      ]
+    }
+  ]
+}

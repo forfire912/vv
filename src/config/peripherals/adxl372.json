@@ -1,0 +1,12 @@
+{
+  "name": "adxl372",
+  "dev_loc": "external",
+  "interfaces": [
+    {
+      "type": "Sensors.ADXL372",
+      "allowed_type": [
+        "I2C"
+      ]
+    }
+  ]
+}

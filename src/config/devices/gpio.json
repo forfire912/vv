@@ -1,0 +1,12 @@
+{
+  "name": "gpio",
+  "dev_loc": "onchip",
+  "interfaces": [
+    {
+      "type": "GPIOPort",
+      "allowed_type": [
+        "GPIOPort"
+      ]
+    }
+  ]
+}

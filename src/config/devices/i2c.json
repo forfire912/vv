@@ -1,0 +1,12 @@
+{
+  "name": "i2c",
+  "dev_loc": "onchip",
+  "interfaces": [
+    {
+      "type": "I2C"
+      "allowed_type": [
+        "I2C"
+      ]
+    }
+  ]
+}

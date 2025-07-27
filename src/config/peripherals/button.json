@@ -1,0 +1,12 @@
+{
+  "name": "button",
+  "dev_loc": "external",
+  "interfaces": [
+    {
+      "type": "Miscellaneous.Button",
+      "allowed_type": [
+        "GPIOPort"
+      ]
+    }
+  ]
+}

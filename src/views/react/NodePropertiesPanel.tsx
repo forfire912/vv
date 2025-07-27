@@ -20,6 +20,11 @@ const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
   // ...existing code...
 
   useEffect(() => {
+    console.log('NodePropertiesPanel useEffect 触发:', { 
+      selectedNodeId: selectedNode?.id, 
+      selectedNodeType: selectedNode?.data?.type 
+    });
+    
     if (!selectedNode) {
       setConnectedCpuId("");
       setAllowedInterfaces([]);
@@ -46,9 +51,14 @@ const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
 
       // 计算接口交集
       const perIfaces = Array.isArray(selectedNode.data.interfaces) ? selectedNode.data.interfaces : [];
+      console.log('外设接口信息:', { nodeId: selectedNode.id, perIfaces });
+      
       const allowedSet = new Set<string>();
       perIfaces.forEach((iface: any) => {
-        const allowed = iface.props?.["allowed _type"] || iface.props?.allowed_type || iface.props?.allowed_types;
+        // 检查多种可能的属性名和位置
+        const allowed = iface.allowed_type || iface.props?.allowed_type || iface.props?.["allowed_type"] || iface.props?.allowed_types || iface["allowed_type"];
+        console.log('接口配置解析:', { iface, allowed });
+        
         if (Array.isArray(allowed)) {
           allowed.forEach((t: string) => allowedSet.add(t));
         } else if (typeof allowed === "string") {
@@ -56,12 +66,38 @@ const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
         }
       });
       const allowedArr = Array.from(allowedSet);
+      console.log('外设允许的接口类型:', allowedArr);
 
       const common: string[] = [];
       if (cpuNode && Array.isArray(cpuNode.data.interfaces)) {
-        const cpuTypes = cpuNode.data.interfaces.map((i: any) => i.type);
-        allowedArr.forEach(t => {
-          if (cpuTypes.includes(t)) common.push(t);
+        // 找到匹配的接口ID（而不是接口类型）
+        cpuNode.data.interfaces.forEach((cpuInterface: any) => {
+          const isMatched = allowedArr.some(allowedType => {
+            const cpuTypeLower = cpuInterface.type.toLowerCase();
+            const allowedTypeLower = allowedType.toLowerCase();
+            
+            console.log('匹配调试:', { cpuTypeLower, allowedTypeLower, interfaceId: cpuInterface.id });
+            
+            // 精确匹配
+            if (cpuTypeLower === allowedTypeLower) return true;
+            
+            // 前缀匹配：外设要求 "GPIOPort"，CPU提供 "GPIOPort.MAX32650_GPIO"
+            if (cpuTypeLower.startsWith(allowedTypeLower + ".")) return true;
+            
+            // 反向匹配：外设要求 "GPIOPort.MAX32650_GPIO"，CPU提供 "GPIOPort.MAX32650_GPIO" 
+            if (allowedTypeLower.startsWith(cpuTypeLower + ".")) return true;
+            
+            // 通用类型匹配：外设要求 "GPIOPort"，CPU提供 "GPIOPort.任何实现"
+            const cpuBaseType = cpuTypeLower.split('.')[0];
+            const allowedBaseType = allowedTypeLower.split('.')[0];
+            if (cpuBaseType === allowedBaseType) return true;
+            
+            return false;
+          });
+          
+          if (isMatched && !common.includes(cpuInterface.id)) {
+            common.push(cpuInterface.id); // 存储接口ID而不是接口类型
+          }
         });
       }
       setAllowedInterfaces(common);
@@ -141,9 +177,9 @@ const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
               <div className="property-label">接口参数范围</div>
               {cpuNode.data.interfaces.map((i: any) => (
                 <div key={i.id || i.type} className="property-value" style={{ marginTop: 4 }}>
-                  <b>{i.type}</b>：{i.props.pin_nums
+                  <b>{i.type}</b>：{i.props?.pin_nums
                     ? `1 - ${i.props.pin_nums}`
-                    : Array.isArray(i.props.pin_sels)
+                    : Array.isArray(i.props?.pin_sels)
                     ? `[${i.props.pin_sels.join(", ")}]`
                     : ""}
                 </div>
@@ -177,11 +213,11 @@ const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
               <div className="property-label">接口</div>
               <select
                 className="properties-select"
-                value={selectedNode.data.config?.selectedInterface || ""}
+                value={selectedNode.data.config?.selectedInterfaceId || ""}
                 onChange={e => {
                   const cfg = {
                     ...selectedNode.data.config,
-                    selectedInterface: e.target.value,
+                    selectedInterfaceId: e.target.value,
                     pinNumber: undefined,
                     pinSelection: undefined
                   };
@@ -189,14 +225,19 @@ const NodePropertiesPanel: React.FC<NodePropertiesPanelProps> = ({
                 }}
               >
                 <option value="">请选择接口</option>
-                {allowedInterfaces.map(ifaceType => (
-                  <option key={ifaceType} value={ifaceType}>{ifaceType}</option>
-                ))}
+                {allowedInterfaces.map(ifaceId => {
+                  const ifaceDef = cpuNode?.data.interfaces.find((i: any) => i.id === ifaceId);
+                  return (
+                    <option key={ifaceId} value={ifaceId}>
+                      {ifaceId} ({ifaceDef?.type})
+                    </option>
+                  );
+                })}
               </select>
             </div>
-            {selectedNode.data.config?.selectedInterface && cpuNode && (
+            {selectedNode.data.config?.selectedInterfaceId && cpuNode && (
               (() => {
-                const ifaceDef = cpuNode.data.interfaces.find((i: any) => i.type === selectedNode.data.config.selectedInterface);
+                const ifaceDef = cpuNode.data.interfaces.find((i: any) => i.id === selectedNode.data.config.selectedInterfaceId);
                 if (!ifaceDef?.props) return null;
                 return (
                   <div className="property-group">

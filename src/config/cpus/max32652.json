@@ -1,0 +1,150 @@
+{
+  "name": "max32652",
+  "type": "cpu",
+  "interfaces": [
+    {
+      "id": "cpu",
+      "type": "CPU.CortexM"
+    },
+    {
+      "id": "nvic",
+      "type": "IRQControllers.NVIC"
+    },
+    {
+      "id": "gcr",
+      "type": "Miscellaneous.MAX32650_GCR"
+    },
+    {
+      "id": "wdt0",
+      "type": "Timers.MAX32650_WDT"
+    },
+    {
+      "id": "wdt1",
+      "type": "Timers.MAX32650_WDT"
+    },
+    {
+      "id": "timer0",
+      "type": "Timers.MAX32650_Timer"
+    },
+    {
+      "id": "timer1",
+      "type": "Timers.MAX32650_Timer"
+    },
+    {
+      "id": "tpu",
+      "type": "Miscellaneous.MAX32650_TPU"
+    },
+    {
+      "id": "timer2",
+      "type": "Timers.MAX32650_Timer"
+    },
+    {
+      "id": "timer3",
+      "type": "Timers.MAX32650_Timer"
+    },
+    {
+      "id": "timer4",
+      "type": "Timers.MAX32650_Timer"
+    },
+    {
+      "id": "timer5",
+      "type": "Timers.MAX32650_Timer"
+    },
+    {
+      "id": "i2c0",
+      "type": "I2C.MAX32650_I2C"
+    },
+    {
+      "id": "i2c1",
+      "type": "I2C.MAX32650_I2C"
+    },
+    {
+      "id": "adc",
+      "type": "Analog.MAX32650_ADC"
+    },
+    {
+      "id": "uart0",
+      "type": "UART.MAX32650_UART"
+    },
+    {
+      "id": "uart1",
+      "type": "UART.MAX32650_UART"
+    },
+    {
+      "id": "uart2",
+      "type": "UART.MAX32650_UART"
+    },
+    {
+      "id": "spi0",
+      "type": "SPI.MAX32650_SPI"
+    },
+    {
+      "id": "spi1",
+      "type": "SPI.MAX32650_SPI"
+    },
+    {
+      "id": "spi2",
+      "type": "SPI.MAX32650_SPI"
+    },
+    {
+      "id": "gpio0",
+      "type": "GPIOPort.MAX32650_GPIO",
+      "props": {
+        "pin_nums": 32
+      }
+    },
+    {
+      "id": "gpio1",
+      "type": "GPIOPort.MAX32650_GPIO",
+      "props": {
+        "pin_nums": 32
+      }
+    },
+    {
+      "id": "gpio2",
+      "type": "GPIOPort.MAX32650_GPIO",
+      "props": {
+        "pin_nums": 32
+      }
+    },
+    {
+      "id": "gpio3",
+      "type": "GPIOPort.MAX32650_GPIO",
+      "props": {
+        "pin_nums": 10
+      }
+    },
+    {
+      "id": "spi3",
+      "type": "SPI.MAX32650_SPI"
+    },
+    {
+      "id": "rtc",
+      "type": "Timers.MAX32650_RTC"
+    },
+    {
+      "id": "pwrseq",
+      "type": "Miscellaneous.MAX32650_PWRSEQ"
+    },
+    {
+      "id": "dwt",
+      "type": "Miscellaneous.DWT"
+    },
+    {
+      "id": "flash",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "sram",
+      "type": "Memory.MappedMemory"
+    },
+    {
+      "id": "bitbandPeripherals",
+      "type": "Miscellaneous.BitBanding"
+    },
+    {
+      "id": "bitbandSram",
+      "type": "Miscellaneous.BitBanding"
+    }
+  ]
+}
